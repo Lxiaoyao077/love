@@ -9,131 +9,212 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-  html{-webkit-tap-highlight-color:transparent}
+  html{-webkit-tap-highlight-color:transparent;scroll-behavior:smooth}
   body{
     font-family:"Noto Serif SC","PingFang SC","STSong",serif;
-    background:oklch(0.11 0.005 20);
+    background:oklch(0.12 0.006 25);
     color:oklch(0.88 0.005 85);
     min-height:100vh;
     min-height:100dvh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
+    overflow-x:hidden;
   }
 
-  /* 微光渐变背景 */
+  /* 温暖光晕背景 */
   .bg-glow{
     position:fixed;
     border-radius:50%;
-    filter:blur(120px);
-    opacity:0.25;
+    filter:blur(140px);
     pointer-events:none;
     z-index:0;
-    animation:breathe 8s ease-in-out infinite;
+    animation:breathe 10s ease-in-out infinite;
   }
   .bg-glow-1{
-    width:min(70vw,400px);height:min(70vw,400px);
-    top:-20%;left:-15%;
-    background:oklch(0.45 0.12 10);
+    width:min(80vw,500px);height:min(80vw,500px);
+    top:-25%;left:-20%;
+    background:oklch(0.38 0.14 12);
+    opacity:0.22;
     animation-delay:0s;
   }
   .bg-glow-2{
-    width:min(50vw,300px);height:min(50vw,300px);
-    bottom:-10%;right:-10%;
-    background:oklch(0.4 0.14 20);
-    animation-delay:4s;
+    width:min(60vw,380px);height:min(60vw,380px);
+    bottom:-15%;right:-15%;
+    background:oklch(0.34 0.12 18);
+    opacity:0.2;
+    animation-delay:5s;
   }
   @keyframes breathe{
-    0%,100%{transform:scale(1);opacity:0.2}
-    50%{transform:scale(1.2);opacity:0.3}
+    0%,100%{transform:scale(1);opacity:0.18}
+    50%{transform:scale(1.15);opacity:0.28}
   }
 
-  .container{
+  /* Hero Section */
+  .hero{
     position:relative;z-index:1;
-    text-align:center;
+    min-height:100vh;
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
     padding:clamp(2rem,8vw,5rem) clamp(1.2rem,5vw,2.5rem);
+  }
+  .hero-inner{
+    text-align:center;
     width:100%;
     max-width:420px;
-    animation:riseIn 1.4s cubic-bezier(0.22,1,0.36,1) both;
+    animation:riseIn 1.6s cubic-bezier(0.22,1,0.36,1) both;
   }
   @keyframes riseIn{
-    0%{opacity:0;transform:translateY(48px)}
+    0%{opacity:0;transform:translateY(56px)}
     100%{opacity:1;transform:translateY(0)}
   }
 
-  /* 日期行 */
   .date-line{
     font-family:"Noto Sans SC","PingFang SC",sans-serif;
-    font-size:0.7rem;
+    font-size:0.68rem;
     font-weight:400;
-    letter-spacing:0.24em;
+    letter-spacing:0.28em;
     text-transform:uppercase;
-    color:oklch(0.45 0.02 25);
-    margin-bottom:clamp(2.5rem,10vw,4rem);
+    color:oklch(0.42 0.025 22);
+    margin-bottom:clamp(2rem,8vw,3rem);
   }
 
-  /* 名字 */
   .names{
-    margin-bottom:clamp(1.2rem,5vw,2rem);
-    line-height:1.15;
+    margin-bottom:clamp(1rem,4vw,1.8rem);
+    line-height:1.12;
   }
   .name{
     display:block;
-    font-size:clamp(3rem,12vw,5rem);
+    font-size:clamp(2.8rem,11vw,4.8rem);
     font-weight:600;
-    letter-spacing:0.06em;
-    color:oklch(0.92 0.01 85);
-    line-height:1.15;
+    letter-spacing:0.08em;
+    color:oklch(0.93 0.008 85);
+    line-height:1.12;
   }
-  .name:first-child{margin-bottom:clamp(0.2rem,1.5vw,0.5rem)}
+  .name:first-child{margin-bottom:clamp(0.15rem,1vw,0.4rem)}
 
-  /* 连接符 */
   .ampersand{
     display:block;
-    font-family:"Noto Serif SC",serif;
-    font-size:clamp(1.6rem,6vw,2.6rem);
+    font-size:clamp(1.4rem,5.5vw,2.4rem);
     font-weight:300;
     font-style:italic;
-    color:oklch(0.5 0.06 15);
+    color:oklch(0.48 0.07 14);
     line-height:1;
-    margin:clamp(0.3rem,2vw,0.8rem) 0;
-    animation:pulse-opacity 3s ease-in-out infinite;
+    margin:clamp(0.25rem,2vw,0.7rem) 0;
+    animation:pulse-opacity 3.5s ease-in-out infinite;
   }
   @keyframes pulse-opacity{
-    0%,100%{opacity:0.5}
+    0%,100%{opacity:0.45}
     50%{opacity:1}
   }
 
-  /* 主标题 */
   .main-line{
-    font-size:clamp(1.5rem,6vw,2.4rem);
+    font-size:clamp(1.4rem,5.5vw,2.2rem);
     font-weight:700;
-    letter-spacing:0.12em;
-    margin-bottom:clamp(2.5rem,8vw,3.5rem);
-    color:oklch(0.85 0.03 20);
-    text-shadow:0 0 60px oklch(0.45 0.12 12 / 0.35);
+    letter-spacing:0.14em;
+    margin-bottom:clamp(1.2rem,4vw,1.8rem);
+    color:oklch(0.82 0.04 18);
+    text-shadow:0 0 50px oklch(0.42 0.13 12 / 0.3);
   }
 
-  /* 分割线 */
+  /* 下滑提示 */
+  .scroll-hint{
+    position:absolute;
+    bottom:clamp(2rem,6vw,3rem);
+    left:50%;
+    transform:translateX(-50%);
+    animation:floatDown 2.8s ease-in-out infinite;
+  }
+  .scroll-hint span{
+    display:block;
+    width:1px;
+    height:clamp(28px,7vw,40px);
+    background:linear-gradient(to bottom,transparent,oklch(0.5 0.05 15 / 0.6),transparent);
+  }
+  @keyframes floatDown{
+    0%,100%{opacity:0.3;transform:translateX(-50%) translateY(-4px)}
+    50%{opacity:1;transform:translateX(-50%) translateY(4px)}
+  }
+
+  /* 作文区 */
+  .essay-section{
+    position:relative;z-index:1;
+    padding:clamp(3rem,10vw,6rem) clamp(1.5rem,6vw,3rem);
+  }
+  .essay{
+    max-width:460px;
+    margin:0 auto;
+    animation:fadeIn 1.2s 0.2s cubic-bezier(0.22,1,0.36,1) both;
+  }
+  @keyframes fadeIn{
+    0%{opacity:0;transform:translateY(40px)}
+    100%{opacity:1;transform:translateY(0)}
+  }
+
+  .essay-header{
+    text-align:center;
+    margin-bottom:clamp(2rem,6vw,3rem);
+  }
+  .essay-header-line{
+    display:inline-block;
+    width:clamp(20px,6vw,30px);
+    height:1px;
+    background:oklch(0.4 0.06 15);
+    vertical-align:middle;
+  }
+  .essay-header-text{
+    display:inline-block;
+    font-family:"Noto Sans SC","PingFang SC",sans-serif;
+    font-size:0.65rem;
+    letter-spacing:0.25em;
+    color:oklch(0.42 0.03 20);
+    margin:0 clamp(0.5rem,2vw,1rem);
+    vertical-align:middle;
+  }
+
+  .essay-body{
+    font-size:clamp(0.95rem,3.5vw,1.1rem);
+    line-height:2.2;
+    letter-spacing:0.03em;
+    color:oklch(0.72 0.01 85);
+  }
+  .essay-body p{
+    margin-bottom:clamp(1rem,3vw,1.4rem);
+    text-indent:2em;
+  }
+  .essay-body .highlight{
+    color:oklch(0.78 0.05 20);
+    font-weight:500;
+  }
+
+  .essay-footer{
+    text-align:center;
+    margin-top:clamp(2.5rem,7vw,3.5rem);
+  }
+  .essay-sign{
+    font-size:0.85rem;
+    color:oklch(0.5 0.04 15);
+    letter-spacing:0.08em;
+  }
+
   .divider{
     width:1px;
-    height:clamp(48px,12vw,72px);
-    background:linear-gradient(to bottom,transparent,oklch(0.35 0.04 15),transparent);
-    margin:0 auto clamp(2.5rem,8vw,3.5rem);
+    height:clamp(32px,8vw,48px);
+    background:linear-gradient(to bottom,transparent,oklch(0.32 0.04 15),transparent);
+    margin:0 auto clamp(2rem,6vw,2.5rem);
   }
 
-  /* 底部文字 */
-  .footer-note{
+  .end-note{
+    text-align:center;
     font-family:"Noto Sans SC","PingFang SC",sans-serif;
-    font-size:0.78rem;
-    font-weight:300;
-    letter-spacing:0.12em;
-    color:oklch(0.4 0.02 20);
+    font-size:0.72rem;
+    letter-spacing:0.15em;
+    color:oklch(0.38 0.02 20);
+    padding-bottom:clamp(3rem,8vw,5rem);
   }
 
   @media(prefers-reduced-motion:reduce){
-    .bg-glow,.ampersand,.container{animation:none}
+    .bg-glow,.ampersand,.hero-inner,.essay,.scroll-hint{animation:none}
   }
 </style>
 </head>
@@ -141,20 +222,43 @@
   <div class="bg-glow bg-glow-1"></div>
   <div class="bg-glow bg-glow-2"></div>
 
-  <main class="container">
-    <p class="date-line">2026 · Forever</p>
-
-    <div class="names">
-      <span class="name">林子航</span>
-      <span class="ampersand">&amp;</span>
-      <span class="name">苏欣念</span>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="date-line">2026 · Forever</p>
+      <div class="names">
+        <span class="name">林子航</span>
+        <span class="ampersand">&amp;</span>
+        <span class="name">苏欣念</span>
+      </div>
+      <h1 class="main-line">爱一生一世</h1>
     </div>
+    <div class="scroll-hint"><span></span></div>
+  </section>
 
-    <h1 class="main-line">爱一生一世</h1>
-
-    <div class="divider"></div>
-
-    <p class="footer-note">执子之手，与子偕老</p>
-  </main>
+  <!-- 小作文 -->
+  <section class="essay-section">
+    <article class="essay">
+      <div class="essay-header">
+        <span class="essay-header-line"></span>
+        <span class="essay-header-text">写给苏欣念</span>
+        <span class="essay-header-line"></span>
+      </div>
+      <div class="essay-body">
+        <p>遇见你之前，我以为这世上所有的浪漫都写在书里、拍在电影里——直到那天你回头对我笑了一下，我才知道，原来书上写的都太轻了。</p>
+        <p>你不是那种一惊一乍闯进来的人，你是慢慢地、温柔地，像春天化开冰河那样，一点一点漫进我的生活。等我发现的时候，已经满脑子都是你了。走路在想你，吃饭在想你，连呼吸都带着你的名字。那一刻我就知道——<span class="highlight">完了，这辈子怕是跑不掉了。</span></p>
+        <p>你知道吗，我最喜欢的是你认真听我说话的样子。全世界都忙着刷手机、赶时间、敷衍了事，只有你会歪着头听我讲完那些无聊的废话，然后笑着说"然后呢"。<span class="highlight">那种被认真对待的感觉，是我二十多年来收到过最好的礼物。</span></p>
+        <p>有时候我会想，我们在一起到底图什么。图你好看吗？好像是，但不全是。图你性格好吗？也是，但也不是全部。想来想去，可能就是图一个"是你"。因为是你，所以下雨天困在家里也觉得有趣；因为是你，所以再普通的日子都变得值得纪念；因为是你，所以我愿意把所有的温柔、耐心和未来都交出来。</p>
+        <p><span class="highlight">他们说爱一个人最好的方式，就是把她规划进自己的余生里。</span>那我告诉你，我的余生剧本第一页就写着你的名字。后面每一页，不管剧情怎么走，主角永远是你。</p>
+        <p>苏欣念，我不承诺给你全世界——那太假了。但我承诺：从今往后的每一天，我都会像第一天喜欢你那样，认真、热烈、不遗余力。饿了给你做饭，累了给你捏肩，难过了就把肩膀借你，开心了就陪你一起疯。</p>
+        <p class="highlight">一生一世不是一句口号，是我早就做好的决定。</p>
+      </div>
+      <div class="divider"></div>
+      <div class="essay-footer">
+        <p class="essay-sign">—— 永远爱你的 林子航</p>
+      </div>
+    </article>
+    <p class="end-note">2026.06.19 · 始于心动，终于白首</p>
+  </section>
 </body>
 </html>
