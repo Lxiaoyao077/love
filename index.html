@@ -2,269 +2,167 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <title>林子航 &amp; 苏欣念</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
 <style>
   *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-  html{-webkit-tap-highlight-color:transparent;scroll-behavior:smooth}
+  html{-webkit-tap-highlight-color:transparent}
 
   body{
-    font-family:"Noto Serif SC","PingFang SC","STSong",serif;
-    background:oklch(0.96 0.009 81);
-    color:oklch(0.24 0.02 60);
+    font-family:"Noto Serif SC","PingFang SC","STSong","Songti SC",serif;
+    background:#f7f3ec;
+    color:#3b2d24;
     min-height:100vh;
     min-height:100dvh;
-    overflow-x:hidden;
-    background-image:
-      radial-gradient(ellipse 80% 60% at 30% 20%, oklch(0.94 0.03 85 / 0.5) 0%, transparent 70%),
-      radial-gradient(ellipse 60% 50% at 75% 80%, oklch(0.92 0.02 70 / 0.35) 0%, transparent 70%);
+    padding:clamp(2.5rem,10vh,4.5rem) clamp(1.2rem,6vw,2.5rem);
+    line-height:2.1;
   }
 
-  /* 纸张纹理叠加 */
-  body::before{
-    content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-    background-image:
-      repeating-linear-gradient(0deg, transparent, transparent 2px, oklch(0.5 0.01 80 / 0.015) 2px, oklch(0.5 0.01 80 / 0.015) 2.5px);
-    opacity:0.6;
+  .page{
+    max-width:380px;margin:0 auto;
   }
 
-  /* 主容器 */
-  .container{
-    position:relative;z-index:1;
-    min-height:100vh;min-height:100dvh;
-    display:flex;flex-direction:column;align-items:center;
-    padding:clamp(3rem,10vh,5rem) clamp(1.5rem,6vw,3rem) clamp(3rem,8vh,4rem);
+  /* 日期——手写感，轻轻放在左上角 */
+  .dateline{
+    font-size:0.7rem;color:#9e8b7a;letter-spacing:0.05em;
+    margin-bottom:clamp(2.5rem,12vh,5rem);
   }
 
-  /* === Hero === */
-  .hero{
-    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    width:100%;max-width:400px;text-align:center;
-    animation:riseIn 1.6s cubic-bezier(0.22,1,0.36,1) both;
+  /* 称呼 */
+  .greeting{
+    font-size:clamp(2.2rem,8vw,3.4rem);font-weight:500;line-height:1.3;
+    margin-bottom:1rem;
   }
-  @keyframes riseIn{
-    0%{opacity:0;transform:translateY(40px)}
-    100%{opacity:1;transform:translateY(0)}
+  .greeting .name-zi{display:block}
+  .greeting .name-xin{margin-left:0.6em;color:#6b5544}
+
+  .amp{
+    display:inline;font-family:"Georgia","Times New Roman",serif;
+    font-style:italic;font-weight:400;color:#a68b7a;font-size:0.72em;
+    margin:0 0.08em;vertical-align:middle;
   }
 
-  /* 顶部细线标记 */
-  .top-mark{
-    display:flex;align-items:center;gap:0.6rem;margin-bottom:clamp(2.2rem,8vw,3rem);
-  }
-  .top-mark::before,.top-mark::after{
-    content:'';display:block;width:clamp(20px,6vw,32px);height:0.5px;
-    background:oklch(0.35 0.02 60);
-  }
-  .top-mark span{
-    font-family:"Noto Sans SC","PingFang SC",sans-serif;
-    font-size:0.58rem;font-weight:300;letter-spacing:0.4em;
-    color:oklch(0.32 0.02 65);text-transform:uppercase;
+  /* 那句话 */
+  .the-line{
+    font-size:clamp(1rem,3.5vw,1.15rem);font-weight:500;
+    color:#4a3424;letter-spacing:0.15em;
+    margin-bottom:clamp(2rem,8vw,3rem);margin-top:0.3rem;
   }
 
-  /* 名字 */
-  .names{
-    margin-bottom:clamp(0.6rem,2.5vw,1rem);line-height:1.15;
-  }
-  .name-line{
-    font-size:clamp(2.6rem,10vw,4.6rem);font-weight:600;
-    letter-spacing:0.12em;color:oklch(0.18 0.025 55);line-height:1.1;
-  }
-  .name-line:first-child{margin-bottom:clamp(0.05rem,0.5vw,0.2rem)}
-
-  .connector{
-    display:block;
-    font-family:"Cormorant Garamond","Georgia",serif;
-    font-size:clamp(1.4rem,5vw,2.4rem);font-weight:400;font-style:italic;
-    color:oklch(0.38 0.04 50);line-height:1;
-    margin:clamp(0.15rem,1.2vw,0.5rem) 0;
-    animation:pulse-soft 4.5s ease-in-out infinite;
-  }
-  @keyframes pulse-soft{
-    0%,100%{opacity:0.45}50%{opacity:0.85}
+  /* 留白 */
+  .spacer{
+    height:clamp(3rem,12vh,6rem);
   }
 
-  /* 主宣言 */
-  .declaration{
-    font-size:clamp(1.2rem,4.5vw,1.75rem);font-weight:700;
-    letter-spacing:0.22em;color:oklch(0.26 0.045 35);
-    margin-bottom:clamp(2.5rem,9vw,3.5rem);
-  }
-
-  /* 墨环 */
+  /* 墨环——简单一圈，不规则断点 */
   .ink-ring{
-    position:relative;width:clamp(70px,18vw,100px);height:clamp(70px,18vw,100px);
-    margin:0 auto clamp(2.5rem,9vw,3.5rem);
+    width:clamp(60px,16vw,80px);height:clamp(60px,16vw,80px);
+    margin:0 0 clamp(2.5rem,10vh,4rem);
   }
   .ink-ring svg{width:100%;height:100%;overflow:visible}
-  .ring-path{
-    fill:none;stroke:oklch(0.3 0.035 45 / 0.28);stroke-width:0.6;
-    stroke-dasharray:4 6;animation:spin-slow 60s linear infinite;
-    transform-origin:center;filter:url(#ink-bleed);
+  .ring-a{
+    fill:none;stroke:#8c735e;stroke-width:0.7;
+    stroke-dasharray:5 8 2 10 4 7;stroke-linecap:round;
+    animation:spin 40s linear infinite;transform-origin:center;
   }
-  .ring-path:nth-child(2){
-    animation-duration:75s;animation-direction:reverse;
-    stroke:oklch(0.28 0.03 50 / 0.18);stroke-dasharray:2 10;stroke-width:0.4;
+  .ring-b{
+    fill:none;stroke:#a68b7a;stroke-width:0.4;
+    stroke-dasharray:3 12 1 15;stroke-linecap:round;
+    animation:spin 55s linear reverse infinite;transform-origin:center;
   }
-  .ring-dot{
-    position:absolute;width:3.5px;height:3.5px;border-radius:50%;
-    background:oklch(0.35 0.05 40);top:-2px;left:50%;transform:translateX(-50%);
-    box-shadow:0 0 8px oklch(0.4 0.06 35 / 0.25),0 0 2px oklch(0.3 0.04 40 / 0.5);
-    animation:spin 60s linear infinite;transform-origin:50% calc(50% + 2px);
+  .dot{
+    fill:#7a5c48;
+    animation:spin 40s linear infinite;transform-origin:30px 30px;
   }
-  @keyframes spin{0%{transform:translateX(-50%) rotate(0deg)}100%{transform:translateX(-50%) rotate(360deg)}}
-  @keyframes spin-slow{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+  @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 
-  /* 引语 */
+  /* 引语 —— 偏右一点点，打破对称 */
   .epigraph{
-    font-size:clamp(0.78rem,2.8vw,0.9rem);font-weight:300;
-    color:oklch(0.34 0.02 60);letter-spacing:0.1em;line-height:1.9;
+    font-size:0.8rem;color:#8c7b6c;line-height:2;
+    margin-bottom:clamp(3rem,12vh,5rem);
+    padding-left:clamp(2rem,15vw,5rem);
     font-style:italic;
   }
-  .epigraph .decor{
-    display:block;font-size:0.42rem;color:oklch(0.3 0.03 55);
-    letter-spacing:0.35em;margin-top:0.5rem;font-style:normal;
-  }
 
-  /* 下滑提示 */
-  .scroll-note{
-    position:absolute;bottom:clamp(1.5rem,5vw,2.5rem);left:50%;
-    transform:translateX(-50%);animation:floatDown 3s ease-in-out infinite;
+  /* 计数器 */
+  .counter{
+    padding:1.2rem 0;
+    border-top:0.5px solid #d4c8bb;
+    border-bottom:0.5px solid #d4c8bb;
+    margin-bottom:2rem;
   }
-  .scroll-note span{
-    display:block;width:0.5px;
-    height:clamp(28px,7vw,40px);
-    background:linear-gradient(to bottom,transparent,oklch(0.3 0.02 60 / 0.4),transparent);
-  }
-  @keyframes floatDown{
-    0%,100%{opacity:0.2;transform:translateX(-50%) translateY(-3px)}
-    50%{opacity:1;transform:translateX(-50%) translateY(3px)}
-  }
-
-  /* === 计数器区 === */
-  .counter-section{
-    width:100%;max-width:380px;text-align:center;
-    padding:clamp(1.5rem,5vw,2.5rem) clamp(1rem,4vw,2rem);
-    border:0.5px solid oklch(0.5 0.02 60 / 0.2);
-    border-radius:1px;
-    background:oklch(0.97 0.008 80 / 0.5);
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
-    opacity:0;
-    animation:fadeUp 1.4s 0.3s cubic-bezier(0.22,1,0.36,1) forwards;
-  }
-  @keyframes fadeUp{
-    0%{opacity:0;transform:translateY(36px)}
-    100%{opacity:1;transform:translateY(0)}
-  }
-
   .counter-label{
-    font-family:"Noto Sans SC","PingFang SC",sans-serif;
-    font-size:0.58rem;letter-spacing:0.3em;
-    color:oklch(0.3 0.02 65);margin-bottom:0.8rem;
+    font-size:0.55rem;color:#a69888;letter-spacing:0.15em;margin-bottom:0.5rem;
   }
   .counter-row{
-    display:flex;justify-content:center;align-items:baseline;gap:clamp(0.25rem,1.5vw,0.5rem);
+    display:flex;align-items:baseline;gap:0.3rem;
   }
   .counter-num{
-    font-family:"Cormorant Garamond","Georgia",serif;
-    font-size:clamp(2.2rem,7.5vw,3.2rem);font-weight:600;
-    color:oklch(0.22 0.035 45);
+    font-size:2.8rem;font-weight:300;color:#4a3424;line-height:1;
   }
   .counter-unit{
-    font-family:"Noto Sans SC","PingFang SC",sans-serif;
-    font-size:0.68rem;color:oklch(0.3 0.025 60);letter-spacing:0.12em;
+    font-size:0.75rem;color:#8c7b6c;
   }
   .counter-note{
-    font-size:0.68rem;color:oklch(0.32 0.02 60);letter-spacing:0.08em;
-    margin-top:0.6rem;
+    font-size:0.7rem;color:#a69888;margin-top:0.4rem;
   }
 
-  /* 底部分隔 */
-  .footer-sep{
-    margin-top:clamp(2rem,6vw,3rem);
-    width:clamp(40px,10vw,60px);height:0.5px;
-    background:oklch(0.35 0.02 60 / 0.3);
+  .end{
+    font-size:0.68rem;color:#bfb0a2;margin-top:1.5rem;
   }
 
   @media(prefers-reduced-motion:reduce){
-    .connector,.hero,.counter-section,.scroll-note,.ring-path,.ring-dot{animation:none}
-    .counter-section{opacity:1}
+    .ring-a,.ring-b,.dot{animation:none}
   }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <!-- Hero -->
-  <section class="hero">
-    <div class="top-mark"><span>一 生 一 世</span></div>
+<div class="page">
 
-    <div class="names">
-      <p class="name-line">林子航</p>
-      <span class="connector">&amp;</span>
-      <p class="name-line">苏欣念</p>
-    </div>
+  <div class="dateline">2026 年 6 月 19 日</div>
 
-    <p class="declaration">爱一生一世</p>
+  <div class="greeting">
+    <span class="name-zi">林子航</span>
+    <span class="amp" style="font-size:clamp(1.6rem,5vw,2rem);display:block;margin:0.1rem 0">&amp;</span>
+    <span class="name-xin">苏欣念</span>
+  </div>
 
-    <!-- 墨环 -->
-    <div class="ink-ring">
-      <svg viewBox="0 0 100 100">
-        <defs>
-          <filter id="ink-bleed">
-            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" result="noise"/>
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.6" xChannelSelector="R" yChannelSelector="G"/>
-          </filter>
-        </defs>
-        <circle class="ring-path" cx="50" cy="50" r="34"/>
-        <circle class="ring-path" cx="50" cy="50" r="34"/>
-      </svg>
-      <div class="ring-dot"></div>
-    </div>
+  <p class="the-line">爱一生一世</p>
 
-    <p class="epigraph">
-      斯人若彩虹，遇上方知有
-      <span class="decor">— 仅献给此生挚爱</span>
-    </p>
-  </section>
+  <div class="spacer"></div>
 
-  <div class="scroll-note"><span></span></div>
+  <!-- 墨环 -->
+  <div class="ink-ring">
+    <svg viewBox="0 0 60 60">
+      <circle class="ring-a" cx="30" cy="30" r="22"/>
+      <circle class="ring-b" cx="30" cy="30" r="22"/>
+      <circle class="dot" cx="30" cy="8" r="1.8"/>
+    </svg>
+  </div>
+
+  <p class="epigraph">斯人若彩虹<br>遇上方知有</p>
 
   <!-- 在一起的日子 -->
-  <section class="counter-section">
-    <p class="counter-label">L O V E &nbsp; S I N C E</p>
+  <div class="counter">
+    <div class="counter-label">在一起</div>
     <div class="counter-row">
       <span class="counter-num" id="days">0</span>
       <span class="counter-unit">天</span>
     </div>
-    <p class="counter-note">从这一天起，每一天都算数</p>
-  </section>
+    <div class="counter-note">从 2026.5.3 算起，每天都算数</div>
+  </div>
 
-  <div class="footer-sep"></div>
+  <p class="end">—</p>
+
 </div>
 
-<svg width="0" height="0" style="position:absolute">
-  <filter id="ink-bleed-global">
-    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" result="noise"/>
-    <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.6" xChannelSelector="R" yChannelSelector="G"/>
-  </filter>
-</svg>
-
 <script>
-  (function(){
-    const start = new Date('2026-05-03');
-    const el = document.getElementById('days');
-    const update = () => {
-      const now = new Date();
-      const diff = Math.floor((now - start) / (1000 * 60 * 60 * 24));
-      el.textContent = Math.max(0, diff);
-    };
-    update();
-    setInterval(update, 60000);
-  })();
+(function(){
+  var s=new Date('2026-05-03'),e=document.getElementById('days');
+  function u(){var n=Math.floor((new Date()-s)/864e5);e.textContent=Math.max(0,n)}
+  u();setInterval(u,6e4)
+})();
 </script>
 
 </body>
