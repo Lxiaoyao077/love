@@ -6,327 +6,266 @@
 <title>林子航 &amp; 苏欣念</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
 <style>
   *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
   html{-webkit-tap-highlight-color:transparent;scroll-behavior:smooth}
+
   body{
     font-family:"Noto Serif SC","PingFang SC","STSong",serif;
-    background:oklch(0.115 0.006 22);
-    color:oklch(0.86 0.005 85);
+    background:oklch(0.96 0.009 81);
+    color:oklch(0.24 0.02 60);
     min-height:100vh;
     min-height:100dvh;
     overflow-x:hidden;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 30% 20%, oklch(0.94 0.03 85 / 0.5) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 50% at 75% 80%, oklch(0.92 0.02 70 / 0.35) 0%, transparent 70%);
   }
 
-  /* 光晕 */
-  .bg-glow{
-    position:fixed;border-radius:50%;filter:blur(150px);
-    pointer-events:none;z-index:0;animation:breathe 12s ease-in-out infinite;
-  }
-  .bg-glow-1{
-    width:min(85vw,520px);height:min(85vw,520px);
-    top:-28%;left:-22%;
-    background:oklch(0.35 0.12 10);opacity:0.2;animation-delay:0s;
-  }
-  .bg-glow-2{
-    width:min(55vw,360px);height:min(55vw,360px);
-    bottom:-18%;right:-18%;
-    background:oklch(0.32 0.11 16);opacity:0.18;animation-delay:6s;
-  }
-  @keyframes breathe{
-    0%,100%{transform:scale(1);opacity:0.16}
-    50%{transform:scale(1.18);opacity:0.26}
+  /* 纸张纹理叠加 */
+  body::before{
+    content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 2px, oklch(0.5 0.01 80 / 0.015) 2px, oklch(0.5 0.01 80 / 0.015) 2.5px);
+    opacity:0.6;
   }
 
-  /* Hero */
-  .hero{
+  /* 主容器 */
+  .container{
     position:relative;z-index:1;
     min-height:100vh;min-height:100dvh;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    padding:clamp(2rem,8vw,5rem) clamp(1.2rem,5vw,2.5rem);
+    display:flex;flex-direction:column;align-items:center;
+    padding:clamp(3rem,10vh,5rem) clamp(1.5rem,6vw,3rem) clamp(3rem,8vh,4rem);
   }
-  .hero-inner{
-    text-align:center;width:100%;max-width:440px;
-    animation:riseIn 1.8s cubic-bezier(0.22,1,0.36,1) both;
+
+  /* === Hero === */
+  .hero{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    width:100%;max-width:400px;text-align:center;
+    animation:riseIn 1.6s cubic-bezier(0.22,1,0.36,1) both;
   }
   @keyframes riseIn{
-    0%{opacity:0;transform:translateY(64px)}
+    0%{opacity:0;transform:translateY(40px)}
     100%{opacity:1;transform:translateY(0)}
   }
 
-  .date-badge{
-    display:inline-flex;align-items:center;gap:0.6rem;
-    margin-bottom:clamp(2.5rem,9vw,3.5rem);
+  /* 顶部细线标记 */
+  .top-mark{
+    display:flex;align-items:center;gap:0.6rem;margin-bottom:clamp(2.2rem,8vw,3rem);
   }
-  .date-badge::before,.date-badge::after{
-    content:'';display:block;width:clamp(18px,5vw,28px);height:0.5px;
-    background:oklch(0.38 0.04 16);
+  .top-mark::before,.top-mark::after{
+    content:'';display:block;width:clamp(20px,6vw,32px);height:0.5px;
+    background:oklch(0.35 0.02 60);
   }
-  .date-badge-text{
+  .top-mark span{
     font-family:"Noto Sans SC","PingFang SC",sans-serif;
-    font-size:0.6rem;font-weight:400;letter-spacing:0.35em;
-    color:oklch(0.4 0.025 20);text-transform:uppercase;
+    font-size:0.58rem;font-weight:300;letter-spacing:0.4em;
+    color:oklch(0.32 0.02 65);text-transform:uppercase;
   }
 
-  .names{margin-bottom:clamp(0.8rem,3vw,1.4rem);line-height:1.1}
-  .name{
-    display:block;font-size:clamp(2.8rem,11vw,5rem);
-    font-weight:600;letter-spacing:0.1em;color:oklch(0.93 0.006 85);line-height:1.1;
+  /* 名字 */
+  .names{
+    margin-bottom:clamp(0.6rem,2.5vw,1rem);line-height:1.15;
   }
-  .name:first-child{margin-bottom:clamp(0.1rem,0.8vw,0.3rem)}
+  .name-line{
+    font-size:clamp(2.6rem,10vw,4.6rem);font-weight:600;
+    letter-spacing:0.12em;color:oklch(0.18 0.025 55);line-height:1.1;
+  }
+  .name-line:first-child{margin-bottom:clamp(0.05rem,0.5vw,0.2rem)}
 
-  .ampersand{
+  .connector{
     display:block;
     font-family:"Cormorant Garamond","Georgia",serif;
-    font-size:clamp(1.6rem,6vw,2.8rem);font-weight:400;font-style:italic;
-    color:oklch(0.46 0.07 14);line-height:1;
-    margin:clamp(0.2rem,1.5vw,0.6rem) 0;
-    animation:pulse-opacity 4s ease-in-out infinite;
+    font-size:clamp(1.4rem,5vw,2.4rem);font-weight:400;font-style:italic;
+    color:oklch(0.38 0.04 50);line-height:1;
+    margin:clamp(0.15rem,1.2vw,0.5rem) 0;
+    animation:pulse-soft 4.5s ease-in-out infinite;
   }
-  @keyframes pulse-opacity{
-    0%,100%{opacity:0.4}50%{opacity:1}
-  }
-
-  .main-line{
-    font-size:clamp(1.3rem,5vw,2rem);font-weight:700;letter-spacing:0.18em;
-    color:oklch(0.8 0.04 18);
-    text-shadow:0 0 55px oklch(0.4 0.13 12 / 0.28);
-    margin-bottom:clamp(3rem,10vw,4.5rem);
+  @keyframes pulse-soft{
+    0%,100%{opacity:0.45}50%{opacity:0.85}
   }
 
-  /* 星轨环 */
-  .orbit-wrap{
-    position:relative;width:clamp(60px,16vw,90px);height:clamp(60px,16vw,90px);
-    margin:0 auto clamp(3rem,10vw,4.5rem);
+  /* 主宣言 */
+  .declaration{
+    font-size:clamp(1.2rem,4.5vw,1.75rem);font-weight:700;
+    letter-spacing:0.22em;color:oklch(0.26 0.045 35);
+    margin-bottom:clamp(2.5rem,9vw,3.5rem);
   }
-  .orbit{
-    position:absolute;inset:-20%;border-radius:50%;
-    border:0.5px solid oklch(0.38 0.05 16 / 0.35);
-    animation:spin 20s linear infinite;
-  }
-  .orbit:nth-child(2){
-    inset:-38%;animation-duration:28s;animation-direction:reverse;
-    border-color:oklch(0.34 0.04 16 / 0.22);
-  }
-  .orbit-dot{
-    position:absolute;width:3px;height:3px;border-radius:50%;
-    background:oklch(0.62 0.11 16);top:-1.5px;left:50%;
-    box-shadow:0 0 6px oklch(0.52 0.14 14 / 0.5);
-  }
-  .orbit:nth-child(2) .orbit-dot{
-    width:2px;height:2px;top:-1px;background:oklch(0.55 0.08 18);
-  }
-  @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 
-  /* 短引语 */
-  .hero-epigraph{
+  /* 墨环 */
+  .ink-ring{
+    position:relative;width:clamp(70px,18vw,100px);height:clamp(70px,18vw,100px);
+    margin:0 auto clamp(2.5rem,9vw,3.5rem);
+  }
+  .ink-ring svg{width:100%;height:100%;overflow:visible}
+  .ring-path{
+    fill:none;stroke:oklch(0.3 0.035 45 / 0.28);stroke-width:0.6;
+    stroke-dasharray:4 6;animation:spin-slow 60s linear infinite;
+    transform-origin:center;filter:url(#ink-bleed);
+  }
+  .ring-path:nth-child(2){
+    animation-duration:75s;animation-direction:reverse;
+    stroke:oklch(0.28 0.03 50 / 0.18);stroke-dasharray:2 10;stroke-width:0.4;
+  }
+  .ring-dot{
+    position:absolute;width:3.5px;height:3.5px;border-radius:50%;
+    background:oklch(0.35 0.05 40);top:-2px;left:50%;transform:translateX(-50%);
+    box-shadow:0 0 8px oklch(0.4 0.06 35 / 0.25),0 0 2px oklch(0.3 0.04 40 / 0.5);
+    animation:spin 60s linear infinite;transform-origin:50% calc(50% + 2px);
+  }
+  @keyframes spin{0%{transform:translateX(-50%) rotate(0deg)}100%{transform:translateX(-50%) rotate(360deg)}}
+  @keyframes spin-slow{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+  /* 引语 */
+  .epigraph{
     font-size:clamp(0.78rem,2.8vw,0.9rem);font-weight:300;
-    color:oklch(0.5 0.03 20);letter-spacing:0.08em;line-height:1.8;
+    color:oklch(0.34 0.02 60);letter-spacing:0.1em;line-height:1.9;
     font-style:italic;
   }
+  .epigraph .decor{
+    display:block;font-size:0.42rem;color:oklch(0.3 0.03 55);
+    letter-spacing:0.35em;margin-top:0.5rem;font-style:normal;
+  }
 
-  .scroll-hint{
+  /* 下滑提示 */
+  .scroll-note{
     position:absolute;bottom:clamp(1.5rem,5vw,2.5rem);left:50%;
     transform:translateX(-50%);animation:floatDown 3s ease-in-out infinite;
   }
-  .scroll-hint span{
+  .scroll-note span{
     display:block;width:0.5px;
-    height:clamp(24px,6vw,36px);
-    background:linear-gradient(to bottom,transparent,oklch(0.48 0.05 15 / 0.55),transparent);
+    height:clamp(28px,7vw,40px);
+    background:linear-gradient(to bottom,transparent,oklch(0.3 0.02 60 / 0.4),transparent);
   }
   @keyframes floatDown{
-    0%,100%{opacity:0.25;transform:translateX(-50%) translateY(-3px)}
+    0%,100%{opacity:0.2;transform:translateX(-50%) translateY(-3px)}
     50%{opacity:1;transform:translateX(-50%) translateY(3px)}
   }
 
-  /* 作文区 */
-  .essay-section{
-    position:relative;z-index:1;
-    padding:clamp(3rem,10vw,6rem) clamp(1.5rem,6vw,3rem);
+  /* === 计数器区 === */
+  .counter-section{
+    width:100%;max-width:380px;text-align:center;
+    padding:clamp(1.5rem,5vw,2.5rem) clamp(1rem,4vw,2rem);
+    border:0.5px solid oklch(0.5 0.02 60 / 0.2);
+    border-radius:1px;
+    background:oklch(0.97 0.008 80 / 0.5);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    opacity:0;
+    animation:fadeUp 1.4s 0.3s cubic-bezier(0.22,1,0.36,1) forwards;
   }
-  .essay{
-    max-width:480px;margin:0 auto;opacity:0;
-    animation:fadeIn 1.4s 0.3s cubic-bezier(0.22,1,0.36,1) forwards;
-  }
-  @keyframes fadeIn{
-    0%{opacity:0;transform:translateY(48px)}
+  @keyframes fadeUp{
+    0%{opacity:0;transform:translateY(36px)}
     100%{opacity:1;transform:translateY(0)}
   }
 
-  .essay-header{
-    text-align:center;margin-bottom:clamp(2.5rem,7vw,3.5rem);
-  }
-  .essay-header-diamond{
-    display:block;font-size:0.45rem;color:oklch(0.42 0.06 16);
-    margin-bottom:0.8rem;letter-spacing:0.3em;
-  }
-  .essay-header-text{
-    font-family:"Noto Sans SC","PingFang SC",sans-serif;
-    font-size:0.65rem;letter-spacing:0.22em;
-    color:oklch(0.4 0.025 20);
-  }
-
-  .essay-body{
-    font-size:clamp(0.92rem,3.2vw,1.05rem);line-height:2.3;
-    letter-spacing:0.025em;color:oklch(0.7 0.01 85);
-  }
-  .essay-body p{margin-bottom:clamp(1.1rem,3.5vw,1.6rem);text-indent:2em}
-  .essay-body .hl{
-    color:oklch(0.76 0.05 20);font-weight:500;
-    background:linear-gradient(to top,oklch(0.3 0.06 14 / 0.25) 0%,transparent 40%);
-    padding:0 0.15em;
-  }
-
-  .essay-footer{
-    text-align:center;margin-top:clamp(3rem,8vw,4rem);
-  }
-  .essay-divider{
-    width:1px;height:clamp(28px,7vw,44px);
-    background:linear-gradient(to bottom,transparent,oklch(0.3 0.05 15),transparent);
-    margin:0 auto clamp(1.8rem,5vw,2.5rem);
-  }
-  .essay-sign{font-size:0.82rem;color:oklch(0.48 0.04 15);letter-spacing:0.06em}
-  .essay-date{
-    font-family:"Noto Sans SC","PingFang SC",sans-serif;
-    font-size:0.65rem;color:oklch(0.35 0.02 18);letter-spacing:0.18em;
-    margin-top:0.5rem;
-  }
-
-  /* 倒计时条 */
-  .counter-section{
-    position:relative;z-index:1;
-    padding:clamp(2rem,6vw,4rem) clamp(1.5rem,6vw,3rem) clamp(3rem,8vw,5rem);
-  }
-  .counter{
-    max-width:420px;margin:0 auto;text-align:center;
-    padding:clamp(1.5rem,5vw,2.5rem) clamp(1rem,4vw,2rem);
-    border:0.5px solid oklch(0.2 0.02 16);
-    border-radius:2px;
-    background:oklch(0.13 0.005 22 / 0.5);
-    backdrop-filter:blur(20px);
-    -webkit-backdrop-filter:blur(20px);
-    opacity:0;
-    animation:fadeIn 1.4s 0.6s cubic-bezier(0.22,1,0.36,1) forwards;
-  }
   .counter-label{
     font-family:"Noto Sans SC","PingFang SC",sans-serif;
-    font-size:0.6rem;letter-spacing:0.25em;
-    color:oklch(0.38 0.025 20);margin-bottom:0.8rem;
+    font-size:0.58rem;letter-spacing:0.3em;
+    color:oklch(0.3 0.02 65);margin-bottom:0.8rem;
   }
   .counter-row{
-    display:flex;justify-content:center;align-items:baseline;gap:clamp(0.3rem,2vw,0.6rem);
+    display:flex;justify-content:center;align-items:baseline;gap:clamp(0.25rem,1.5vw,0.5rem);
   }
   .counter-num{
     font-family:"Cormorant Garamond","Georgia",serif;
-    font-size:clamp(2rem,7vw,3rem);font-weight:600;
-    color:oklch(0.8 0.04 18);
+    font-size:clamp(2.2rem,7.5vw,3.2rem);font-weight:600;
+    color:oklch(0.22 0.035 45);
   }
   .counter-unit{
     font-family:"Noto Sans SC","PingFang SC",sans-serif;
-    font-size:0.7rem;color:oklch(0.42 0.025 20);letter-spacing:0.1em;
+    font-size:0.68rem;color:oklch(0.3 0.025 60);letter-spacing:0.12em;
   }
   .counter-note{
-    font-size:0.7rem;color:oklch(0.45 0.02 18);letter-spacing:0.06em;
+    font-size:0.68rem;color:oklch(0.32 0.02 60);letter-spacing:0.08em;
     margin-top:0.6rem;
   }
 
+  /* 底部分隔 */
+  .footer-sep{
+    margin-top:clamp(2rem,6vw,3rem);
+    width:clamp(40px,10vw,60px);height:0.5px;
+    background:oklch(0.35 0.02 60 / 0.3);
+  }
+
   @media(prefers-reduced-motion:reduce){
-    .bg-glow,.ampersand,.hero-inner,.essay,.counter,.scroll-hint,.orbit{animation:none}
+    .connector,.hero,.counter-section,.scroll-note,.ring-path,.ring-dot{animation:none}
+    .counter-section{opacity:1}
   }
 </style>
 </head>
 <body>
-  <div class="bg-glow bg-glow-1"></div>
-  <div class="bg-glow bg-glow-2"></div>
 
+<div class="container">
   <!-- Hero -->
   <section class="hero">
-    <div class="hero-inner">
-      <div class="date-badge">
-        <span class="date-badge-text">Forever</span>
-      </div>
-      <div class="names">
-        <span class="name">林子航</span>
-        <span class="ampersand">&amp;</span>
-        <span class="name">苏欣念</span>
-      </div>
-      <h1 class="main-line">爱一生一世</h1>
+    <div class="top-mark"><span>一 生 一 世</span></div>
 
-      <div class="orbit-wrap">
-        <div class="orbit"><div class="orbit-dot"></div></div>
-        <div class="orbit"><div class="orbit-dot"></div></div>
-      </div>
-
-      <p class="hero-epigraph">斯人若彩虹，遇上方知有</p>
+    <div class="names">
+      <p class="name-line">林子航</p>
+      <span class="connector">&amp;</span>
+      <p class="name-line">苏欣念</p>
     </div>
-    <div class="scroll-hint"><span></span></div>
+
+    <p class="declaration">爱一生一世</p>
+
+    <!-- 墨环 -->
+    <div class="ink-ring">
+      <svg viewBox="0 0 100 100">
+        <defs>
+          <filter id="ink-bleed">
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.6" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+        </defs>
+        <circle class="ring-path" cx="50" cy="50" r="34"/>
+        <circle class="ring-path" cx="50" cy="50" r="34"/>
+      </svg>
+      <div class="ring-dot"></div>
+    </div>
+
+    <p class="epigraph">
+      斯人若彩虹，遇上方知有
+      <span class="decor">— 仅献给此生挚爱</span>
+    </p>
   </section>
 
-  <!-- 小作文 -->
-  <section class="essay-section">
-    <article class="essay">
-      <div class="essay-header">
-        <span class="essay-header-diamond">◆</span>
-        <span class="essay-header-text">写给苏欣念</span>
-      </div>
-      <div class="essay-body">
-        <p>遇见你之前，我以为这世上所有的浪漫都写在书里、拍在电影里——直到那天你回头对我笑了一下，我才知道，原来书上写的都太轻了。</p>
-        <p>你不是那种一惊一乍闯进来的人，你是慢慢地、温柔地，像春天化开冰河那样，一点一点漫进我的生活。等我发现的时候，已经满脑子都是你了。走路在想你，吃饭在想你，连呼吸都带着你的名字。那一刻我就知道——<span class="hl">完了，这辈子怕是跑不掉了。</span></p>
-        <p>你知道吗，我最喜欢的是你认真听我说话的样子。全世界都忙着刷手机、赶时间、敷衍了事，只有你会歪着头听我讲完那些无聊的废话，然后笑着说"然后呢"。<span class="hl">那种被认真对待的感觉，是我二十多年来收到过最好的礼物。</span></p>
-        <p>有时候我会想，我们在一起到底图什么。图你好看吗？好像是，但不全是。图你性格好吗？也是，但也不是全部。想来想去，可能就是图一个"是你"。因为是你，所以下雨天困在家里也觉得有趣；因为是你，所以再普通的日子都变得值得纪念；因为是你，所以我愿意把所有的温柔、耐心和未来都交出来。</p>
-        <p><span class="hl">他们说爱一个人最好的方式，就是把她规划进自己的余生里。</span>那我告诉你，我的余生剧本第一页就写着你的名字。后面每一页，不管剧情怎么走，主角永远是你。</p>
-        <p>苏欣念，我不承诺给你全世界——那太假了。但我承诺：从今往后的每一天，我都会像第一天喜欢你那样，认真、热烈、不遗余力。饿了给你做饭，累了给你捏肩，难过了就把肩膀借你，开心了就陪你一起疯。</p>
-        <p class="hl">一生一世不是一句口号，是我早就做好的决定。</p>
-      </div>
-      <div class="essay-divider"></div>
-      <div class="essay-footer">
-        <p class="essay-sign">永远爱你的 林子航</p>
-        <p class="essay-date">2026.06.19</p>
-      </div>
-    </article>
-  </section>
+  <div class="scroll-note"><span></span></div>
 
   <!-- 在一起的日子 -->
   <section class="counter-section">
-    <div class="counter">
-      <p class="counter-label">L O V E &nbsp; S I N C E</p>
-      <div class="counter-row">
-        <span class="counter-num" id="days">0</span>
-        <span class="counter-unit">天</span>
-      </div>
-      <p class="counter-note">始于心动，终于白首</p>
+    <p class="counter-label">L O V E &nbsp; S I N C E</p>
+    <div class="counter-row">
+      <span class="counter-num" id="days">0</span>
+      <span class="counter-unit">天</span>
     </div>
+    <p class="counter-note">从这一天起，每一天都算数</p>
   </section>
 
-  <script>
-    // 天数计数器 - 从今天(2026-06-19)开始计算
-    (function(){
-      const start = new Date('2026-06-19');
-      const el = document.getElementById('days');
-      const update = () => {
-        const now = new Date();
-        const diff = Math.floor((now - start) / (1000 * 60 * 60 * 24));
-        el.textContent = Math.max(0, diff);
-      };
-      update();
-      setInterval(update, 60000);
-    })();
+  <div class="footer-sep"></div>
+</div>
 
-    // 作文区滚动渐显
-    (function(){
-      const essay = document.querySelector('.essay');
-      const counter = document.querySelector('.counter');
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if(entry.isIntersecting){
-            entry.target.style.animationPlayState = 'running';
-          }
-        });
-      }, {threshold: 0.15});
-      if(essay) observer.observe(essay);
-      if(counter) observer.observe(counter);
-    })();
-  </script>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="ink-bleed-global">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.6" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<script>
+  (function(){
+    const start = new Date('2026-06-19');
+    const el = document.getElementById('days');
+    const update = () => {
+      const now = new Date();
+      const diff = Math.floor((now - start) / (1000 * 60 * 60 * 24));
+      el.textContent = Math.max(0, diff);
+    };
+    update();
+    setInterval(update, 60000);
+  })();
+</script>
+
 </body>
 </html>
