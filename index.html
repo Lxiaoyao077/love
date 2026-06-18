@@ -184,7 +184,9 @@
   .flip-card{
     aspect-ratio:1;perspective:600px;cursor:pointer;
     -webkit-tap-highlight-color:transparent;
+    transition:transform 0.2s cubic-bezier(0.3,0,1,1);
   }
+  .flip-card:active{transform:scale(0.92)}
   .flip-inner{
     position:relative;width:100%;height:100%;
     transition:transform 0.5s cubic-bezier(0.22,1,0.36,1);
@@ -199,18 +201,33 @@
     backface-visibility:hidden;-webkit-backface-visibility:hidden;
   }
   .flip-front{
-    background:rgba(245,242,238,0.9);
+    background:linear-gradient(135deg,rgba(248,245,240,0.95) 0%,rgba(240,236,230,0.9) 100%);
     border:1px solid oklch(0.7 0.02 70 / 0.3);
-    font-size:1.4rem;color:oklch(0.25 0.03 55);
+    font-size:1.4rem;color:oklch(0.35 0.02 60);
+    box-shadow:0 2px 8px rgba(0,0,0,0.03),inset 0 1px 0 rgba(255,255,255,0.6);
+    overflow:hidden;
+  }
+  .flip-front::after{
+    content:'';position:absolute;inset:6px;border-radius:8px;
+    border:0.5px dashed oklch(0.6 0.02 65 / 0.25);
+    pointer-events:none;
   }
   .flip-back{
-    background:rgba(255,248,245,0.95);
-    border:1px solid oklch(0.65 0.04 50 / 0.25);
+    background:linear-gradient(135deg,rgba(255,250,248,0.97) 0%,rgba(252,245,240,0.95) 100%);
+    border:1px solid oklch(0.6 0.04 45 / 0.2);
     transform:rotateY(180deg);font-size:clamp(1.8rem,6vw,2.6rem);
+    box-shadow:0 2px 12px rgba(0,0,0,0.04);
   }
   .flip-card.matched .flip-back{
-    background:rgba(245,242,238,0.6);
-    border-color:oklch(0.55 0.02 70 / 0.2);
+    background:rgba(245,242,238,0.55);
+    border-color:oklch(0.55 0.02 70 / 0.15);
+    box-shadow:none;
+    animation:matchPulse 0.5s cubic-bezier(0.22,1,0.36,1);
+  }
+  @keyframes matchPulse{
+    0%{transform:rotateY(180deg) scale(1)}
+    40%{transform:rotateY(180deg) scale(1.12)}
+    100%{transform:rotateY(180deg) scale(1)}
   }
 
   .flip-result{
@@ -229,13 +246,14 @@
     color:oklch(0.28 0.03 55);letter-spacing:0.15em;cursor:pointer;
     transition:all 0.3s;
   }
-  .flip-retry:active{background:rgba(245,240,235,0.9)}
+  .flip-retry:active{background:rgba(245,240,235,0.9);transform:scale(0.95)}
 
   /* ====== 刮刮卡 ====== */
   .scratch-wrap{position:relative;width:280px;margin:0 auto}
   .scratch-result{
     position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-    background:rgba(250,248,245,0.95);border-radius:16px;
+    background:linear-gradient(135deg,rgba(252,250,246,0.97) 0%,rgba(248,243,238,0.95) 100%);
+    border-radius:16px;
     font-size:1.05rem;letter-spacing:0.12em;color:oklch(0.22 0.04 45);
     text-align:center;line-height:1.8;padding:1.5rem;
     border:0.5px solid oklch(0.5 0.02 60 / 0.15);
@@ -244,18 +262,29 @@
   .scratch-canvas{
     display:block;width:100%;border-radius:16px;
     position:relative;z-index:1;touch-action:none;
+    box-shadow:0 2px 12px rgba(0,0,0,0.04);
   }
 
   /* ====== 问答 ====== */
   .quiz-wrap{max-width:360px;width:100%;margin:0 auto}
   .quiz-question{
     font-size:0.95rem;color:oklch(0.22 0.03 50);margin-bottom:1.2rem;
-    letter-spacing:0.06em;line-height:1.6;
+    letter-spacing:0.06em;line-height:1.6;text-align:center;
+    transition:opacity 0.35s,transform 0.4s cubic-bezier(0.05,0.7,0.1,1);
   }
+  .quiz-question.enter{opacity:0;transform:translateY(12px)}
+  .quiz-question.slide-in{opacity:1;transform:translateY(0)}
   .quiz-progress{
-    font-family:"Noto Sans SC",sans-serif;font-size:0.55rem;
-    color:oklch(0.35 0.02 65);letter-spacing:0.2em;margin-bottom:1.2rem;
+    display:flex;gap:8px;justify-content:center;margin-bottom:1.2rem;
   }
+  .quiz-dot{
+    width:7px;height:7px;border-radius:50%;
+    background:oklch(0.7 0.02 65 / 0.35);
+    transition:all 0.45s cubic-bezier(0.05,0.7,0.1,1);
+  }
+  .quiz-dot.done{background:oklch(0.45 0.06 155 / 0.6);transform:scale(1.2)}
+  .quiz-dot.current{background:oklch(0.28 0.04 50);transform:scale(1.3)}
+  .quiz-dot.wrong-dot{background:oklch(0.45 0.08 25 / 0.5)}
   .quiz-options{display:flex;flex-direction:column;gap:10px}
   .quiz-opt{
     width:100%;padding:14px 18px;border-radius:12px;
@@ -263,10 +292,16 @@
     background:rgba(255,255,255,0.8);
     font-family:"Noto Sans SC",sans-serif;font-size:0.82rem;
     color:oklch(0.24 0.03 55);letter-spacing:0.06em;cursor:pointer;
-    text-align:left;transition:all 0.3s cubic-bezier(0.05,0.7,0.1,1);
+    text-align:left;transition:all 0.35s cubic-bezier(0.05,0.7,0.1,1);
     -webkit-tap-highlight-color:transparent;
+    opacity:0;transform:translateY(8px);
   }
-  .quiz-opt:active{transform:scale(0.97)}
+  .quiz-opt.show{opacity:1;transform:translateY(0)}
+  .quiz-opt:nth-child(1).show{transition-delay:0s}
+  .quiz-opt:nth-child(2).show{transition-delay:0.06s}
+  .quiz-opt:nth-child(3).show{transition-delay:0.12s}
+  .quiz-opt:nth-child(4).show{transition-delay:0.18s}
+  .quiz-opt:active{transform:scale(0.97)!important}
   .quiz-opt.correct{
     background:rgba(200,230,200,0.35);border-color:rgba(100,160,100,0.3);
     color:oklch(0.35 0.08 145);
@@ -279,11 +314,18 @@
   .quiz-score{
     text-align:center;margin-top:1.5rem;opacity:0;
     transition:all 0.6s cubic-bezier(0.05,0.7,0.1,1);
+    transform:scale(0.9);
   }
-  .quiz-score.show{opacity:1}
+  .quiz-score.show{opacity:1;transform:scale(1)}
   .quiz-score .score-num{
     font-family:"Cormorant Garamond",serif;font-size:2.2rem;
-    color:oklch(0.22 0.04 45);
+    color:oklch(0.22 0.04 45);transition:transform 0.5s cubic-bezier(0.22,1,0.36,1);
+  }
+  .quiz-score.show .score-num{animation:scorePop 0.6s 0.15s cubic-bezier(0.22,1,0.36,1) forwards}
+  @keyframes scorePop{
+    0%{transform:scale(0.5)}
+    60%{transform:scale(1.15)}
+    100%{transform:scale(1)}
   }
   .quiz-score .score-text{
     font-size:0.78rem;color:oklch(0.3 0.03 55);letter-spacing:0.1em;margin:0.5rem 0 1rem;
@@ -294,29 +336,46 @@
     background:rgba(255,255,255,0.7);
     font-family:"Noto Sans SC",sans-serif;font-size:0.72rem;
     color:oklch(0.28 0.03 55);letter-spacing:0.15em;cursor:pointer;
+    transition:all 0.3s;
   }
+  .quiz-retry:active{transform:scale(0.95)}
 
   /* ====== 许愿池 ====== */
   .wish-wrap{display:flex;flex-direction:column;align-items:center}
   .wish-pool{
     position:relative;width:clamp(160px,45vw,200px);
     height:clamp(160px,45vw,200px);border-radius:50%;
-    background:radial-gradient(circle at 40% 35%,rgba(200,215,230,0.35) 0%,rgba(180,200,220,0.2) 40%,rgba(160,190,215,0.15) 100%);
+    background:radial-gradient(circle at 40% 35%,rgba(200,215,230,0.35) 0%,rgba(180,200,220,0.2) 40%,rgba(160,190,215,0.12) 100%);
     border:1px solid rgba(180,200,220,0.25);
     box-shadow:0 4px 24px rgba(0,0,0,0.04),inset 0 2px 12px rgba(200,215,230,0.2);
     overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent;
     margin-bottom:1rem;
   }
+  .wish-pool::before{
+    content:'';position:absolute;inset:0;border-radius:50%;
+    background:radial-gradient(ellipse 60% 30% at 50% 35%,rgba(255,255,255,0.25) 0%,transparent 60%);
+    pointer-events:none;z-index:3;
+    animation:poolShimmer 5s ease-in-out infinite;
+  }
+  @keyframes poolShimmer{
+    0%,100%{opacity:0.6;transform:scale(1)}
+    50%{opacity:1;transform:scale(1.05)}
+  }
   .wish-water{
     position:absolute;bottom:0;left:0;right:0;height:45%;
     background:linear-gradient(to top,rgba(180,205,230,0.25) 0%,rgba(190,210,235,0.12) 60%,transparent 100%);
     border-radius:0 0 50% 50%;
+    animation:waterBreathe 4s ease-in-out infinite;
+  }
+  @keyframes waterBreathe{
+    0%,100%{height:45%;opacity:0.9}
+    50%{height:48%;opacity:1}
   }
   .wish-hint{
     position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
     font-family:"Noto Sans SC",sans-serif;font-size:0.68rem;
     color:oklch(0.35 0.02 65);letter-spacing:0.15em;pointer-events:none;
-    transition:opacity 0.4s;
+    transition:opacity 0.4s;z-index:4;
   }
   .wish-coin{
     position:absolute;width:18px;height:18px;border-radius:50%;
@@ -339,11 +398,11 @@
     color:oklch(0.35 0.02 65);letter-spacing:0.2em;margin-top:0.4rem;
   }
   @keyframes coinDrop{
-    0%{top:-20px;transform:rotate(0deg);opacity:0.9}
-    60%{top:58%;transform:rotate(400deg);opacity:1}
-    70%{top:62%;transform:rotate(460deg)}
-    85%{top:56%;transform:rotate(520deg)}
-    100%{top:60%;transform:rotate(560deg);opacity:0.3}
+    0%{top:-20px;transform:translateX(-50%) rotate(0deg);opacity:0.9}
+    60%{top:58%;transform:translateX(-50%) rotate(400deg);opacity:1}
+    70%{top:62%;transform:translateX(-50%) rotate(460deg)}
+    85%{top:56%;transform:translateX(-50%) rotate(520deg)}
+    100%{top:60%;transform:translateX(-50%) rotate(560deg);opacity:0.25}
   }
   @keyframes rippleOut{
     0%{width:10px;height:10px;opacity:0.6}
@@ -616,10 +675,19 @@
     pairs.forEach((emoji,i)=>{
       const card=document.createElement('div');
       card.className='flip-card';
+      card.style.opacity='0';card.style.transform='scale(0.85)';
       card.innerHTML=`<div class="flip-inner"><div class="flip-front">?</div><div class="flip-back">${emoji}</div></div>`;
       card.addEventListener('click',()=>flipCard(card,i,emoji));
       grid.appendChild(card);
       cards.push(card);
+      /* 错峰入场 */
+      requestAnimationFrame(()=>{
+        requestAnimationFrame(()=>{
+          card.style.transition='opacity 0.35s cubic-bezier(0.05,0.7,0.1,1),transform 0.4s cubic-bezier(0.05,0.7,0.1,1)';
+          card.style.transitionDelay=(i*0.04)+'s';
+          card.style.opacity='1';card.style.transform='scale(1)';
+        });
+      });
     });
   }
 
@@ -636,8 +704,15 @@
           setTimeout(()=>result.classList.add('show'),400);
         }
       }else{
+        /* 不匹配时短暂抖动 */
+        a.card.style.transition='transform 0.12s';b.card.style.transition='transform 0.12s';
+        a.card.style.transform='translateX(-3px)';b.card.style.transform='translateX(3px)';
+        setTimeout(()=>{
+          a.card.style.transform='translateX(0)';b.card.style.transform='translateX(0)';
+        },120);
         setTimeout(()=>{
           a.card.classList.remove('flipped');b.card.classList.remove('flipped');
+          a.card.style.transition='';b.card.style.transition='';
           flipped=[];locked=false;
         },800);
       }
@@ -655,15 +730,28 @@
   let ctx,scratching=false,scratched=0;
 
   function init(){
-    const w=wrap.clientWidth;
-    canvas.width=w;canvas.height=w*0.65;
+    const w=wrap.clientWidth,h=w*0.65;
+    canvas.width=w;canvas.height=h;
     ctx=canvas.getContext('2d');
-    ctx.fillStyle='#c8bfb0';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle='#b8afa2';
-    ctx.font='14px "Noto Sans SC","PingFang SC",sans-serif';
-    ctx.textAlign='center';
-    ctx.fillText('用手指刮开',canvas.width/2,canvas.height/2);
+    /* 涂层底色 */
+    ctx.fillStyle='#cfc7b8';
+    ctx.fillRect(0,0,w,h);
+    /* 网格纹理 */
+    ctx.strokeStyle='rgba(180,170,155,0.2)';
+    ctx.lineWidth=0.5;
+    for(let y=0;y<h;y+=8){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}
+    for(let x=0;x<w;x+=8){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke()}
+    /* 斜纹覆盖 */
+    ctx.strokeStyle='rgba(190,180,165,0.18)';
+    ctx.lineWidth=0.8;
+    for(let d=-h;d<w+h;d+=12){ctx.beginPath();ctx.moveTo(d,0);ctx.lineTo(d+h,h);ctx.stroke()}
+    /* 提示文字 */
+    ctx.fillStyle='rgba(140,130,115,0.7)';
+    ctx.font='15px "Noto Sans SC","PingFang SC",sans-serif';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.shadowColor='rgba(255,255,255,0.3)';ctx.shadowBlur=2;
+    ctx.fillText('✦  用手指刮开  ✦',w/2,h/2);
+    ctx.shadowBlur=0;
     scratched=0;
   }
 
@@ -718,33 +806,50 @@
   const elSN=document.getElementById('scoreNum');
   const elST=document.getElementById('scoreText');
   const elRetry=document.getElementById('quizRetry');
-  let idx=0,score=0;
+  let idx=0,score=0,wrongFlags=[];
 
   function init(){
-    idx=0;score=0;elS.classList.remove('show');
+    idx=0;score=0;wrongFlags=[];elS.classList.remove('show');
+    elQ.classList.add('enter');
+    renderDots();
     showQuestion();
+  }
+
+  function renderDots(){
+    elP.innerHTML='';
+    for(let i=0;i<questions.length;i++){
+      const dot=document.createElement('span');
+      dot.className='quiz-dot';
+      if(i<idx) dot.classList.add(wrongFlags[i]?'wrong-dot':'done');
+      if(i===idx) dot.classList.add('current');
+      elP.appendChild(dot);
+    }
   }
 
   function showQuestion(){
     if(idx>=questions.length){showResult();return}
     const q=questions[idx];
-    elP.textContent=`第 ${idx+1} / ${questions.length} 题`;
-    elQ.textContent=q.q;
-    elO.innerHTML='';
+    elQ.textContent=q.q;elO.innerHTML='';
+    elQ.classList.remove('slide-in');elQ.classList.add('enter');
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{elQ.classList.add('slide-in')});
+    });
     q.opts.forEach((opt,i)=>{
       const btn=document.createElement('button');
       btn.className='quiz-opt';btn.textContent=opt;
       btn.addEventListener('click',()=>answer(i,q));
       elO.appendChild(btn);
+      requestAnimationFrame(()=>{requestAnimationFrame(()=>btn.classList.add('show'))});
     });
   }
 
   function answer(i,q){
     const btns=elO.querySelectorAll('.quiz-opt');
     btns.forEach(b=>b.classList.add('disabled'));
-    if(i===q.a){btns[i].classList.add('correct');score++}
-    else{btns[i].classList.add('wrong');btns[q.a].classList.add('correct')}
+    if(i===q.a){btns[i].classList.add('correct');score++;wrongFlags[idx]=false}
+    else{btns[i].classList.add('wrong');btns[q.a].classList.add('correct');wrongFlags[idx]=true}
     idx++;
+    renderDots();
     setTimeout(showQuestion,1000);
   }
 
@@ -769,32 +874,34 @@
   let count=0;
 
   pool.addEventListener('click',function(e){
-    const rect=pool.getBoundingClientRect();
-    const x=e.clientX-rect.left;
-    const y=e.clientY-rect.top;
-    if(x<0||y<0||x>rect.width||y>rect.height)return;
     hint.style.opacity='0';
 
+    /* 硬币从顶部中央落下 */
     const coin=document.createElement('div');
     coin.className='wish-coin';
-    coin.style.left=(x-9)+'px';
+    coin.style.left='50%';
     coin.style.animation='coinDrop 0.9s cubic-bezier(0.22,1,0.36,1) forwards';
     pool.appendChild(coin);
 
+    /* 涟漪从池心扩散 */
     const ripple=document.createElement('div');
     ripple.className='wish-ripple';
-    ripple.style.left=x+'px';ripple.style.top=y+'px';
+    ripple.style.left='50%';ripple.style.top='50%';
     ripple.style.width='10px';ripple.style.height='10px';
     ripple.style.animation='rippleOut 1.2s ease-out forwards';
     pool.appendChild(ripple);
 
-    setTimeout(()=>{coin.remove();ripple.remove()},1300);
+    setTimeout(()=>{coin.remove();ripple.remove()},1400);
 
     count++;
     counter.textContent=`已许愿 ${count} 次`;
-    blessing.textContent=blessings[Math.floor(Math.random()*blessings.length)];
-    blessing.style.opacity='0';
-    requestAnimationFrame(()=>{blessing.style.opacity='1'});
+    const next=blessings[Math.floor(Math.random()*blessings.length)];
+    blessing.style.opacity='0';blessing.style.transform='translateY(6px)';
+    setTimeout(()=>{
+      blessing.textContent=next;
+      blessing.style.opacity='1';
+      blessing.style.transform='translateY(0)';
+    },120);
   });
 })();
 </script>
