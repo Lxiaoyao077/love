@@ -33,11 +33,24 @@
   .hero{
     flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
     width:100%;max-width:400px;text-align:center;
-    animation:riseIn 1.6s cubic-bezier(0.22,1,0.36,1) both;
   }
+
+  /* Hero 子元素错峰入场 */
+  .hero > * {
+    opacity:0;
+    animation:riseIn 1.2s cubic-bezier(0.05,0.7,0.1,1) both;
+    animation-fill-mode:both;
+  }
+  .hero > *:nth-child(1){animation-delay:0.08s}  /* top-mark */
+  .hero > *:nth-child(2){animation-delay:0.18s}  /* names */
+  .hero > *:nth-child(3){animation-delay:0.28s}  /* declaration */
+  .hero > *:nth-child(4){animation-delay:0.40s}  /* ink-ring */
+  .hero > *:nth-child(5){animation-delay:0.52s}  /* epigraph */
+
   @keyframes riseIn{
-    0%{opacity:0;transform:translateY(40px)}
-    100%{opacity:1;transform:translateY(0)}
+    0%{opacity:0;transform:translateY(48px) scale(0.96)}
+    60%{opacity:0.8}
+    100%{opacity:1;transform:translateY(0) scale(1)}
   }
 
   .top-mark{
@@ -139,11 +152,12 @@
     -webkit-backdrop-filter:blur(8px);
     box-shadow:0 1px 2px rgba(0,0,0,0.04),0 2px 8px rgba(0,0,0,0.03);
     opacity:0;
-    animation:fadeUp 1.4s 0.3s cubic-bezier(0.22,1,0.36,1) forwards;
+    transform:translateY(48px);
+    transition:opacity 0.9s cubic-bezier(0.05,0.7,0.1,1), transform 0.9s cubic-bezier(0.05,0.7,0.1,1);
   }
-  @keyframes fadeUp{
-    0%{opacity:0;transform:translateY(36px)}
-    100%{opacity:1;transform:translateY(0)}
+  .counter-section.revealed{
+    opacity:1;
+    transform:translateY(0);
   }
 
   .counter-label{
@@ -188,6 +202,11 @@
     height:56px;
     border-radius:30px;
 
+    /* 入场动画 - 底部弹入 + 过冲回弹 */
+    opacity:0;
+    transform:translateX(-50%) translateY(24px) scale(0.92);
+    animation:navEnter 0.8s 0.65s cubic-bezier(0.05,0.7,0.1,1) forwards;
+
     /* 多层玻璃结构 */
     background:rgba(255,255,255,0.52);
     backdrop-filter:blur(32px) saturate(2.2);
@@ -208,6 +227,13 @@
 
     /* 微妙模糊纹理叠加 */
     position:relative;
+  }
+
+  @keyframes navEnter{
+    0%{opacity:0;transform:translateX(-50%) translateY(24px) scale(0.92)}
+    55%{opacity:1;transform:translateX(-50%) translateY(-3px) scale(1.01)}
+    75%{transform:translateX(-50%) translateY(1px) scale(0.995)}
+    100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
   }
 
   /* 顶部反射高光条 */
@@ -281,7 +307,7 @@
     width:44px;
     height:44px;
     border-radius:50%;
-    transition:all 0.35s cubic-bezier(0.22,1,0.36,1);
+    transition:color 0.35s cubic-bezier(0.05,0.7,0.1,1);
     cursor:pointer;
     -webkit-tap-highlight-color:transparent;
     color:oklch(0.4 0.02 60);
@@ -289,22 +315,26 @@
   }
 
   .nav-item:active{
-    transform:scale(0.9);
-    transition:transform 0.12s ease;
+    transform:scale(0.85);
+    transition:transform 0.15s cubic-bezier(0.3,0,1,1);
   }
 
-  /* 选中态 - 半透明圆形背景 + 文字标签 */
+  /* 选中态文字颜色 */
   .nav-item.active{
     opacity:1;
     color:oklch(0.22 0.04 40);
   }
-  .nav-item.active::before{
-    content:'';
+
+  /* 滑动指示器 - 胶囊背景 */
+  .nav-indicator{
     position:absolute;
-    inset:2px;
-    border-radius:50%;
+    z-index:2;
+    height:44px;
+    border-radius:22px;
     background:rgba(245,240,235,0.7);
-    z-index:-1;
+    pointer-events:none;
+    transition:left 0.45s cubic-bezier(0.05,0.7,0.1,1),
+               width 0.45s cubic-bezier(0.05,0.7,0.1,1);
   }
 
   /* 主页图标居中放大 */
@@ -343,8 +373,10 @@
   }
 
   @media(prefers-reduced-motion:reduce){
-    .connector,.hero,.counter-section,.scroll-note,.ring-path,.ring-dot,.glass-chroma{animation:none}
-    .counter-section{opacity:1}
+    .hero > *,.glass-nav{animation:none;opacity:1;transform:none}
+    .counter-section{opacity:1;transform:none;transition:none}
+    .connector,.ring-path,.ring-dot,.glass-chroma{animation:none}
+    .nav-indicator{transition:none}
   }
 </style>
 </head>
@@ -401,6 +433,7 @@
 <!-- 底部导航栏 -->
 <nav class="glass-nav" id="glassNav">
   <div class="glass-chroma"></div>
+  <div class="nav-indicator" id="navIndicator"></div>
 
   <div class="nav-item" data-tab="flip">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -466,30 +499,87 @@
     setInterval(update, 60000);
   })();
 
-  /* 底部导航切换 */
+  /* 滚动触发计数器揭示 */
   (function(){
-    const items = document.querySelectorAll('.nav-item');
-    const home = document.querySelector('.nav-item.home');
+    const counter = document.querySelector('.counter-section');
+    if(!counter) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    },{threshold:0.2,rootMargin:'0px 0px -40px 0px'});
+
+    observer.observe(counter);
+  })();
+
+  /* 底部导航 - 滑动指示器 + 切换逻辑 */
+  (function(){
+    const nav = document.getElementById('glassNav');
+    const indicator = document.getElementById('navIndicator');
+    const items = nav.querySelectorAll('.nav-item');
+    let activeItem = nav.querySelector('.nav-item.active');
+
+    /* 初始化指示器位置 */
+    function moveIndicator(target){
+      const navRect = nav.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      const left = targetRect.left - navRect.left;
+      const width = targetRect.width;
+      indicator.style.left = left + 'px';
+      indicator.style.width = width + 'px';
+    }
+
+    /* 页面加载后定位指示器 */
+    if(activeItem){
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => moveIndicator(activeItem));
+      });
+    }
 
     items.forEach(item => {
       item.addEventListener('click', function(e){
         e.preventDefault();
         const tab = this.dataset.tab;
 
+        /* 更新选中态 */
+        items.forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+        activeItem = this;
+
+        /* 滑动指示器 */
+        moveIndicator(this);
+
+        /* 轻触倾斜反馈 */
+        this.style.transform = 'scale(0.85)';
+        setTimeout(() => { this.style.transform = ''; }, 150);
+
         if(tab === 'home'){
           window.scrollTo({top:0, behavior:'smooth'});
         } else {
-          if(confirm('功能开发中，点击确定返回主页')){
-            window.scrollTo({top:0, behavior:'smooth'});
+          /* 功能占位 - 轻提示 */
+          const label = this.querySelector('.nav-label');
+          if(label){
+            const orig = label.textContent;
+            label.textContent = '即将开放';
+            label.style.opacity = '1';
+            label.style.transform = 'translateX(-50%) translateY(0)';
+            setTimeout(() => {
+              label.textContent = orig;
+              label.style.opacity = '';
+              label.style.transform = '';
+            },1200);
           }
         }
-
-        /* 视觉反馈 - 短暂涟漪 */
-        const ripple = this.animate([
-          {boxShadow:'0 0 0 0 rgba(0,0,0,0.08)'},
-          {boxShadow:'0 0 0 8px rgba(0,0,0,0)'}
-        ],{duration:400, easing:'ease-out'});
       });
+    });
+
+    /* 窗口尺寸变化时重新定位 */
+    window.addEventListener('resize', () => {
+      if(activeItem) moveIndicator(activeItem);
     });
   })();
 </script>
