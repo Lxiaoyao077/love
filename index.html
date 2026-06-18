@@ -15,42 +15,49 @@
     font-family:"Noto Serif SC","PingFang SC","STSong",serif;
     background:#FFFFFF;
     color:oklch(0.22 0.02 60);
-    min-height:100vh;
-    min-height:100dvh;
+    min-height:100vh;min-height:100dvh;
     overflow-x:hidden;
   }
 
-  /* 主容器 */
-  .container{
+  /* 主容器 - 所有面板共用 */
+  .page-panel{
     position:relative;z-index:1;
     min-height:100vh;min-height:100dvh;
-    display:flex;flex-direction:column;align-items:center;
+    display:none;flex-direction:column;align-items:center;
     padding:clamp(3rem,10vh,5rem) clamp(1.5rem,6vw,3rem) clamp(8rem,18vh,10rem);
-    padding-bottom:120px;
+    padding-bottom:130px;
+  }
+  .page-panel.active{display:flex}
+
+  /* ====== 主页 ====== */
+  #homePanel{
+    animation:panelIn 0.45s cubic-bezier(0.05,0.7,0.1,1);
   }
 
-  /* === Hero === */
   .hero{
     flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
     width:100%;max-width:400px;text-align:center;
+    margin-bottom:2rem;
   }
 
-  /* Hero 子元素错峰入场 */
   .hero > * {
     opacity:0;
     animation:riseIn 1.2s cubic-bezier(0.05,0.7,0.1,1) both;
-    animation-fill-mode:both;
   }
-  .hero > *:nth-child(1){animation-delay:0.08s}  /* top-mark */
-  .hero > *:nth-child(2){animation-delay:0.18s}  /* names */
-  .hero > *:nth-child(3){animation-delay:0.28s}  /* declaration */
-  .hero > *:nth-child(4){animation-delay:0.40s}  /* ink-ring */
-  .hero > *:nth-child(5){animation-delay:0.52s}  /* epigraph */
+  .hero > *:nth-child(1){animation-delay:0.08s}
+  .hero > *:nth-child(2){animation-delay:0.18s}
+  .hero > *:nth-child(3){animation-delay:0.28s}
+  .hero > *:nth-child(4){animation-delay:0.40s}
+  .hero > *:nth-child(5){animation-delay:0.52s}
 
   @keyframes riseIn{
     0%{opacity:0;transform:translateY(48px) scale(0.96)}
     60%{opacity:0.8}
     100%{opacity:1;transform:translateY(0) scale(1)}
+  }
+  @keyframes panelIn{
+    0%{opacity:0;transform:translateY(16px)}
+    100%{opacity:1;transform:translateY(0)}
   }
 
   .top-mark{
@@ -63,7 +70,7 @@
   .top-mark span{
     font-family:"Noto Sans SC","PingFang SC",sans-serif;
     font-size:0.58rem;font-weight:300;letter-spacing:0.4em;
-    color:oklch(0.32 0.02 65);text-transform:uppercase;
+    color:oklch(0.32 0.02 65);
   }
 
   .names{
@@ -93,7 +100,6 @@
     margin-bottom:clamp(2.5rem,9vw,3.5rem);
   }
 
-  /* 墨环 */
   .ink-ring{
     position:relative;width:clamp(70px,18vw,100px);height:clamp(70px,18vw,100px);
     margin:0 auto clamp(2.5rem,9vw,3.5rem);
@@ -119,30 +125,13 @@
 
   .epigraph{
     font-size:clamp(0.78rem,2.8vw,0.9rem);font-weight:300;
-    color:oklch(0.34 0.02 60);letter-spacing:0.1em;line-height:1.9;
-    font-style:italic;
+    color:oklch(0.34 0.02 60);letter-spacing:0.1em;line-height:1.9;font-style:italic;
   }
   .epigraph .decor{
     display:block;font-size:0.42rem;color:oklch(0.3 0.03 55);
     letter-spacing:0.35em;margin-top:0.5rem;font-style:normal;
   }
 
-  /* 下滑提示 */
-  .scroll-note{
-    position:absolute;bottom:clamp(1.5rem,5vw,2.5rem);left:50%;
-    transform:translateX(-50%);animation:floatDown 3s ease-in-out infinite;
-  }
-  .scroll-note span{
-    display:block;width:0.5px;
-    height:clamp(28px,7vw,40px);
-    background:linear-gradient(to bottom,transparent,oklch(0.3 0.02 60 / 0.35),transparent);
-  }
-  @keyframes floatDown{
-    0%,100%{opacity:0.2;transform:translateX(-50%) translateY(-3px)}
-    50%{opacity:1;transform:translateX(-50%) translateY(3px)}
-  }
-
-  /* === 计数器区 === */
   .counter-section{
     width:100%;max-width:380px;text-align:center;
     padding:clamp(1.5rem,5vw,2.5rem) clamp(1rem,4vw,2rem);
@@ -151,144 +140,253 @@
     backdrop-filter:blur(8px);
     -webkit-backdrop-filter:blur(8px);
     box-shadow:0 1px 2px rgba(0,0,0,0.04),0 2px 8px rgba(0,0,0,0.03);
-    opacity:0;
-    transform:translateY(48px);
-    transition:opacity 0.9s cubic-bezier(0.05,0.7,0.1,1), transform 0.9s cubic-bezier(0.05,0.7,0.1,1);
+    opacity:0;transform:translateY(48px);
+    transition:opacity 0.9s cubic-bezier(0.05,0.7,0.1,1),transform 0.9s cubic-bezier(0.05,0.7,0.1,1);
   }
-  .counter-section.revealed{
-    opacity:1;
-    transform:translateY(0);
-  }
+  .counter-section.revealed{opacity:1;transform:translateY(0)}
 
   .counter-label{
     font-family:"Noto Sans SC","PingFang SC",sans-serif;
-    font-size:0.58rem;letter-spacing:0.3em;
-    color:oklch(0.3 0.02 65);margin-bottom:0.8rem;
+    font-size:0.58rem;letter-spacing:0.3em;color:oklch(0.3 0.02 65);margin-bottom:0.8rem;
   }
   .counter-row{
     display:flex;justify-content:center;align-items:baseline;gap:clamp(0.25rem,1.5vw,0.5rem);
   }
   .counter-num{
     font-family:"Cormorant Garamond","Georgia",serif;
-    font-size:clamp(2.2rem,7.5vw,3.2rem);font-weight:600;
-    color:oklch(0.2 0.035 45);
+    font-size:clamp(2.2rem,7.5vw,3.2rem);font-weight:600;color:oklch(0.2 0.035 45);
   }
   .counter-unit{
     font-family:"Noto Sans SC","PingFang SC",sans-serif;
     font-size:0.68rem;color:oklch(0.3 0.025 60);letter-spacing:0.12em;
   }
   .counter-note{
-    font-size:0.68rem;color:oklch(0.32 0.02 60);letter-spacing:0.08em;
-    margin-top:0.6rem;
+    font-size:0.68rem;color:oklch(0.32 0.02 60);letter-spacing:0.08em;margin-top:0.6rem;
   }
 
   .footer-sep{
-    margin-top:clamp(2rem,6vw,3rem);
-    width:clamp(40px,10vw,60px);height:0.5px;
+    margin-top:clamp(2rem,6vw,3rem);width:clamp(40px,10vw,60px);height:0.5px;
     background:oklch(0.35 0.02 60 / 0.25);
   }
 
-  /* ==================== 底部液态玻璃导航栏 ==================== */
+  /* ====== 游戏通用 ====== */
+  .game-title{
+    font-family:"Noto Sans SC","PingFang SC",sans-serif;
+    font-size:0.85rem;font-weight:400;letter-spacing:0.25em;
+    color:oklch(0.28 0.03 60);margin-bottom:1.5rem;text-align:center;
+  }
+
+  /* ====== 翻牌游戏 ====== */
+  .flip-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:clamp(8px,2vw,12px);max-width:340px;width:100%;
+  }
+  .flip-card{
+    aspect-ratio:1;perspective:600px;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .flip-inner{
+    position:relative;width:100%;height:100%;
+    transition:transform 0.5s cubic-bezier(0.22,1,0.36,1);
+    transform-style:preserve-3d;
+  }
+  .flip-card.flipped .flip-inner,
+  .flip-card.matched .flip-inner{transform:rotateY(180deg)}
+
+  .flip-front,.flip-back{
+    position:absolute;inset:0;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  }
+  .flip-front{
+    background:rgba(245,242,238,0.9);
+    border:1px solid oklch(0.7 0.02 70 / 0.3);
+    font-size:1.4rem;color:oklch(0.25 0.03 55);
+  }
+  .flip-back{
+    background:rgba(255,248,245,0.95);
+    border:1px solid oklch(0.65 0.04 50 / 0.25);
+    transform:rotateY(180deg);font-size:clamp(1.8rem,6vw,2.6rem);
+  }
+  .flip-card.matched .flip-back{
+    background:rgba(245,242,238,0.6);
+    border-color:oklch(0.55 0.02 70 / 0.2);
+  }
+
+  .flip-result{
+    text-align:center;margin-top:1.5rem;opacity:0;
+    transition:all 0.6s cubic-bezier(0.05,0.7,0.1,1);
+  }
+  .flip-result.show{opacity:1}
+  .flip-result p{
+    font-size:0.85rem;color:oklch(0.24 0.04 45);letter-spacing:0.1em;margin-bottom:0.8rem;
+  }
+  .flip-retry{
+    display:inline-block;padding:8px 28px;border-radius:20px;
+    border:0.5px solid oklch(0.45 0.03 50 / 0.3);
+    background:rgba(255,255,255,0.7);
+    font-family:"Noto Sans SC",sans-serif;font-size:0.72rem;
+    color:oklch(0.28 0.03 55);letter-spacing:0.15em;cursor:pointer;
+    transition:all 0.3s;
+  }
+  .flip-retry:active{background:rgba(245,240,235,0.9)}
+
+  /* ====== 刮刮卡 ====== */
+  .scratch-wrap{position:relative;width:280px;margin:0 auto}
+  .scratch-result{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    background:rgba(250,248,245,0.95);border-radius:16px;
+    font-size:1.05rem;letter-spacing:0.12em;color:oklch(0.22 0.04 45);
+    text-align:center;line-height:1.8;padding:1.5rem;
+    border:0.5px solid oklch(0.5 0.02 60 / 0.15);
+    z-index:0;
+  }
+  .scratch-canvas{
+    display:block;width:100%;border-radius:16px;
+    position:relative;z-index:1;touch-action:none;
+  }
+
+  /* ====== 问答 ====== */
+  .quiz-wrap{max-width:360px;width:100%;margin:0 auto}
+  .quiz-question{
+    font-size:0.95rem;color:oklch(0.22 0.03 50);margin-bottom:1.2rem;
+    letter-spacing:0.06em;line-height:1.6;
+  }
+  .quiz-progress{
+    font-family:"Noto Sans SC",sans-serif;font-size:0.55rem;
+    color:oklch(0.35 0.02 65);letter-spacing:0.2em;margin-bottom:1.2rem;
+  }
+  .quiz-options{display:flex;flex-direction:column;gap:10px}
+  .quiz-opt{
+    width:100%;padding:14px 18px;border-radius:12px;
+    border:0.5px solid oklch(0.55 0.02 65 / 0.3);
+    background:rgba(255,255,255,0.8);
+    font-family:"Noto Sans SC",sans-serif;font-size:0.82rem;
+    color:oklch(0.24 0.03 55);letter-spacing:0.06em;cursor:pointer;
+    text-align:left;transition:all 0.3s cubic-bezier(0.05,0.7,0.1,1);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .quiz-opt:active{transform:scale(0.97)}
+  .quiz-opt.correct{
+    background:rgba(200,230,200,0.35);border-color:rgba(100,160,100,0.3);
+    color:oklch(0.35 0.08 145);
+  }
+  .quiz-opt.wrong{
+    background:rgba(245,220,220,0.35);border-color:rgba(200,140,140,0.3);
+    color:oklch(0.35 0.08 25);
+  }
+  .quiz-opt.disabled{pointer-events:none;opacity:0.7}
+  .quiz-score{
+    text-align:center;margin-top:1.5rem;opacity:0;
+    transition:all 0.6s cubic-bezier(0.05,0.7,0.1,1);
+  }
+  .quiz-score.show{opacity:1}
+  .quiz-score .score-num{
+    font-family:"Cormorant Garamond",serif;font-size:2.2rem;
+    color:oklch(0.22 0.04 45);
+  }
+  .quiz-score .score-text{
+    font-size:0.78rem;color:oklch(0.3 0.03 55);letter-spacing:0.1em;margin:0.5rem 0 1rem;
+  }
+  .quiz-retry{
+    display:inline-block;padding:8px 28px;border-radius:20px;
+    border:0.5px solid oklch(0.45 0.03 50 / 0.3);
+    background:rgba(255,255,255,0.7);
+    font-family:"Noto Sans SC",sans-serif;font-size:0.72rem;
+    color:oklch(0.28 0.03 55);letter-spacing:0.15em;cursor:pointer;
+  }
+
+  /* ====== 许愿池 ====== */
+  .wish-wrap{display:flex;flex-direction:column;align-items:center}
+  .wish-pool{
+    position:relative;width:clamp(160px,45vw,200px);
+    height:clamp(160px,45vw,200px);border-radius:50%;
+    background:radial-gradient(circle at 40% 35%,rgba(200,215,230,0.35) 0%,rgba(180,200,220,0.2) 40%,rgba(160,190,215,0.15) 100%);
+    border:1px solid rgba(180,200,220,0.25);
+    box-shadow:0 4px 24px rgba(0,0,0,0.04),inset 0 2px 12px rgba(200,215,230,0.2);
+    overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent;
+    margin-bottom:1rem;
+  }
+  .wish-water{
+    position:absolute;bottom:0;left:0;right:0;height:45%;
+    background:linear-gradient(to top,rgba(180,205,230,0.25) 0%,rgba(190,210,235,0.12) 60%,transparent 100%);
+    border-radius:0 0 50% 50%;
+  }
+  .wish-hint{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    font-family:"Noto Sans SC",sans-serif;font-size:0.68rem;
+    color:oklch(0.35 0.02 65);letter-spacing:0.15em;pointer-events:none;
+    transition:opacity 0.4s;
+  }
+  .wish-coin{
+    position:absolute;width:18px;height:18px;border-radius:50%;
+    background:radial-gradient(circle at 35% 35%,#f0d78c,#d4a843);
+    box-shadow:0 1px 3px rgba(0,0,0,0.15);
+    z-index:2;pointer-events:none;
+  }
+  .wish-ripple{
+    position:absolute;border-radius:50%;
+    border:0.5px solid rgba(180,200,220,0.3);
+    pointer-events:none;z-index:1;
+  }
+  .wish-blessing{
+    font-size:0.82rem;color:oklch(0.24 0.04 45);letter-spacing:0.08em;
+    text-align:center;min-height:2rem;transition:all 0.5s;
+    max-width:280px;line-height:1.6;
+  }
+  .wish-counter{
+    font-family:"Noto Sans SC",sans-serif;font-size:0.55rem;
+    color:oklch(0.35 0.02 65);letter-spacing:0.2em;margin-top:0.4rem;
+  }
+  @keyframes coinDrop{
+    0%{top:-20px;transform:rotate(0deg);opacity:0.9}
+    60%{top:58%;transform:rotate(400deg);opacity:1}
+    70%{top:62%;transform:rotate(460deg)}
+    85%{top:56%;transform:rotate(520deg)}
+    100%{top:60%;transform:rotate(560deg);opacity:0.3}
+  }
+  @keyframes rippleOut{
+    0%{width:10px;height:10px;opacity:0.6}
+    100%{width:120px;height:120px;opacity:0;margin-left:-60px;margin-top:-60px}
+  }
+
+  /* ====== 底部液态玻璃导航栏 ====== */
   .glass-nav{
     position:fixed;
-    bottom:max(20px, env(safe-area-inset-bottom, 20px));
-    left:50%;
-    transform:translateX(-50%);
-    z-index:100;
-    display:flex;
-    align-items:center;
-    gap:clamp(6px,2vw,12px);
-    padding:6px clamp(10px,3vw,16px);
-    height:56px;
-    border-radius:30px;
-
-    /* 入场动画 - 底部弹入 + 过冲回弹 */
-    opacity:0;
-    transform:translateX(-50%) translateY(24px) scale(0.92);
+    bottom:max(20px,env(safe-area-inset-bottom,20px));
+    left:50%;transform:translateX(-50%);
+    z-index:100;display:flex;align-items:center;
+    gap:clamp(6px,2vw,12px);padding:6px clamp(10px,3vw,16px);
+    height:56px;border-radius:30px;
+    opacity:0;transform:translateX(-50%) translateY(24px) scale(0.92);
     animation:navEnter 0.8s 0.65s cubic-bezier(0.05,0.7,0.1,1) forwards;
-
-    /* 多层玻璃结构 */
     background:rgba(255,255,255,0.52);
     backdrop-filter:blur(32px) saturate(2.2);
     -webkit-backdrop-filter:blur(32px) saturate(2.2);
-
-    /* 边框 - 内外双层高光 */
     border:0.5px solid rgba(255,255,255,0.7);
-    outline:0.5px solid rgba(255,255,255,0.25);
-    outline-offset:-3px;
-
-    /* 阴影层次 - 模拟真实玻璃悬浮 */
-    box-shadow:
-      0 0 0 0.5px rgba(255,255,255,0.9) inset,
-      0 2px 0 0 rgba(255,255,255,0.4) inset,
-      0 8px 32px rgba(0,0,0,0.06),
-      0 2px 8px rgba(0,0,0,0.04),
-      0 0 0 0.5px rgba(0,0,0,0.03);
-
-    /* 微妙模糊纹理叠加 */
-    position:relative;
+    outline:0.5px solid rgba(255,255,255,0.25);outline-offset:-3px;
+    box-shadow:0 0 0 0.5px rgba(255,255,255,0.9) inset,0 2px 0 0 rgba(255,255,255,0.4) inset,0 8px 32px rgba(0,0,0,0.06),0 2px 8px rgba(0,0,0,0.04),0 0 0 0.5px rgba(0,0,0,0.03);
   }
-
   @keyframes navEnter{
     0%{opacity:0;transform:translateX(-50%) translateY(24px) scale(0.92)}
     55%{opacity:1;transform:translateX(-50%) translateY(-3px) scale(1.01)}
     75%{transform:translateX(-50%) translateY(1px) scale(0.995)}
     100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
   }
-
-  /* 顶部反射高光条 */
   .glass-nav::before{
-    content:'';
-    position:absolute;
-    top:3px;
-    left:12px;
-    right:12px;
-    height:0.5px;
-    background:linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(255,255,255,0.5) 20%,
-      rgba(255,255,255,0.9) 50%,
-      rgba(255,255,255,0.5) 80%,
-      transparent 100%
-    );
-    pointer-events:none;
-    z-index:2;
+    content:'';position:absolute;top:3px;left:12px;right:12px;height:0.5px;
+    background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.5) 20%,rgba(255,255,255,0.9) 50%,rgba(255,255,255,0.5) 80%,transparent 100%);
+    pointer-events:none;z-index:2;
   }
-
-  /* 底部微光 */
   .glass-nav::after{
-    content:'';
-    position:absolute;
-    bottom:2px;
-    left:20px;
-    right:20px;
-    height:1px;
-    background:linear-gradient(
-      90deg,
-      transparent,
-      rgba(255,255,255,0.3) 30%,
-      rgba(255,255,255,0.3) 70%,
-      transparent
-    );
-    pointer-events:none;
-    z-index:2;
+    content:'';position:absolute;bottom:2px;left:20px;right:20px;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3) 30%,rgba(255,255,255,0.3) 70%,transparent);
+    pointer-events:none;z-index:2;
   }
-
-  /* 暖色光晕动画层 */
   .glass-chroma{
-    position:absolute;
-    inset:0;
-    border-radius:30px;
-    pointer-events:none;
-    z-index:1;
+    position:absolute;inset:0;border-radius:30px;pointer-events:none;z-index:1;
     opacity:0.35;
-    background:radial-gradient(
-      ellipse 120% 80% at 50% 50%,
-      rgba(245,200,180,0.25) 0%,
-      rgba(240,180,160,0.1) 40%,
-      transparent 70%
-    );
+    background:radial-gradient(ellipse 120% 80% at 50% 50%,rgba(245,200,180,0.25) 0%,rgba(240,180,160,0.1) 40%,transparent 70%);
     animation:chromaShift 8s ease-in-out infinite;
   }
   @keyframes chromaShift{
@@ -296,129 +394,63 @@
     33%{opacity:0.45;transform:scale(1.02)}
     66%{opacity:0.2;transform:scale(0.98)}
   }
-
-  /* 导航项 */
   .nav-item{
-    position:relative;
-    z-index:3;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    width:44px;
-    height:44px;
-    border-radius:50%;
+    position:relative;z-index:3;display:flex;align-items:center;justify-content:center;
+    width:44px;height:44px;border-radius:50%;
     transition:color 0.35s cubic-bezier(0.05,0.7,0.1,1);
-    cursor:pointer;
-    -webkit-tap-highlight-color:transparent;
-    color:oklch(0.4 0.02 60);
-    opacity:0.38;
+    cursor:pointer;-webkit-tap-highlight-color:transparent;
+    color:oklch(0.4 0.02 60);opacity:0.38;
   }
-
-  .nav-item:active{
-    transform:scale(0.85);
-    transition:transform 0.15s cubic-bezier(0.3,0,1,1);
-  }
-
-  /* 选中态文字颜色 */
-  .nav-item.active{
-    opacity:1;
-    color:oklch(0.22 0.04 40);
-  }
-
-  /* 滑动指示器 - 胶囊背景 */
+  .nav-item:active{transform:scale(0.85);transition:transform 0.15s cubic-bezier(0.3,0,1,1)}
+  .nav-item.active{opacity:1;color:oklch(0.22 0.04 40)}
   .nav-indicator{
-    position:absolute;
-    z-index:2;
-    height:44px;
-    border-radius:22px;
-    background:rgba(245,240,235,0.7);
-    pointer-events:none;
-    transition:left 0.45s cubic-bezier(0.05,0.7,0.1,1),
-               width 0.45s cubic-bezier(0.05,0.7,0.1,1);
+    position:absolute;z-index:2;height:44px;border-radius:22px;
+    background:rgba(245,240,235,0.7);pointer-events:none;
+    transition:left 0.45s cubic-bezier(0.05,0.7,0.1,1),width 0.45s cubic-bezier(0.05,0.7,0.1,1);
   }
-
-  /* 主页图标居中放大 */
-  .nav-item.home{
-    width:48px;
-    height:48px;
-    margin:0 -4px;
-  }
-
-  .nav-item svg{
-    width:22px;
-    height:22px;
-    transition:transform 0.35s cubic-bezier(0.22,1,0.36,1);
-  }
+  .nav-item.home{width:48px;height:48px;margin:0 -4px}
+  .nav-item svg{width:22px;height:22px;transition:transform 0.35s cubic-bezier(0.22,1,0.36,1)}
   .nav-item.home svg{width:26px;height:26px}
   .nav-item.active svg{transform:scale(1.05)}
-
-  /* 标签提示 */
   .nav-label{
-    position:absolute;
-    bottom:-18px;
-    left:50%;
-    transform:translateX(-50%) translateY(4px);
-    font-family:"Noto Sans SC","PingFang SC",sans-serif;
-    font-size:0.5rem;
-    font-weight:400;
-    letter-spacing:0.05em;
-    white-space:nowrap;
-    opacity:0;
-    transition:all 0.35s cubic-bezier(0.22,1,0.36,1);
-    pointer-events:none;
+    position:absolute;bottom:-18px;left:50%;transform:translateX(-50%) translateY(4px);
+    font-family:"Noto Sans SC","PingFang SC",sans-serif;font-size:0.5rem;
+    font-weight:400;letter-spacing:0.05em;white-space:nowrap;
+    opacity:0;transition:all 0.35s cubic-bezier(0.22,1,0.36,1);pointer-events:none;
   }
-  .nav-item.active .nav-label{
-    opacity:1;
-    transform:translateX(-50%) translateY(0);
-  }
+  .nav-item.active .nav-label{opacity:1;transform:translateX(-50%) translateY(0)}
 
   @media(prefers-reduced-motion:reduce){
-    .hero > *,.glass-nav{animation:none;opacity:1;transform:none}
+    .hero>*,.glass-nav{animation:none;opacity:1;transform:none}
     .counter-section{opacity:1;transform:none;transition:none}
-    .connector,.ring-path,.ring-dot,.glass-chroma{animation:none}
+    .connector,.ring-path,.ring-dot,.glass-chroma,.wish-coin,.wish-ripple{animation:none}
     .nav-indicator{transition:none}
   }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <!-- Hero -->
+<!-- ============ 主页 ============ -->
+<div class="page-panel active" id="homePanel">
   <section class="hero">
     <div class="top-mark"><span>一 生 一 世</span></div>
-
     <div class="names">
       <p class="name-line">林子航</p>
       <span class="connector">&amp;</span>
       <p class="name-line">苏欣念</p>
     </div>
-
     <p class="declaration">爱一生一世</p>
-
     <div class="ink-ring">
       <svg viewBox="0 0 100 100">
-        <defs>
-          <filter id="ink-bleed">
-            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" result="noise"/>
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.6" xChannelSelector="R" yChannelSelector="G"/>
-          </filter>
-        </defs>
+        <defs><filter id="ink-bleed"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="0.6" xChannelSelector="R" yChannelSelector="G"/></filter></defs>
         <circle class="ring-path" cx="50" cy="50" r="34"/>
         <circle class="ring-path" cx="50" cy="50" r="34"/>
       </svg>
       <div class="ring-dot"></div>
     </div>
-
-    <p class="epigraph">
-      斯人若彩虹，遇上方知有
-      <span class="decor">— 仅献给此生挚爱</span>
-    </p>
+    <p class="epigraph">斯人若彩虹，遇上方知有<span class="decor">— 仅献给此生挚爱</span></p>
   </section>
-
-  <div class="scroll-note"><span></span></div>
-
-  <!-- 在一起的日子 -->
-  <section class="counter-section">
+  <section class="counter-section" id="counterSection">
     <p class="counter-label">L O V E &nbsp; S I N C E</p>
     <div class="counter-row">
       <span class="counter-num" id="days">0</span>
@@ -426,163 +458,345 @@
     </div>
     <p class="counter-note">从这一天起，每一天都算数</p>
   </section>
-
   <div class="footer-sep"></div>
 </div>
 
-<!-- 底部导航栏 -->
+<!-- ============ 翻牌 ============ -->
+<div class="page-panel" id="flipPanel">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%">
+    <p class="game-title">· 翻 牌 记 忆 ·</p>
+    <div class="flip-grid" id="flipGrid"></div>
+    <div class="flip-result" id="flipResult">
+      <p>全部找到了！</p>
+      <button class="flip-retry" id="flipRetry">再来一次</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 刮刮卡 ============ -->
+<div class="page-panel" id="scratchPanel">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%">
+    <p class="game-title">· 刮 开 看 看 ·</p>
+    <div class="scratch-wrap" id="scratchWrap">
+      <div class="scratch-result">你是此生<br>最幸运的遇见</div>
+      <canvas class="scratch-canvas" id="scratchCanvas"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 问答 ============ -->
+<div class="page-panel" id="quizPanel">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%">
+    <p class="game-title">· 默 契 大 考 验 ·</p>
+    <div class="quiz-wrap" id="quizWrap">
+      <p class="quiz-progress" id="quizProgress"></p>
+      <p class="quiz-question" id="quizQuestion"></p>
+      <div class="quiz-options" id="quizOptions"></div>
+      <div class="quiz-score" id="quizScore">
+        <div class="score-num" id="scoreNum"></div>
+        <p class="score-text" id="scoreText"></p>
+        <button class="quiz-retry" id="quizRetry">再测一次</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 许愿池 ============ -->
+<div class="page-panel" id="wishPanel">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%">
+    <p class="game-title">· 许 愿 池 ·</p>
+    <div class="wish-wrap">
+      <div class="wish-pool" id="wishPool">
+        <div class="wish-water"></div>
+        <div class="wish-hint" id="wishHint">轻触投币许愿</div>
+      </div>
+      <p class="wish-blessing" id="wishBlessing"></p>
+      <p class="wish-counter" id="wishCounter">已许愿 0 次</p>
+    </div>
+  </div>
+</div>
+
+<!-- 底栏 -->
 <nav class="glass-nav" id="glassNav">
   <div class="glass-chroma"></div>
   <div class="nav-indicator" id="navIndicator"></div>
-
   <div class="nav-item" data-tab="flip">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="3" y="3" width="18" height="18" rx="3"/>
-      <rect x="5" y="5" width="14" height="14" rx="2"/>
-      <line x1="12" y1="7" x2="12" y2="17"/>
-      <line x1="12" y1="12" x2="6" y2="12"/>
-      <line x1="12" y1="12" x2="18" y2="12"/>
-    </svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><rect x="5" y="5" width="14" height="14" rx="2"/><line x1="12" y1="7" x2="12" y2="17"/><line x1="12" y1="12" x2="6" y2="12"/><line x1="12" y1="12" x2="18" y2="12"/></svg>
     <span class="nav-label">翻牌</span>
   </div>
-
   <div class="nav-item" data-tab="scratch">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/>
-    </svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>
     <span class="nav-label">刮刮</span>
   </div>
-
   <div class="nav-item home active" data-tab="home">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
-      <polyline points="9,21 9,13 15,13 15,21"/>
-    </svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9,21 9,13 15,13 15,21"/></svg>
     <span class="nav-label">主页</span>
   </div>
-
   <div class="nav-item" data-tab="quiz">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="9"/>
-      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-      <circle cx="12" cy="17" r="0.8" fill="currentColor" stroke="none"/>
-    </svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.8" fill="currentColor" stroke="none"/></svg>
     <span class="nav-label">问答</span>
   </div>
-
   <div class="nav-item" data-tab="wish">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M12 2C8 6 2 8 2 12c0 3 2 5 5 6l-1 4 4-2c1 0.5 2 1 4 1s3-0.5 4-1l4 2-1-4c3-1 5-3 5-6 0-4-6-6-10-10z"/>
-      <circle cx="12" cy="12" r="3"/>
-    </svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8 6 2 8 2 12c0 3 2 5 5 6l-1 4 4-2c1 0.5 2 1 4 1s3-0.5 4-1l4 2-1-4c3-1 5-3 5-6 0-4-6-6-10-10z"/><circle cx="12" cy="12" r="3"/></svg>
     <span class="nav-label">许愿</span>
   </div>
 </nav>
 
-<svg width="0" height="0" style="position:absolute">
-  <filter id="ink-bleed-global">
-    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" result="noise"/>
-    <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.6" xChannelSelector="R" yChannelSelector="G"/>
-  </filter>
-</svg>
-
 <script>
-  (function(){
-    const start = new Date('2026-05-03');
-    const el = document.getElementById('days');
-    const update = () => {
-      const now = new Date();
-      const diff = Math.floor((now - start) / (1000 * 60 * 60 * 24));
-      el.textContent = Math.max(0, diff);
-    };
-    update();
-    setInterval(update, 60000);
-  })();
+/* ====== 核心框架 ====== */
+(function(){
+  const panels={flip:'flipPanel',scratch:'scratchPanel',home:'homePanel',quiz:'quizPanel',wish:'wishPanel'};
+  const nav=document.getElementById('glassNav');
+  const indicator=document.getElementById('navIndicator');
+  const items=nav.querySelectorAll('.nav-item');
+  let activeItem=nav.querySelector('.nav-item.active');
 
-  /* 滚动触发计数器揭示 */
-  (function(){
-    const counter = document.querySelector('.counter-section');
-    if(!counter) return;
+  function moveIndicator(target){
+    const nr=nav.getBoundingClientRect(),tr=target.getBoundingClientRect();
+    indicator.style.left=(tr.left-nr.left)+'px';
+    indicator.style.width=tr.width+'px';
+  }
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if(entry.isIntersecting){
-          entry.target.classList.add('revealed');
-          observer.unobserve(entry.target);
-        }
-      });
-    },{threshold:0.2,rootMargin:'0px 0px -40px 0px'});
+  function switchPanel(tab){
+    Object.values(panels).forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active')});
+    const panel=document.getElementById(panels[tab]);
+    if(!panel)return;
+    panel.classList.add('active');
+    panel.scrollIntoView({behavior:'smooth',block:'start'});
+  }
 
-    observer.observe(counter);
-  })();
+  if(activeItem){requestAnimationFrame(()=>requestAnimationFrame(()=>moveIndicator(activeItem)))}
 
-  /* 底部导航 - 滑动指示器 + 切换逻辑 */
-  (function(){
-    const nav = document.getElementById('glassNav');
-    const indicator = document.getElementById('navIndicator');
-    const items = nav.querySelectorAll('.nav-item');
-    let activeItem = nav.querySelector('.nav-item.active');
-
-    /* 初始化指示器位置 */
-    function moveIndicator(target){
-      const navRect = nav.getBoundingClientRect();
-      const targetRect = target.getBoundingClientRect();
-      const left = targetRect.left - navRect.left;
-      const width = targetRect.width;
-      indicator.style.left = left + 'px';
-      indicator.style.width = width + 'px';
-    }
-
-    /* 页面加载后定位指示器 */
-    if(activeItem){
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => moveIndicator(activeItem));
-      });
-    }
-
-    items.forEach(item => {
-      item.addEventListener('click', function(e){
-        e.preventDefault();
-        const tab = this.dataset.tab;
-
-        /* 更新选中态 */
-        items.forEach(i => i.classList.remove('active'));
-        this.classList.add('active');
-        activeItem = this;
-
-        /* 滑动指示器 */
-        moveIndicator(this);
-
-        /* 轻触倾斜反馈 */
-        this.style.transform = 'scale(0.85)';
-        setTimeout(() => { this.style.transform = ''; }, 150);
-
-        if(tab === 'home'){
-          window.scrollTo({top:0, behavior:'smooth'});
-        } else {
-          /* 功能占位 - 轻提示 */
-          const label = this.querySelector('.nav-label');
-          if(label){
-            const orig = label.textContent;
-            label.textContent = '即将开放';
-            label.style.opacity = '1';
-            label.style.transform = 'translateX(-50%) translateY(0)';
-            setTimeout(() => {
-              label.textContent = orig;
-              label.style.opacity = '';
-              label.style.transform = '';
-            },1200);
-          }
-        }
-      });
+  items.forEach(item=>{
+    item.addEventListener('click',function(e){
+      e.preventDefault();
+      const tab=this.dataset.tab;
+      items.forEach(i=>i.classList.remove('active'));
+      this.classList.add('active');activeItem=this;
+      moveIndicator(this);
+      this.style.transform='scale(0.85)';
+      setTimeout(()=>{this.style.transform=''},150);
+      switchPanel(tab);
     });
+  });
 
-    /* 窗口尺寸变化时重新定位 */
-    window.addEventListener('resize', () => {
-      if(activeItem) moveIndicator(activeItem);
+  window.addEventListener('resize',()=>{if(activeItem)moveIndicator(activeItem)});
+})();
+
+/* ====== 计时器 ====== */
+(function(){
+  const start=new Date('2026-05-03');
+  const el=document.getElementById('days');
+  const update=()=>{const diff=Math.floor((new Date()-start)/86400000);el.textContent=Math.max(0,diff)};
+  update();setInterval(update,60000);
+})();
+
+/* ====== 计数器滚动揭示 ====== */
+(function(){
+  const counter=document.getElementById('counterSection');
+  if(!counter)return;
+  new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');}});},{threshold:0.2,rootMargin:'0px 0px -40px 0px'}).observe(counter);
+})();
+
+/* ====== 翻牌游戏 ====== */
+(function(){
+  const emojis=['💕','💖','💗','💘'];
+  const grid=document.getElementById('flipGrid');
+  const result=document.getElementById('flipResult');
+  const retry=document.getElementById('flipRetry');
+  let cards=[],flipped=[],locked=false,matched=0;
+
+  function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+  function init(){
+    const pairs=shuffle([...emojis,...emojis]);
+    grid.innerHTML='';result.classList.remove('show');
+    cards=[];flipped=[];locked=false;matched=0;
+
+    pairs.forEach((emoji,i)=>{
+      const card=document.createElement('div');
+      card.className='flip-card';
+      card.innerHTML=`<div class="flip-inner"><div class="flip-front">?</div><div class="flip-back">${emoji}</div></div>`;
+      card.addEventListener('click',()=>flipCard(card,i,emoji));
+      grid.appendChild(card);
+      cards.push(card);
     });
-  })();
+  }
+
+  function flipCard(card,i,emoji){
+    if(locked||card.classList.contains('flipped')||card.classList.contains('matched'))return;
+    card.classList.add('flipped');flipped.push({card,i,emoji});
+    if(flipped.length===2){
+      locked=true;
+      const[a,b]=flipped;
+      if(a.emoji===b.emoji&&a.i!==b.i){
+        a.card.classList.add('matched');b.card.classList.add('matched');
+        matched++;flipped=[];locked=false;
+        if(matched===emojis.length){
+          setTimeout(()=>result.classList.add('show'),400);
+        }
+      }else{
+        setTimeout(()=>{
+          a.card.classList.remove('flipped');b.card.classList.remove('flipped');
+          flipped=[];locked=false;
+        },800);
+      }
+    }
+  }
+
+  retry.addEventListener('click',init);
+  init();
+})();
+
+/* ====== 刮刮卡 ====== */
+(function(){
+  const canvas=document.getElementById('scratchCanvas');
+  const wrap=document.getElementById('scratchWrap');
+  let ctx,scratching=false,scratched=0;
+
+  function init(){
+    const w=wrap.clientWidth;
+    canvas.width=w;canvas.height=w*0.65;
+    ctx=canvas.getContext('2d');
+    ctx.fillStyle='#c8bfb0';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle='#b8afa2';
+    ctx.font='14px "Noto Sans SC","PingFang SC",sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText('用手指刮开',canvas.width/2,canvas.height/2);
+    scratched=0;
+  }
+
+  function scratch(e){
+    if(!scratching)return;
+    const rect=canvas.getBoundingClientRect();
+    const x=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
+    const y=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;
+    ctx.globalCompositeOperation='destination-out';
+    ctx.beginPath();ctx.arc(x,y,22,0,Math.PI*2);ctx.fill();
+    scratched++;
+    if(scratched>80){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      canvas.style.pointerEvents='none';
+    }
+  }
+
+  canvas.addEventListener('touchstart',e=>{e.preventDefault();scratching=true;scratch(e)});
+  canvas.addEventListener('touchmove',e=>{e.preventDefault();scratch(e)});
+  canvas.addEventListener('touchend',()=>{scratching=false});
+  canvas.addEventListener('mousedown',e=>{scratching=true;scratch(e)});
+  canvas.addEventListener('mousemove',e=>{scratch(e)});
+  canvas.addEventListener('mouseup',()=>{scratching=false});
+  canvas.addEventListener('mouseleave',()=>{scratching=false});
+  window.addEventListener('resize',init);
+  init();
+})();
+
+/* ====== 问答 ====== */
+(function(){
+  const questions=[
+    {
+      q:'TA 最喜欢叫你什么？',
+      opts:['宝宝','亲爱的','小笨蛋','傻瓜'],
+      a:2
+    },
+    {
+      q:'你们第一次心动是在哪里？',
+      opts:['教室','操场','食堂','图书馆'],
+      a:3
+    },
+    {
+      q:'TA 生气时，什么办法最有效？',
+      opts:['讲道理','买奶茶','撒娇认错','冷战等 TA 消气'],
+      a:2
+    }
+  ];
+  const elQ=document.getElementById('quizQuestion');
+  const elP=document.getElementById('quizProgress');
+  const elO=document.getElementById('quizOptions');
+  const elS=document.getElementById('quizScore');
+  const elSN=document.getElementById('scoreNum');
+  const elST=document.getElementById('scoreText');
+  const elRetry=document.getElementById('quizRetry');
+  let idx=0,score=0;
+
+  function init(){
+    idx=0;score=0;elS.classList.remove('show');
+    showQuestion();
+  }
+
+  function showQuestion(){
+    if(idx>=questions.length){showResult();return}
+    const q=questions[idx];
+    elP.textContent=`第 ${idx+1} / ${questions.length} 题`;
+    elQ.textContent=q.q;
+    elO.innerHTML='';
+    q.opts.forEach((opt,i)=>{
+      const btn=document.createElement('button');
+      btn.className='quiz-opt';btn.textContent=opt;
+      btn.addEventListener('click',()=>answer(i,q));
+      elO.appendChild(btn);
+    });
+  }
+
+  function answer(i,q){
+    const btns=elO.querySelectorAll('.quiz-opt');
+    btns.forEach(b=>b.classList.add('disabled'));
+    if(i===q.a){btns[i].classList.add('correct');score++}
+    else{btns[i].classList.add('wrong');btns[q.a].classList.add('correct')}
+    idx++;
+    setTimeout(showQuestion,1000);
+  }
+
+  function showResult(){
+    elP.textContent='';elQ.textContent='';elO.innerHTML='';
+    elSN.textContent=score===3?'💯':`${score} / 3`;
+    elST.textContent=score===3?'满分默契！你们是天造地设的一对':score===2?'很不错，再了解一点点就满分了':'继续加油，了解是爱的开始';
+    elS.classList.add('show');
+  }
+
+  elRetry.addEventListener('click',init);
+  init();
+})();
+
+/* ====== 许愿池 ====== */
+(function(){
+  const pool=document.getElementById('wishPool');
+  const blessing=document.getElementById('wishBlessing');
+  const counter=document.getElementById('wishCounter');
+  const hint=document.getElementById('wishHint');
+  const blessings=['愿你们岁岁常相见','执子之手，与子偕老','你是人间四月天','此生有你，足矣','星河滚烫，你是人间理想','愿我如星君如月','三餐四季，温暖有趣','山水一程，三生有幸'];
+  let count=0;
+
+  pool.addEventListener('click',function(e){
+    const rect=pool.getBoundingClientRect();
+    const x=e.clientX-rect.left;
+    const y=e.clientY-rect.top;
+    if(x<0||y<0||x>rect.width||y>rect.height)return;
+    hint.style.opacity='0';
+
+    const coin=document.createElement('div');
+    coin.className='wish-coin';
+    coin.style.left=(x-9)+'px';
+    coin.style.animation='coinDrop 0.9s cubic-bezier(0.22,1,0.36,1) forwards';
+    pool.appendChild(coin);
+
+    const ripple=document.createElement('div');
+    ripple.className='wish-ripple';
+    ripple.style.left=x+'px';ripple.style.top=y+'px';
+    ripple.style.width='10px';ripple.style.height='10px';
+    ripple.style.animation='rippleOut 1.2s ease-out forwards';
+    pool.appendChild(ripple);
+
+    setTimeout(()=>{coin.remove();ripple.remove()},1300);
+
+    count++;
+    counter.textContent=`已许愿 ${count} 次`;
+    blessing.textContent=blessings[Math.floor(Math.random()*blessings.length)];
+    blessing.style.opacity='0';
+    requestAnimationFrame(()=>{blessing.style.opacity='1'});
+  });
+})();
 </script>
-
 </body>
 </html>
