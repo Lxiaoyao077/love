@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Miuix Demo</title>
+<style>
+/* ===== Miuix CSS Variables ===== */
+:root{
+  --m-color-primary:#1a73e8;
+  --m-color-on-primary:#ffffff;
+  --m-color-primary-container:#d3e3fd;
+  --m-color-on-primary-container:#041e49;
+  --m-color-secondary:#5f6368;
+  --m-color-on-secondary:#ffffff;
+  --m-color-secondary-container:#e8eaed;
+  --m-color-on-secondary-container:#1f1f1f;
+  --m-color-tertiary:#188038;
+  --m-color-tertiary-container:#ceead6;
+  --m-color-on-tertiary-container:#072711;
+  --m-color-surface:#ffffff;
+  --m-color-surface-variant:#f1f3f4;
+  --m-color-surface-container:#f8f9fa;
+  --m-color-surface-container-high:#eef0f2;
+  --m-color-surface-container-highest:#e3e5e8;
+  --m-color-background:#f8f9fa;
+  --m-color-on-background:#1f1f1f;
+  --m-color-on-surface:#1f1f1f;
+  --m-color-on-surface-variant:#444746;
+  --m-color-outline:#c4c7c5;
+  --m-color-outline-variant:#dadce0;
+  --m-color-error:#d93025;
+  --m-color-error-container:#fce8e6;
+  --m-color-on-error-container:#410002;
+  --m-font-family:"MiSans","Noto Sans SC","PingFang SC",sans-serif;
+  --m-radius-sm:8px;
+  --m-radius-md:12px;
+  --m-radius-lg:16px;
+  --m-radius-xl:24px;
+  --m-radius-full:9999px;
+  --m-shadow-1:0 1px 2px rgba(0,0,0,0.06);
+  --m-shadow-2:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.06);
+  --m-shadow-3:0 4px 8px rgba(0,0,0,0.08);
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --m-color-primary:#8ab4f8;
+    --m-color-on-primary:#062e6f;
+    --m-color-primary-container:#0842a0;
+    --m-color-on-primary-container:#d3e3fd;
+    --m-color-secondary:#c4c7c5;
+    --m-color-on-secondary:#303134;
+    --m-color-secondary-container:#3c4043;
+    --m-color-on-secondary-container:#e8eaed;
+    --m-color-tertiary:#81c995;
+    --m-color-tertiary-container:#1e4620;
+    --m-color-on-tertiary-container:#ceead6;
+    --m-color-surface:#1f1f1f;
+    --m-color-surface-variant:#2d2e31;
+    --m-color-surface-container:#28292c;
+    --m-color-surface-container-high:#303134;
+    --m-color-surface-container-highest:#3c4043;
+    --m-color-background:#1a1a1a;
+    --m-color-on-background:#e3e3e3;
+    --m-color-on-surface:#e3e3e3;
+    --m-color-on-surface-variant:#c4c7c5;
+    --m-color-outline:#5f6368;
+    --m-color-outline-variant:#444746;
+    --m-color-error:#f28b82;
+    --m-color-error-container:#8c1d18;
+    --m-color-on-error-container:#fce8e6;
+    --m-shadow-1:0 1px 2px rgba(0,0,0,0.3);
+    --m-shadow-2:0 1px 3px rgba(0,0,0,0.4);
+    --m-shadow-3:0 4px 8px rgba(0,0,0,0.5);
+  }
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--m-font-family);
+  background:var(--m-color-background);
+  color:var(--m-color-on-background);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  min-height:100vh;
+  padding-bottom:env(safe-area-inset-bottom,0);
+}
+
+/* ===== TopAppBar ===== */
+.top-app-bar{
+  position:sticky;top:0;z-index:10;
+  display:flex;align-items:center;
+  height:56px;padding:0 16px;
+  background:var(--m-color-surface);
+  border-bottom:0.5px solid var(--m-color-outline-variant);
+}
+.top-app-bar .back-btn{
+  width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+  border:none;background:none;cursor:pointer;color:var(--m-color-on-surface);
+  border-radius:var(--m-radius-full);margin-left:-8px;
+  transition:background 0.2s;
+}
+.top-app-bar .back-btn:active{background:var(--m-color-surface-container-high)}
+.top-app-bar .title{
+  flex:1;font-size:1.1rem;font-weight:500;letter-spacing:0.02em;
+  color:var(--m-color-on-surface);margin-left:4px;
+}
+.top-app-bar .action-btn{
+  width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+  border:none;background:none;cursor:pointer;color:var(--m-color-on-surface-variant);
+  border-radius:var(--m-radius-full);
+  transition:background 0.2s;
+}
+.top-app-bar .action-btn:active{background:var(--m-color-surface-container-high)}
+
+/* ===== Content Area ===== */
+.content{padding:8px 12px;max-width:600px;margin:0 auto}
+
+/* ===== Section Header ===== */
+.section-header{
+  font-size:0.78rem;font-weight:500;color:var(--m-color-on-surface-variant);
+  padding:20px 16px 8px;letter-spacing:0.04em;
+}
+
+/* ===== Surface Card ===== */
+.surface-card{
+  background:var(--m-color-surface);
+  border-radius:var(--m-radius-lg);
+  overflow:hidden;
+  box-shadow:var(--m-shadow-1);
+}
+.surface-card + .surface-card{margin-top:12px}
+
+/* ===== Preference ===== */
+.preference{
+  display:flex;align-items:center;padding:0 16px;
+  min-height:56px;cursor:pointer;
+  transition:background 0.15s;
+  -webkit-tap-highlight-color:transparent;
+  border-bottom:0.5px solid var(--m-color-outline-variant);
+}
+.preference:last-child{border-bottom:none}
+.preference:active{background:var(--m-color-surface-container-high)}
+.preference .pref-icon{
+  width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+  border-radius:var(--m-radius-full);margin-right:12px;flex-shrink:0;
+  color:var(--m-color-on-surface-variant);
+}
+.preference .pref-icon.primary{background:var(--m-color-primary-container);color:var(--m-color-on-primary-container)}
+.preference .pref-icon.secondary{background:var(--m-color-secondary-container);color:var(--m-color-on-secondary-container)}
+.preference .pref-icon.tertiary{background:var(--m-color-tertiary-container);color:var(--m-color-on-tertiary-container)}
+.preference .pref-icon.error{background:var(--m-color-error-container);color:var(--m-color-on-error-container)}
+.preference .pref-body{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;padding:12px 0}
+.preference .pref-title{font-size:0.92rem;font-weight:400;color:var(--m-color-on-surface);letter-spacing:0.02em}
+.preference .pref-summary{font-size:0.75rem;color:var(--m-color-on-surface-variant);margin-top:2px;letter-spacing:0.03em}
+.preference .pref-trailing{flex-shrink:0;display:flex;align-items:center;gap:8px;margin-left:12px}
+.preference .pref-value{font-size:0.82rem;color:var(--m-color-on-surface-variant)}
+.preference .pref-arrow{color:var(--m-color-outline);flex-shrink:0}
+
+/* ===== Switch ===== */
+.switch-track{
+  position:relative;width:48px;height:28px;border-radius:var(--m-radius-full);
+  background:var(--m-color-outline);cursor:pointer;
+  transition:background 0.25s cubic-bezier(0.05,0.7,0.1,1);
+  -webkit-tap-highlight-color:transparent;
+}
+.switch-track.on{background:var(--m-color-primary)}
+.switch-thumb{
+  position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;
+  background:#ffffff;box-shadow:0 1px 3px rgba(0,0,0,0.2);
+  transition:transform 0.25s cubic-bezier(0.05,0.7,0.1,1);
+}
+.switch-track.on .switch-thumb{transform:translateX(20px)}
+
+/* ===== NavigationBar ===== */
+.nav-bar{
+  position:fixed;bottom:0;left:0;right:0;
+  display:flex;justify-content:space-around;align-items:center;
+  height:64px;padding-bottom:env(safe-area-inset-bottom,0);
+  background:var(--m-color-surface);
+  border-top:0.5px solid var(--m-color-outline-variant);
+  z-index:10;
+}
+.nav-item{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;padding:6px 0;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  position:relative;flex:1;max-width:80px;
+  color:var(--m-color-on-surface-variant);
+  transition:color 0.2s;
+}
+.nav-item.active{color:var(--m-color-primary)}
+.nav-item .nav-icon{width:24px;height:24px;transition:transform 0.25s cubic-bezier(0.22,1,0.36,1)}
+.nav-item.active .nav-icon{transform:scale(1.08)}
+.nav-item .nav-label{font-size:0.62rem;font-weight:500;letter-spacing:0.04em}
+.nav-indicator{
+  position:absolute;top:-8px;left:50%;transform:translateX(-50%);
+  width:16px;height:3px;border-radius:3px;
+  background:var(--m-color-primary);opacity:0;
+  transition:opacity 0.25s;
+}
+.nav-item.active .nav-indicator{opacity:1}
+
+/* ===== Dialog Overlay ===== */
+.overlay-backdrop{
+  position:fixed;inset:0;z-index:50;
+  background:rgba(0,0,0,0.32);
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.25s;
+}
+.overlay-backdrop.show{opacity:1;pointer-events:auto}
+
+.dialog{
+  background:var(--m-color-surface-container-high);
+  border-radius:var(--m-radius-xl);
+  padding:24px;margin:0 16px 24px;
+  width:100%;max-width:360px;
+  box-shadow:var(--m-shadow-3);
+  transform:translateY(16px);
+  transition:transform 0.3s cubic-bezier(0.05,0.7,0.1,1);
+}
+.overlay-backdrop.show .dialog{transform:translateY(0)}
+.dialog .dialog-title{font-size:1.1rem;font-weight:500;color:var(--m-color-on-surface);margin-bottom:8px}
+.dialog .dialog-body{font-size:0.88rem;color:var(--m-color-on-surface-variant);line-height:1.6;margin-bottom:20px}
+.dialog .dialog-actions{display:flex;gap:8px;justify-content:flex-end}
+.dialog .btn{
+  padding:10px 24px;border-radius:var(--m-radius-full);
+  font-size:0.85rem;font-weight:500;letter-spacing:0.04em;cursor:pointer;
+  border:none;transition:background 0.2s;
+}
+.dialog .btn-text{background:none;color:var(--m-color-primary)}
+.dialog .btn-text:active{background:var(--m-color-primary-container)}
+.dialog .btn-filled{background:var(--m-color-primary);color:var(--m-color-on-primary)}
+.dialog .btn-filled:active{opacity:0.85}
+
+/* ===== Snackbar ===== */
+.snackbar{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--m-color-on-surface);
+  color:var(--m-color-surface);
+  padding:12px 20px;border-radius:var(--m-radius-md);
+  font-size:0.82rem;letter-spacing:0.03em;
+  opacity:0;pointer-events:none;z-index:60;
+  transition:all 0.3s cubic-bezier(0.05,0.7,0.1,1);
+  white-space:nowrap;
+}
+.snackbar.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ===== Page Panel ===== */
+.page-panel{display:none}
+.page-panel.active{display:block}
+
+/* ===== Status Card ===== */
+.status-card{
+  background:var(--m-color-primary-container);
+  border-radius:var(--m-radius-lg);
+  padding:20px;text-align:center;
+  color:var(--m-color-on-primary-container);
+}
+.status-card .status-value{
+  font-size:2rem;font-weight:500;font-family:"Cormorant Garamond",serif;
+  letter-spacing:0.04em;margin-bottom:4px;
+}
+.status-card .status-label{
+  font-size:0.75rem;opacity:0.7;letter-spacing:0.1em;
+}
+
+/* ===== Tags / Chips ===== */
+.chip-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chip{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:4px 12px;border-radius:var(--m-radius-sm);
+  background:var(--m-color-secondary-container);
+  color:var(--m-color-on-secondary-container);
+  font-size:0.72rem;letter-spacing:0.03em;
+}
+.chip.active{background:var(--m-color-primary-container);color:var(--m-color-on-primary-container)}
+
+/* Misc */
+svg.icon{width:20px;height:20px}
+.divider{height:0.5px;background:var(--m-color-outline-variant);margin:0 16px}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ====== TopAppBar ====== -->
+<header class="top-app-bar">
+  <button class="back-btn" aria-label="返回">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <span class="title" id="pageTitle">设置</span>
+  <button class="action-btn" id="moreBtn" aria-label="更多">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.5" fill="currentColor" stroke="none"/></svg>
+  </button>
+</header>
+
+<div class="content">
+
+<!-- ====== 主页 ====== -->
+<div class="page-panel active" id="mainPanel">
+
+  <div class="section-header">状态</div>
+  <div class="surface-card">
+    <div class="preference">
+      <div class="pref-icon primary">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+      </div>
+      <div class="pref-body">
+        <span class="pref-title">运行状态</span>
+        <span class="pref-summary">模块已激活，正常运行中</span>
+      </div>
+      <div class="pref-trailing">
+        <span class="pref-value" style="color:var(--m-color-tertiary)">活跃</span>
+      </div>
+    </div>
+    <div class="preference">
+      <div class="pref-icon secondary">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+      </div>
+      <div class="pref-body">
+        <span class="pref-title">挂载分区</span>
+        <span class="pref-summary">mi_ext, my_stock, product</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header">挂载配置</div>
+  <div class="surface-card">
+    <div class="preference">
+      <div class="pref-icon tertiary">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      </div>
+      <div class="pref-body">
+        <span class="pref-title">自定义挂载规则</span>
+        <span class="pref-summary">已配置 3 条规则</span>
+      </div>
+      <div class="pref-trailing">
+        <svg class="pref-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+    <div class="preference">
+      <div class="pref-icon secondary">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <div class="pref-body">
+        <span class="pref-title">Unmount 模式</span>
+        <span class="pref-summary">卸载原始分区后再挂载</span>
+      </div>
+      <div class="pref-trailing">
+        <div class="switch-track" id="umountSwitch" onclick="toggleSwitch(this)"><div class="switch-thumb"></div></div>
+      </div>
+    </div>
+    <div class="preference">
+      <div class="pref-icon secondary">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </div>
+      <div class="pref-body">
+        <span class="pref-title">挂载来源</span>
+        <span class="pref-summary">当前：KernelSU</span>
+      </div>
+      <div class="pref-trailing">
+        <svg class="pref-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header">模块信息</div>
+  <div class="surface-card">
+    <div class="preference">
+      <div class="pref-icon tertiary">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      </div>
+      <div class="pref-body">
+        <span class="pref-title">关于模块</span>
+        <span class="pref-summary">Magic Mount v2.2.51</span>
+      </div>
+      <div class="pref-trailing">
+        <svg class="pref-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header">危险操作</div>
+  <div class="surface-card">
+    <div class="preference">
+      <div class="pref-icon error">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+      </div>
+      <div class="pref-body">
+        <span class="pref-title" style="color:var(--m-color-error)">清除所有挂载规则</span>
+        <span class="pref-summary">此操作不可逆</span>
+      </div>
+      <div class="pref-trailing">
+        <svg class="pref-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ====== 关于页 ====== -->
+<div class="page-panel" id="aboutPanel">
+  <div style="display:flex;flex-direction:column;align-items:center;padding:32px 16px">
+    <!-- Logo -->
+    <svg viewBox="0 0 160 210" width="100" height="130" style="margin-bottom:16px">
+      <g transform="rotate(-25 80 82)">
+        <path d="M 10,82 A 70,25 0 0,1 150,82" fill="none" stroke="var(--m-color-outline)" stroke-width="1"/>
+      </g>
+      <path d="M80 82 L56 34" stroke="var(--m-color-outline-variant)" stroke-width="1"/>
+      <path d="M80 82 L35 118" stroke="var(--m-color-outline-variant)" stroke-width="1"/>
+      <path d="M80 82 L134 92" stroke="var(--m-color-outline-variant)" stroke-width="1"/>
+      <circle cx="80" cy="82" r="26" fill="var(--m-color-primary-container)" stroke="var(--m-color-primary)" stroke-width="2"/>
+      <circle cx="56" cy="34" r="16" fill="var(--m-color-secondary-container)" stroke="var(--m-color-secondary)" stroke-width="1.5"/>
+      <circle cx="35" cy="118" r="16" fill="var(--m-color-secondary-container)" stroke="var(--m-color-secondary)" stroke-width="1.5"/>
+      <circle cx="134" cy="92" r="16" fill="var(--m-color-secondary-container)" stroke="var(--m-color-secondary)" stroke-width="1.5"/>
+      <path d="M75 120 H85 V172 H106 A16 16 0 0 1 122 188 H38 A16 16 0 0 1 54 172 H75 Z" fill="var(--m-color-surface-container-high)" stroke="var(--m-color-outline)" stroke-width="1"/>
+    </svg>
+    <div class="chip-row" style="justify-content:center">
+      <span class="chip">v2.2.51</span>
+      <span class="chip active">GPL-3.0</span>
+    </div>
+    <div class="surface-card" style="width:100%;margin-top:24px">
+      <div class="preference">
+        <div class="pref-body">
+          <span class="pref-title">Magic Mount</span>
+          <span class="pref-summary">为 KernelSU 提供 Systemless 修改功能</span>
+        </div>
+      </div>
+      <div class="preference">
+        <div class="pref-body">
+          <span class="pref-title">作者</span>
+        </div>
+        <div class="pref-trailing"><span class="pref-value">5ec1cff</span></div>
+      </div>
+      <div class="preference">
+        <div class="pref-body">
+          <span class="pref-title">WebUI</span>
+        </div>
+        <div class="pref-trailing"><span class="pref-value">Miuix Design</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ====== NavigationBar ====== -->
+<nav class="nav-bar" id="navBar">
+  <div class="nav-item active" data-panel="mainPanel">
+    <div class="nav-indicator"></div>
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <span class="nav-label">设置</span>
+  </div>
+  <div class="nav-item" data-panel="aboutPanel">
+    <div class="nav-indicator"></div>
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+    <span class="nav-label">关于</span>
+  </div>
+</nav>
+
+<!-- ====== Dialog ====== -->
+<div class="overlay-backdrop" id="dialogOverlay">
+  <div class="dialog">
+    <div class="dialog-title">清除所有挂载规则</div>
+    <div class="dialog-body">此操作将移除所有自定义挂载配置，且无法恢复。确定要继续吗？</div>
+    <div class="dialog-actions">
+      <button class="btn btn-text" onclick="closeDialog()">取消</button>
+      <button class="btn btn-filled" onclick="confirmClear()">确定清除</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== Snackbar ====== -->
+<div class="snackbar" id="snackbar"></div>
+
+<script>
+/* ====== Switch ====== */
+function toggleSwitch(el){
+  el.classList.toggle('on');
+  const msg=el.classList.contains('on')?'Unmount 已开启':'Unmount 已关闭';
+  showSnackbar(msg);
+}
+
+/* ====== Navigation ====== */
+const navItems=document.querySelectorAll('.nav-item');
+const panels=document.querySelectorAll('.page-panel');
+const pageTitle=document.getElementById('pageTitle');
+const titles={mainPanel:'设置',aboutPanel:'关于'};
+
+navItems.forEach(item=>{
+  item.addEventListener('click',()=>{
+    navItems.forEach(i=>i.classList.remove('active'));
+    item.classList.add('active');
+    const panelId=item.dataset.panel;
+    panels.forEach(p=>p.classList.remove('active'));
+    document.getElementById(panelId).classList.add('active');
+    pageTitle.textContent=titles[panelId]||'设置';
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+/* ====== Dialog ====== */
+function closeDialog(){document.getElementById('dialogOverlay').classList.remove('show')}
+function confirmClear(){
+  closeDialog();
+  showSnackbar('已清除所有挂载规则');
+}
+
+/* ====== Snackbar ====== */
+let snackTimeout;
+function showSnackbar(msg){
+  const el=document.getElementById('snackbar');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(snackTimeout);
+  snackTimeout=setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+/* ====== Preference clicks ====== */
+document.querySelectorAll('.preference').forEach(pref=>{
+  pref.addEventListener('click',function(e){
+    if(e.target.closest('.switch-track'))return;
+    const title=this.querySelector('.pref-title')?.textContent||'';
+    if(title.includes('清除')){document.getElementById('dialogOverlay').classList.add('show');return}
+    showSnackbar('打开：'+title);
+  });
+});
+</script>
+</body>
+</html>
