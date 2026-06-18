@@ -11,21 +11,17 @@
   :root{
     --nav-height:56px;
     --nav-corner:28px;
-    --nav-h-pad:36px;
   }
 
   body{
     font-family:"Noto Serif SC","PingFang SC","STSong","Songti SC",serif;
     background:#f7f3ec;
     color:#3b2d24;
-    min-height:100vh;
-    min-height:100dvh;
-    /* 为悬浮底栏留空间 */
+    min-height:100vh;min-height:100dvh;
     padding-bottom:calc(var(--nav-height) + 48px + env(safe-area-inset-bottom, 0px));
     line-height:2.1;
   }
 
-  /* === 面板 === */
   .panel{display:none}
   .panel.active{display:block}
 
@@ -56,8 +52,8 @@
   .counter-note{font-size:0.7rem;color:#a69888;margin-top:0.4rem}
   .end-mark{font-size:0.68rem;color:#bfb0a2;margin-top:1.5rem}
 
-  /* === 游戏面板 === */
-  .game-panel{text-align:center;padding:clamp(3rem,12vh,5rem) clamp(1.2rem,6vw,2.5rem) clamp(4rem,14vh,6rem)}
+  /* === 游戏面板通用 === */
+  .game-panel{text-align:center;padding:clamp(3rem,12vh,5rem) clamp(1rem,5vw,2rem) clamp(4rem,14vh,6rem)}
   .game-head{font-size:0.6rem;color:#bfb0a2;letter-spacing:0.2em;margin-bottom:2rem}
 
   /* 记忆翻牌 */
@@ -69,7 +65,7 @@
   .card-back{background:#e8e0d6;border:0.5px solid #d4c8bb;font-size:0.55rem;color:#bfb0a2}
   .card-front{background:#f0e8db;border:0.5px solid #d4c8bb;transform:rotateY(180deg);font-size:1.6rem}
   .card.matched .card-face{border-color:#c4a88c;background:#ede0d2}
-  .match-msg{text-align:center;font-size:0.7rem;color:#8c7b6c;margin-top:1.2rem;display:none}
+  .match-msg{font-size:0.7rem;color:#8c7b6c;margin-top:1.2rem;display:none}
   .match-msg.show{display:block}
   .match-msg button{background:none;border:0.5px solid #c4a88c;color:#8c7b6c;font-family:inherit;font-size:0.65rem;padding:0.3rem 1.2rem;border-radius:2px;margin-top:0.5rem;cursor:pointer}
 
@@ -80,102 +76,138 @@
   .scratch-reveal{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(0.9rem,3.5vw,1rem);color:#6b5544;letter-spacing:0.08em;background:#f0e8db;pointer-events:none;text-align:center;line-height:1.6;padding:1rem}
   .scratch-hint{font-size:0.58rem;color:#c4b8ab;margin-top:0.5rem}
 
+  /* === 默契问答 === */
+  .quiz-wrap{max-width:320px;margin:0 auto;text-align:left}
+  .quiz-q{font-size:0.85rem;color:#4a3424;margin-bottom:1rem;line-height:1.8}
+  .quiz-q .q-num{font-size:0.55rem;color:#bfb0a2;display:block;margin-bottom:0.3rem}
+  .quiz-opts{display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.5rem}
+  .quiz-opt{
+    padding:0.7rem 1rem;border:0.5px solid #d4c8bb;border-radius:3px;
+    background:#faf7f2;font-size:0.78rem;color:#5c4a3a;cursor:pointer;
+    transition:background 0.15s,border-color 0.15s;
+    -webkit-tap-highlight-color:transparent;user-select:none;text-align:left;
+  }
+  .quiz-opt:active{background:#ede0d2}
+  .quiz-opt.right{background:#e8e0d0;border-color:#c4a88c;color:#4a3424}
+  .quiz-opt.wrong{background:#f0e8e0;border-color:#d4c8bb;color:#b0a090}
+  .quiz-opt.done{pointer-events:none}
+  .quiz-result{display:none;text-align:center;margin-top:0.5rem}
+  .quiz-result.show{display:block}
+  .quiz-result .big{font-size:2rem;margin-bottom:0.5rem}
+  .quiz-result .msg{font-size:0.78rem;color:#8c7b6c;line-height:1.8}
+  .quiz-result button{background:none;border:0.5px solid #c4a88c;color:#8c7b6c;font-family:inherit;font-size:0.65rem;padding:0.3rem 1.2rem;border-radius:2px;margin-top:0.8rem;cursor:pointer}
+
+  /* === 许愿池 === */
+  .wish-wrap{max-width:320px;margin:0 auto;text-align:center}
+  .wish-pool{
+    position:relative;width:180px;height:180px;margin:0 auto 1.5rem;
+    border-radius:50%;background:linear-gradient(135deg,#e8ddd0,#f2ece3);
+    border:1px solid #d4c8bb;overflow:hidden;
+    box-shadow:inset 0 4px 12px rgba(0,0,0,0.04);
+  }
+  .wish-pool .water{
+    position:absolute;bottom:0;left:0;right:0;height:45%;
+    background:linear-gradient(180deg,rgba(180,200,210,0.18),rgba(160,185,200,0.3));
+    border-radius:0 0 50% 50%;animation:waterShimmer 3s ease-in-out infinite;
+  }
+  @keyframes waterShimmer{0%,100%{opacity:0.7}50%{opacity:1}}
+  .wish-coin{
+    position:absolute;top:30px;left:50%;transform:translateX(-50%);
+    width:28px;height:28px;border-radius:50%;
+    background:linear-gradient(135deg,#d4b896,#c4a47a);
+    border:1px solid #b8956e;cursor:pointer;
+    transition:transform 0.1s;
+    box-shadow:0 1px 3px rgba(0,0,0,0.12);
+    -webkit-tap-highlight-color:transparent;z-index:2;
+  }
+  .wish-coin::after{
+    content:'';position:absolute;top:4px;left:6px;width:14px;height:14px;
+    border-radius:50%;background:rgba(255,255,255,0.2);
+  }
+  .wish-coin.dropping{
+    animation:coinDrop 1.2s cubic-bezier(0.22,0.61,0.36,1) forwards;
+    pointer-events:none;
+  }
+  @keyframes coinDrop{
+    0%{top:30px;opacity:1;transform:translateX(-50%) rotate(0deg)}
+    30%{top:75px;opacity:1;transform:translateX(-50%) rotate(180deg)}
+    60%{top:105px;opacity:0.8;transform:translateX(-50%) rotate(360deg)}
+    100%{top:120px;opacity:0;transform:translateX(-50%) rotate(540deg)}
+  }
+  .wish-ripple{
+    position:absolute;top:105px;left:50%;width:0;height:0;
+    border-radius:50%;border:0.5px solid rgba(180,170,150,0.4);
+    transform:translate(-50%,-50%);opacity:0;pointer-events:none;
+  }
+  .wish-ripple.go{animation:rippleOut 1s ease-out forwards}
+  @keyframes rippleOut{
+    0%{width:0;height:0;opacity:0.6}100%{width:100px;height:100px;opacity:0}
+  }
+  .wish-msg{font-size:0.75rem;color:#8c7b6c;min-height:1.5rem;transition:opacity 0.3s}
+  .wish-count{font-size:0.58rem;color:#bfb0a2;margin-top:0.5rem}
+
   /* ============================================
-     MIUIX FloatingNavigationBar — 液态玻璃胶囊
+     MIUIX FloatingNavigationBar — 5 项液态玻璃
      ============================================ */
   .tab-bar{
     position:fixed;bottom:24px;left:50%;z-index:100;
     transform:translateX(-50%);
-    height:var(--nav-height);
-    padding:0 12px;
-    margin-bottom:env(safe-area-inset-bottom, 0);
-    display:flex;align-items:center;gap:6px;
-
-    /* 胶囊圆角 */
+    height:var(--nav-height);padding:0 10px;
+    margin-bottom:env(safe-area-inset-bottom,0);
+    display:flex;align-items:center;gap:4px;
     border-radius:var(--nav-corner);
 
     /* 玻璃底 */
-    background:rgba(255,255,255,0.62);
-
-    /* 三层模糊叠加 — 模拟镜头折射 */
+    background:rgba(255,255,255,0.6);
     backdrop-filter:blur(24px) saturate(1.3);
     -webkit-backdrop-filter:blur(24px) saturate(1.3);
 
-    /* 外阴影 — shadowElevation */
-    box-shadow:
-      0 2px 16px rgba(0,0,0,0.07),
-      0 0.5px 0.5px rgba(0,0,0,0.04);
-
-    /* 边框高光 — 镜头折射 */
-    border:0.5px solid rgba(255,255,255,0.45);
-
-    /* 内高光 — 模拟光在玻璃内部反射 */
+    /* 多层阴影 + 内高光 */
     box-shadow:
       0 2px 16px rgba(0,0,0,0.07),
       0 0.5px 0.5px rgba(0,0,0,0.04),
-      inset 0 0.5px 0 rgba(255,255,255,0.7),
-      inset 0 -0.5px 0 rgba(0,0,0,0.04);
+      inset 0 0.5px 0 rgba(255,255,255,0.65),
+      inset 0 -0.5px 0 rgba(0,0,0,0.03);
+
+    border:0.5px solid rgba(255,255,255,0.4);
   }
 
-  /* 顶部高光反射条 — 玻璃表面的 specular highlight */
   .tab-bar::before{
     content:'';position:absolute;top:0;left:12px;right:12px;
     height:0.5px;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.6) 30%,rgba(255,255,255,0.8) 50%,rgba(255,255,255,0.6) 70%,transparent);
-    border-radius:1px;
-    pointer-events:none;
-    z-index:2;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5) 30%,rgba(255,255,255,0.7) 50%,rgba(255,255,255,0.5) 70%,transparent);
+    pointer-events:none;z-index:2;
   }
 
-  /* 色彩振动层 — 微妙色相偏移动画 */
   .tab-bar::after{
     content:'';position:absolute;inset:1px;border-radius:calc(var(--nav-corner) - 1px);
-    background:linear-gradient(135deg,rgba(180,160,140,0.08) 0%,transparent 50%,rgba(200,185,165,0.06) 100%);
+    background:linear-gradient(135deg,rgba(180,160,140,0.06) 0%,transparent 50%,rgba(200,185,165,0.04) 100%);
     animation:chromaShift 8s ease-in-out infinite alternate;
     pointer-events:none;z-index:1;
   }
-  @keyframes chromaShift{
-    0%{opacity:0.4}100%{opacity:0.85}
-  }
+  @keyframes chromaShift{0%{opacity:0.4}100%{opacity:0.8}}
 
-  /* 导航项 */
   .tab-item{
     position:relative;z-index:3;
-    width:44px;height:44px;
-    border-radius:50%;
+    width:40px;height:40px;border-radius:50%;
     display:flex;align-items:center;justify-content:center;
     cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;
-    /* 未选中 — Miuix UnselectedAlpha */
     opacity:0.38;
-    transition:opacity 0.25s,background 0.25s;
+    transition:opacity 0.25s,background 0.2s;
     color:#3b2d24;
   }
   .tab-item.active{
     opacity:1;
-    /* 选中背景 — 微妙的毛玻璃圆底 */
     background:rgba(107,85,68,0.08);
   }
-  .tab-item:active{
-    opacity:0.5;
-    transition:opacity 0.05s;
-  }
-  .tab-item.active:active{
-    opacity:0.6;
-  }
-  .tab-icon{
-    width:28px;height:28px;
-    display:flex;align-items:center;justify-content:center;
-  }
-  .tab-icon svg{
-    width:28px;height:28px;
-    transition:transform 0.2s ease;
-  }
-  .tab-item.active .tab-icon svg{
-    transform:scale(1.08);
-  }
+  .tab-item:active{opacity:0.5;transition:opacity 0.05s}
+  .tab-item.active:active{opacity:0.6}
+  .tab-icon{width:26px;height:26px;display:flex;align-items:center;justify-content:center}
+  .tab-icon svg{width:26px;height:26px;transition:transform 0.2s ease}
+  .tab-item.active .tab-icon svg{transform:scale(1.08)}
 
   @media(prefers-reduced-motion:reduce){
-    .ring-a,.ring-b,.ring-dot{animation:none}
+    .ring-a,.ring-b,.ring-dot,.wish-coin.dropping,.wish-ripple.go{animation:none}
     .card-inner{transition:none}
     .tab-item,.tab-item.active .tab-icon svg{transition:none}
     .tab-bar::after{animation:none;opacity:0.6}
@@ -234,15 +266,27 @@
   </div>
 </div>
 
-<!-- ============ 悬浮胶囊底栏 ============ -->
-<nav class="tab-bar" id="tabBar">
-  <div class="tab-item active" data-tab="home">
-    <div class="tab-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 10l9-8 9 8"/><path d="M5 9v10h4v-6h6v6h4V9"/>
-      </svg>
+<!-- ============ 默契问答 ============ -->
+<div class="panel game-panel" id="panelQuiz">
+  <p class="game-head">· 默 契 大 考 验 ·</p>
+  <div class="quiz-wrap" id="quizBox"></div>
+</div>
+
+<!-- ============ 许愿池 ============ -->
+<div class="panel game-panel" id="panelWish">
+  <p class="game-head">· 许 愿 池 ·</p>
+  <div class="wish-wrap">
+    <div class="wish-pool" id="wishPool">
+      <div class="water"></div>
+      <div class="wish-coin" id="wishCoin" title="扔一枚硬币"></div>
     </div>
+    <p class="wish-msg" id="wishMsg">点击硬币，许个愿吧</p>
+    <p class="wish-count" id="wishCount"></p>
   </div>
+</div>
+
+<!-- ============ 底栏 ============ -->
+<nav class="tab-bar" id="tabBar">
   <div class="tab-item" data-tab="cards">
     <div class="tab-icon">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -254,6 +298,30 @@
     <div class="tab-icon">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 1.5l2.2 6.8h7.1l-5.7 4.2 2.2 6.7L12 15l-5.8 4.2 2.2-6.7-5.7-4.2h7.1z"/>
+      </svg>
+    </div>
+  </div>
+  <div class="tab-item active" data-tab="home">
+    <div class="tab-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 10l9-8 9 8"/><path d="M5 9v10h4v-6h6v6h4V9"/>
+      </svg>
+    </div>
+  </div>
+  <div class="tab-item" data-tab="quiz">
+    <div class="tab-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+        <line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="15" r="0.5" fill="currentColor" stroke="none"/>
+      </svg>
+    </div>
+  </div>
+  <div class="tab-item" data-tab="wish">
+    <div class="tab-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/>
+        <path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/>
+        <path d="M19.07 4.93l-1.41 1.41"/><path d="M6.34 17.66l-1.41 1.41"/>
       </svg>
     </div>
   </div>
@@ -270,9 +338,9 @@
 // === 底栏切换 ===
 (function(){
   var panels={
-    home:document.getElementById('panelHome'),
-    cards:document.getElementById('panelCards'),
-    scratch:document.getElementById('panelScratch')
+    home:document.getElementById('panelHome'),cards:document.getElementById('panelCards'),
+    scratch:document.getElementById('panelScratch'),quiz:document.getElementById('panelQuiz'),
+    wish:document.getElementById('panelWish')
   };
   document.querySelectorAll('.tab-item').forEach(function(t){
     t.addEventListener('click',function(){
@@ -282,6 +350,7 @@
       Object.keys(panels).forEach(function(k){panels[k].classList.remove('active')});
       panels[name].classList.add('active');
       if(name==='scratch'&&!window._scratchReady)initScratch();
+      if(name==='wish'&&!window._wishReady)initWish();
     });
   });
 })();
@@ -335,12 +404,10 @@ function initScratch(){
   var h=Math.round(w*0.44);
   canvas.width=w;canvas.height=h;
   canvas.style.width=w+'px';canvas.style.height=h+'px';
-
   var ctx=canvas.getContext('2d');
   ctx.fillStyle='#c4b8ab';ctx.fillRect(0,0,w,h);
   ctx.fillStyle='#d4c8bb';ctx.font='0.55rem "Noto Serif SC",serif';ctx.textAlign='center';
   ctx.fillText('· 刮 开 这 里 ·',w/2,h/2);
-
   var drawing=false;
   function scratch(e){
     e.preventDefault();
@@ -357,6 +424,85 @@ function initScratch(){
   canvas.addEventListener('mousemove',function(e){if(drawing)scratch(e)});
   canvas.addEventListener('mouseup',function(){drawing=false});
   canvas.addEventListener('mouseleave',function(){drawing=false});
+}
+
+// === 默契问答 ===
+(function(){
+  var quizBox=document.getElementById('quizBox');
+  var questions=[
+    {q:'TA 最喜欢你叫她什么？',opts:['宝贝','亲爱的','小笨蛋','全都有'],ans:3},
+    {q:'你们第一次心动是在哪里？',opts:['学校','街头偶遇','微信聊天','某个夜晚'],ans:3},
+    {q:'TA 生气的时候，最有效的办法是？',opts:['讲道理','抱住不放','买好吃的','等她消气'],ans:1}
+  ];
+  var idx=0,score=0;
+  var msgs=['缘分满分，天生一对','默契无间，心有灵犀','还需要多了解哦，来日方长'];
+
+  function renderQ(){
+    if(idx>=questions.length){
+      var m=score===3?0:score===2?1:2;
+      quizBox.innerHTML='<div class="quiz-result show"><div class="big">'+(score===3?'💯':score===2?'💖':'💪')+'</div><div class="msg">答对 '+score+'/'+questions.length+' 题<br>'+msgs[m]+'</div><button onclick="window._restartQuiz()">再来一次</button></div>';
+      return;
+    }
+    var q=questions[idx];
+    var h='<div class="quiz-q"><span class="q-num">第 '+(idx+1)+' 题</span>'+q.q+'</div><div class="quiz-opts">';
+    q.opts.forEach(function(o,i){
+      h+='<div class="quiz-opt" data-i="'+i+'">'+o+'</div>';
+    });
+    h+='</div>';
+    quizBox.innerHTML=h;
+    quizBox.querySelectorAll('.quiz-opt').forEach(function(o){
+      o.addEventListener('click',function(){
+        if(this.classList.contains('done'))return;
+        var i=parseInt(this.dataset.i);
+        quizBox.querySelectorAll('.quiz-opt').forEach(function(x){x.classList.add('done')});
+        if(i===q.ans){this.classList.add('right');score++}else{this.classList.add('wrong');quizBox.querySelector('.quiz-opt[data-i="'+q.ans+'"]').classList.add('right')}
+        idx++;
+        setTimeout(renderQ,800);
+      });
+    });
+  }
+  window._restartQuiz=function(){idx=0;score=0;renderQ()};
+  renderQ();
+})();
+
+// === 许愿池 ===
+var wishMessages=[
+  '愿你所求皆如愿','好运正在派送中','所念皆星河','星河滚烫，你是人间理想',
+  '万事胜意','未来可期','心想事成','今天的愿望，明天就实现'
+];
+var wishCount=0;
+
+function initWish(){
+  window._wishReady=true;
+  var coin=document.getElementById('wishCoin');
+  var pool=document.getElementById('wishPool');
+  var msgEl=document.getElementById('wishMsg');
+  var countEl=document.getElementById('wishCount');
+
+  countEl.textContent='已许愿 '+wishCount+' 次';
+
+  coin.addEventListener('click',function(){
+    if(coin.classList.contains('dropping'))return;
+    coin.classList.add('dropping');
+    wishCount++;
+    countEl.textContent='已许愿 '+wishCount+' 次';
+
+    // 涟漪
+    var ripple=document.createElement('div');
+    ripple.className='wish-ripple go';
+    pool.appendChild(ripple);
+
+    // 随机祝福
+    var m=wishMessages[Math.floor(Math.random()*wishMessages.length)];
+    msgEl.textContent=m;
+    msgEl.style.opacity=0;
+    requestAnimationFrame(function(){msgEl.style.opacity=1});
+
+    setTimeout(function(){
+      coin.classList.remove('dropping');
+      ripple.remove();
+    },1300);
+  });
 }
 </script>
 
