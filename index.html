@@ -655,13 +655,18 @@
   }
   .mole-hole{
     position:relative;aspect-ratio:1;cursor:pointer;
-    -webkit-tap-highlight-color:transparent;overflow:hidden;
+    -webkit-tap-highlight-color:transparent;overflow:visible;
+  }
+  .mole-hole::before{
+    content:'';position:absolute;inset:0;z-index:0;
+    background:radial-gradient(ellipse 55% 50% at 50% 55%,#6b4c30 0%,#4a3020 100%);
+    border-radius:50% 50% 40% 40%;
   }
   .mole-mound{
     position:absolute;bottom:0;left:50%;transform:translateX(-50%);
     width:85%;height:40%;border-radius:50% 50% 0 0;
     background:radial-gradient(ellipse 80% 60% at 50% 100%,#c49a6c 0%,#a0784c 60%,#8b6535 100%);
-    z-index:2;
+    z-index:1;
   }
   .mole-mound::after{
     content:'';position:absolute;top:3px;left:15%;right:15%;height:2px;
@@ -682,8 +687,7 @@
   }
   .mole-body{
     position:absolute;bottom:30%;left:50%;transform:translate(-50%,100%);
-    width:55%;z-index:4;transition:transform 0.12s ease;
-    pointer-events:none;
+    width:55%;z-index:2;transition:transform 0.12s ease;
   }
   .mole-body.up{transform:translate(-50%,0)}
   .mole-body.hit{transform:translate(-50%,0) scale(0.85)}
@@ -1462,6 +1466,7 @@
       body.className='mole-body';
       body.innerHTML='<div class="mole-face"><div class="mole-eye-l"></div><div class="mole-eye-r"></div><div class="mole-nose"></div><div class="mole-mouth"></div><div class="mole-cheek-l"></div><div class="mole-cheek-r"></div></div>';
       hole.appendChild(body);
+      body.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();whack(parseInt(hole.dataset.index))});
       hole.addEventListener('pointerdown',e=>{e.preventDefault();whack(parseInt(hole.dataset.index))});
       grid.appendChild(hole);
     }
