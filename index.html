@@ -18,101 +18,87 @@
     line-height:2.1;
   }
 
-  .page{
-    max-width:380px;margin:0 auto;
-  }
+  .page{max-width:380px;margin:0 auto}
 
-  /* 日期——手写感，轻轻放在左上角 */
-  .dateline{
-    font-size:0.7rem;color:#9e8b7a;letter-spacing:0.05em;
-    margin-bottom:clamp(2.5rem,12vh,5rem);
-  }
+  .dateline{font-size:0.7rem;color:#9e8b7a;letter-spacing:0.05em;margin-bottom:clamp(2.5rem,12vh,5rem)}
 
-  /* 称呼 */
-  .greeting{
-    font-size:clamp(2.2rem,8vw,3.4rem);font-weight:500;line-height:1.3;
-    margin-bottom:1rem;
-  }
+  .greeting{font-size:clamp(2.2rem,8vw,3.4rem);font-weight:500;line-height:1.3;margin-bottom:1rem}
   .greeting .name-zi{display:block}
   .greeting .name-xin{margin-left:0.6em;color:#6b5544}
 
-  .amp{
-    display:inline;font-family:"Georgia","Times New Roman",serif;
-    font-style:italic;font-weight:400;color:#a68b7a;font-size:0.72em;
-    margin:0 0.08em;vertical-align:middle;
-  }
+  .the-line{font-size:clamp(1rem,3.5vw,1.15rem);font-weight:500;color:#4a3424;letter-spacing:0.15em;margin-bottom:clamp(2rem,8vw,3rem);margin-top:0.3rem}
 
-  /* 那句话 */
-  .the-line{
-    font-size:clamp(1rem,3.5vw,1.15rem);font-weight:500;
-    color:#4a3424;letter-spacing:0.15em;
-    margin-bottom:clamp(2rem,8vw,3rem);margin-top:0.3rem;
-  }
+  .spacer{height:clamp(3rem,12vh,6rem)}
 
-  /* 留白 */
-  .spacer{
-    height:clamp(3rem,12vh,6rem);
-  }
-
-  /* 墨环——简单一圈，不规则断点 */
-  .ink-ring{
-    width:clamp(60px,16vw,80px);height:clamp(60px,16vw,80px);
-    margin:0 0 clamp(2.5rem,10vh,4rem);
-  }
+  .ink-ring{width:clamp(60px,16vw,80px);height:clamp(60px,16vw,80px);margin:0 0 clamp(2.5rem,10vh,4rem)}
   .ink-ring svg{width:100%;height:100%;overflow:visible}
-  .ring-a{
-    fill:none;stroke:#8c735e;stroke-width:0.7;
-    stroke-dasharray:5 8 2 10 4 7;stroke-linecap:round;
-    animation:spin 40s linear infinite;transform-origin:center;
-  }
-  .ring-b{
-    fill:none;stroke:#a68b7a;stroke-width:0.4;
-    stroke-dasharray:3 12 1 15;stroke-linecap:round;
-    animation:spin 55s linear reverse infinite;transform-origin:center;
-  }
-  .dot{
-    fill:#7a5c48;
-    animation:spin 40s linear infinite;transform-origin:30px 30px;
-  }
+  .ring-a{fill:none;stroke:#8c735e;stroke-width:0.7;stroke-dasharray:5 8 2 10 4 7;stroke-linecap:round;animation:spin 40s linear infinite;transform-origin:center}
+  .ring-b{fill:none;stroke:#a68b7a;stroke-width:0.4;stroke-dasharray:3 12 1 15;stroke-linecap:round;animation:spin 55s linear reverse infinite;transform-origin:center}
+  .dot{fill:#7a5c48;animation:spin 40s linear infinite;transform-origin:30px 30px}
   @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 
-  /* 引语 —— 偏右一点点，打破对称 */
-  .epigraph{
-    font-size:0.8rem;color:#8c7b6c;line-height:2;
-    margin-bottom:clamp(3rem,12vh,5rem);
-    padding-left:clamp(2rem,15vw,5rem);
-    font-style:italic;
+  .epigraph{font-size:0.8rem;color:#8c7b6c;line-height:2;margin-bottom:clamp(3rem,12vh,5rem);padding-left:clamp(2rem,15vw,5rem);font-style:italic}
+
+  .counter{padding:1.2rem 0;border-top:0.5px solid #d4c8bb;border-bottom:0.5px solid #d4c8bb;margin-bottom:2rem}
+  .counter-label{font-size:0.55rem;color:#a69888;letter-spacing:0.15em;margin-bottom:0.5rem}
+  .counter-row{display:flex;align-items:baseline;gap:0.3rem}
+  .counter-num{font-size:2.8rem;font-weight:300;color:#4a3424;line-height:1}
+  .counter-unit{font-size:0.75rem;color:#8c7b6c}
+  .counter-note{font-size:0.7rem;color:#a69888;margin-top:0.4rem}
+
+  /* === 游戏区分隔 === */
+  .game-section{padding-top:clamp(2.5rem,10vh,4rem)}
+  .game-title{font-size:0.6rem;color:#bfb0a2;letter-spacing:0.2em;text-align:center;margin-bottom:2rem}
+
+  /* === 记忆翻牌 === */
+  .card-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;max-width:300px;margin:0 auto 3rem}
+  .card{
+    aspect-ratio:1;perspective:400px;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;user-select:none;
+  }
+  .card-inner{
+    position:relative;width:100%;height:100%;transition:transform 0.35s ease;
+    transform-style:preserve-3d;
+  }
+  .card.flipped .card-inner,.card.matched .card-inner{transform:rotateY(180deg)}
+  .card-face{
+    position:absolute;inset:0;border-radius:4px;display:flex;align-items:center;justify-content:center;
+    backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  }
+  .card-back{
+    background:#e8e0d6;border:0.5px solid #d4c8bb;
+    font-size:0.55rem;color:#bfb0a2;
+  }
+  .card-front{
+    background:#f0e8db;border:0.5px solid #d4c8bb;transform:rotateY(180deg);
+    font-size:1.6rem;
+  }
+  .card.matched .card-face{border-color:#c4a88c;background:#ede0d2}
+
+  .match-msg{text-align:center;font-size:0.7rem;color:#8c7b6c;margin-top:-1.5rem;margin-bottom:2rem;display:none}
+  .match-msg.show{display:block}
+  .match-msg button{
+    background:none;border:0.5px solid #c4a88c;color:#8c7b6c;font-family:inherit;
+    font-size:0.65rem;padding:0.3rem 1.2rem;border-radius:2px;margin-top:0.5rem;cursor:pointer;
   }
 
-  /* 计数器 */
-  .counter{
-    padding:1.2rem 0;
-    border-top:0.5px solid #d4c8bb;
-    border-bottom:0.5px solid #d4c8bb;
-    margin-bottom:2rem;
+  /* === 刮刮卡 === */
+  .scratch-wrap{max-width:300px;margin:0 auto;text-align:center}
+  .scratch-label{font-size:0.58rem;color:#bfb0a2;letter-spacing:0.15em;margin-bottom:0.8rem}
+  .scratch-card{position:relative;display:inline-block;border-radius:2px;overflow:hidden}
+  .scratch-card canvas{display:block;border-radius:2px}
+  .scratch-reveal{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:clamp(0.9rem,3vw,1rem);color:#6b5544;letter-spacing:0.08em;
+    background:#f0e8db;pointer-events:none;text-align:center;line-height:1.6;padding:1rem;
   }
-  .counter-label{
-    font-size:0.55rem;color:#a69888;letter-spacing:0.15em;margin-bottom:0.5rem;
-  }
-  .counter-row{
-    display:flex;align-items:baseline;gap:0.3rem;
-  }
-  .counter-num{
-    font-size:2.8rem;font-weight:300;color:#4a3424;line-height:1;
-  }
-  .counter-unit{
-    font-size:0.75rem;color:#8c7b6c;
-  }
-  .counter-note{
-    font-size:0.7rem;color:#a69888;margin-top:0.4rem;
-  }
+  .scratch-hint{font-size:0.58rem;color:#c4b8ab;margin-top:0.5rem}
 
-  .end{
-    font-size:0.68rem;color:#bfb0a2;margin-top:1.5rem;
-  }
+  .end{font-size:0.68rem;color:#bfb0a2;margin-top:2rem}
 
   @media(prefers-reduced-motion:reduce){
     .ring-a,.ring-b,.dot{animation:none}
+    .card-inner{transition:none}
   }
 </style>
 </head>
@@ -124,7 +110,7 @@
 
   <div class="greeting">
     <span class="name-zi">林子航</span>
-    <span class="amp" style="font-size:clamp(1.6rem,5vw,2rem);display:block;margin:0.1rem 0">&amp;</span>
+    <span style="font-family:Georgia,serif;font-style:italic;color:#a68b7a;font-size:clamp(1.6rem,5vw,2rem);display:block;margin:0.1rem 0">&amp;</span>
     <span class="name-xin">苏欣念</span>
   </div>
 
@@ -132,7 +118,6 @@
 
   <div class="spacer"></div>
 
-  <!-- 墨环 -->
   <div class="ink-ring">
     <svg viewBox="0 0 60 60">
       <circle class="ring-a" cx="30" cy="30" r="22"/>
@@ -143,7 +128,6 @@
 
   <p class="epigraph">斯人若彩虹<br>遇上方知有</p>
 
-  <!-- 在一起的日子 -->
   <div class="counter">
     <div class="counter-label">在一起</div>
     <div class="counter-row">
@@ -153,15 +137,116 @@
     <div class="counter-note">从 2026.5.3 算起，每天都算数</div>
   </div>
 
+  <!-- 娱乐区 -->
+  <div class="game-section">
+    <p class="game-title">· 玩 一 会 儿 ·</p>
+
+    <!-- 记忆翻牌 -->
+    <div class="card-grid" id="board"></div>
+    <div class="match-msg" id="matchMsg">
+      全找到啦，运气真好
+      <br><button onclick="initCards()">再来一次</button>
+    </div>
+
+    <!-- 刮刮卡 -->
+    <div class="scratch-wrap" style="margin-top:2.5rem">
+      <div class="scratch-label">刮开看看</div>
+      <div class="scratch-card">
+        <div class="scratch-reveal">你是此生<br>最幸运的遇见</div>
+        <canvas id="scratchCanvas"></canvas>
+      </div>
+      <p class="scratch-hint">手指划过灰色区域</p>
+    </div>
+  </div>
+
   <p class="end">—</p>
 
 </div>
 
 <script>
+// 计数器
 (function(){
   var s=new Date('2026-05-03'),e=document.getElementById('days');
   function u(){var n=Math.floor((new Date()-s)/864e5);e.textContent=Math.max(0,n)}
   u();setInterval(u,6e4)
+})();
+
+// 记忆翻牌
+(function(){
+  var emojis=['💕','💖','💗','💘'],cards=[],flipped=[],locked=false,matched=0;
+  var board=document.getElementById('board'),msg=document.getElementById('matchMsg');
+
+  function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+
+  function initCards(){
+    cards=shuffle([...emojis,...emojis]);flipped=[];locked=false;matched=0;msg.classList.remove('show');
+    board.innerHTML='';
+    cards.forEach(function(emoji,i){
+      var card=document.createElement('div');card.className='card';card.dataset.i=i;
+      card.innerHTML='<div class="card-inner"><div class="card-face card-back">?</div><div class="card-face card-front">'+emoji+'</div></div>';
+      card.addEventListener('click',function(){flip(i)});
+      board.appendChild(card);
+    });
+  }
+
+  function flip(i){
+    if(locked)return;
+    var card=board.children[i];
+    if(card.classList.contains('flipped')||card.classList.contains('matched'))return;
+    card.classList.add('flipped');flipped.push(i);
+    if(flipped.length===2){
+      locked=true;
+      var a=flipped[0],b=flipped[1];
+      if(cards[a]===cards[b]){
+        board.children[a].classList.add('matched');
+        board.children[b].classList.add('matched');
+        matched+=2;flipped=[];locked=false;
+        if(matched===8)msg.classList.add('show');
+      }else{
+        setTimeout(function(){
+          board.children[a].classList.remove('flipped');
+          board.children[b].classList.remove('flipped');
+          flipped=[];locked=false;
+        },700);
+      }
+    }
+  }
+
+  initCards();
+})();
+
+// 刮刮卡
+(function(){
+  var canvas=document.getElementById('scratchCanvas');
+  var parent=canvas.parentElement;
+  var w=parent.clientWidth;
+  var h=Math.round(w*0.42);
+  canvas.width=w;canvas.height=h;
+  canvas.style.width=w+'px';canvas.style.height=h+'px';
+
+  var ctx=canvas.getContext('2d');
+  ctx.fillStyle='#c4b8ab';ctx.fillRect(0,0,w,h);
+  ctx.fillStyle='#d4c8bb';ctx.font='0.55rem "Noto Serif SC",serif';ctx.textAlign='center';
+  ctx.fillText('· 刮 开 这 里 ·',w/2,h/2);
+
+  var drawing=false;
+
+  function scratch(e){
+    e.preventDefault();
+    var rect=canvas.getBoundingClientRect();
+    var x=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
+    var y=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;
+    ctx.globalCompositeOperation='destination-out';
+    ctx.beginPath();ctx.arc(x,y,22,0,Math.PI*2);ctx.fill();
+  }
+
+  canvas.addEventListener('touchstart',function(e){drawing=true;scratch(e)});
+  canvas.addEventListener('touchmove',function(e){if(drawing)scratch(e)});
+  canvas.addEventListener('touchend',function(){drawing=false});
+  canvas.addEventListener('mousedown',function(e){drawing=true;scratch(e)});
+  canvas.addEventListener('mousemove',function(e){if(drawing)scratch(e)});
+  canvas.addEventListener('mouseup',function(){drawing=false});
+  canvas.addEventListener('mouseleave',function(){drawing=false});
 })();
 </script>
 
