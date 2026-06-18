@@ -16,17 +16,17 @@
     min-height:100dvh;
     padding-bottom:64px;
     line-height:2.1;
+    /* 确保内容不被底栏遮挡 */
+    padding-bottom:calc(64px + env(safe-area-inset-bottom, 0px));
   }
 
-  .page{max-width:380px;margin:0 auto}
-
-  /* === 主页面板 === */
-  .panel{display:none;padding:clamp(2.5rem,10vh,4.5rem) clamp(1.2rem,6vw,2.5rem)}
+  /* === 面板通用 === */
+  .panel{display:none}
   .panel.active{display:block}
 
-  /* 游戏面板通用 */
-  .game-panel{text-align:center;padding-top:clamp(3rem,12vh,5rem)}
-  .game-panel .game-head{font-size:0.6rem;color:#bfb0a2;letter-spacing:0.2em;margin-bottom:2rem}
+  /* === 主页 === */
+  #panelHome{padding:clamp(2.5rem,10vh,4.5rem) clamp(1.2rem,6vw,2.5rem)}
+  #panelHome .page{max-width:380px;margin:0 auto}
 
   .dateline{font-size:0.7rem;color:#9e8b7a;letter-spacing:0.05em;margin-bottom:clamp(2.5rem,12vh,5rem)}
   .greeting{font-size:clamp(2.2rem,8vw,3.4rem);font-weight:500;line-height:1.3;margin-bottom:1rem}
@@ -44,7 +44,7 @@
 
   .epigraph{font-size:0.8rem;color:#8c7b6c;line-height:2;margin-bottom:clamp(3rem,12vh,5rem);padding-left:clamp(2rem,15vw,5rem);font-style:italic}
 
-  .counter{padding:1.2rem 0;border-top:0.5px solid #d4c8bb;border-bottom:0.5px solid #d4c8bb;margin-bottom:2rem}
+  .counter{padding:1.2rem 0;border-top:0.5px solid #d4c8bb;border-bottom:0.5px solid #d4c8bb;margin-bottom:1.5rem}
   .counter-label{font-size:0.55rem;color:#a69888;letter-spacing:0.15em;margin-bottom:0.5rem}
   .counter-row{display:flex;align-items:baseline;gap:0.3rem}
   .counter-num{font-size:2.8rem;font-weight:300;color:#4a3424;line-height:1}
@@ -52,12 +52,13 @@
   .counter-note{font-size:0.7rem;color:#a69888;margin-top:0.4rem}
   .end-mark{font-size:0.68rem;color:#bfb0a2;margin-top:1.5rem}
 
+  /* === 游戏面板 === */
+  .game-panel{text-align:center;padding:clamp(3rem,12vh,5rem) clamp(1.2rem,6vw,2.5rem) clamp(4rem,14vh,6rem)}
+  .game-head{font-size:0.6rem;color:#bfb0a2;letter-spacing:0.2em;margin-bottom:2rem}
+
   /* 记忆翻牌 */
   .card-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;max-width:300px;margin:0 auto}
-  .card{
-    aspect-ratio:1;perspective:400px;cursor:pointer;
-    -webkit-tap-highlight-color:transparent;user-select:none;
-  }
+  .card{aspect-ratio:1;perspective:400px;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
   .card-inner{position:relative;width:100%;height:100%;transition:transform 0.35s ease;transform-style:preserve-3d}
   .card.flipped .card-inner,.card.matched .card-inner{transform:rotateY(180deg)}
   .card-face{position:absolute;inset:0;border-radius:4px;display:flex;align-items:center;justify-content:center;backface-visibility:hidden;-webkit-backface-visibility:hidden}
@@ -70,40 +71,60 @@
 
   /* 刮刮卡 */
   .scratch-wrap{max-width:300px;margin:0 auto}
-  .scratch-label{font-size:0.58rem;color:#bfb0a2;letter-spacing:0.15em;margin-bottom:0.8rem}
   .scratch-card{position:relative;display:inline-block;border-radius:2px;overflow:hidden}
   .scratch-card canvas{display:block;border-radius:2px}
   .scratch-reveal{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(0.9rem,3.5vw,1rem);color:#6b5544;letter-spacing:0.08em;background:#f0e8db;pointer-events:none;text-align:center;line-height:1.6;padding:1rem}
   .scratch-hint{font-size:0.58rem;color:#c4b8ab;margin-top:0.5rem}
 
-  /* === MIUI 底栏 === */
+  /* ========================================
+     MIUIX NavigationBar — 严格参考 Miuix 规范
+     ======================================== */
   .tab-bar{
-    position:fixed;bottom:0;left:0;right:0;height:64px;
-    background:#faf7f2;display:flex;align-items:center;justify-content:space-around;
-    border-top:0.5px solid #e0d8ce;z-index:100;
-    padding-bottom:env(safe-area-inset-bottom,0);
+    position:fixed;left:0;right:0;bottom:0;z-index:100;
+    height:64px;
+    padding-bottom:env(safe-area-inset-bottom, 0);
+    /* surface 背景 — Miuix 默认白色/超浅灰 */
+    background:#ffffff;
+    /* 顶部分割线 — showDivider 默认 true */
+    border-top:0.5px solid rgba(0,0,0,0.08);
+    /* 内容区 */
+    display:flex;align-items:stretch;
   }
   .tab-item{
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:3px;cursor:pointer;flex:1;height:100%;padding-top:4px;
-    -webkit-tap-highlight-color:transparent;user-select:none;
-    transition:color 0.2s;color:#bfb0a2;
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;
+    /* 未选中项透明度 — Miuix UnselectedAlpha = 0.4 */
+    opacity:0.4;
+    transition:opacity 0.2s,font-weight 0.2s;
+    font-weight:400;
+    color:#000000;
+    padding-top:2px;
   }
-  .tab-item.active{color:#6b5544}
-  .tab-item svg{width:22px;height:22px;transition:transform 0.2s}
-  .tab-item.active svg{transform:scale(1.05)}
-  .tab-label{font-size:0.55rem;letter-spacing:0.05em;font-weight:400}
+  .tab-item.active{
+    opacity:1;
+    font-weight:600;
+    /* 选中项按压透明度 — Miuix SelectedPressedAlpha = 0.5 */
+  }
+  .tab-item:active{
+    opacity:0.5;
+  }
+  .tab-item.active:active{
+    opacity:0.5;
+  }
+  .tab-icon{width:26px;height:26px;margin-bottom:2px;display:flex;align-items:center;justify-content:center}
+  .tab-icon svg{width:26px;height:26px}
+  .tab-label{font-size:12px;letter-spacing:0.02em;line-height:1}
 
   @media(prefers-reduced-motion:reduce){
     .ring-a,.ring-b,.ring-dot{animation:none}
     .card-inner{transition:none}
-    .tab-item,.tab-item svg{transition:none}
+    .tab-item{transition:none}
   }
 </style>
 </head>
 <body>
 
-<!-- ======== 主页 ======== -->
+<!-- ============ 主页 ============ -->
 <div class="panel active" id="panelHome">
   <div class="page">
     <div class="dateline">2026 年 6 月 19 日</div>
@@ -134,14 +155,14 @@
   </div>
 </div>
 
-<!-- ======== 翻牌 ======== -->
+<!-- ============ 翻牌 ============ -->
 <div class="panel game-panel" id="panelCards">
   <p class="game-head">· 记 忆 翻 牌 ·</p>
   <div class="card-grid" id="board"></div>
   <div class="match-msg" id="matchMsg">全找到啦，运气真好<br><button onclick="initCards()">再来一次</button></div>
 </div>
 
-<!-- ======== 刮刮卡 ======== -->
+<!-- ============ 刮刮卡 ============ -->
 <div class="panel game-panel" id="panelScratch">
   <p class="game-head">· 刮 刮 卡 ·</p>
   <div class="scratch-wrap">
@@ -153,27 +174,33 @@
   </div>
 </div>
 
-<!-- ======== 底栏 ======== -->
-<div class="tab-bar" id="tabBar">
+<!-- ============ Miuix 底栏 ============ -->
+<nav class="tab-bar" id="tabBar">
   <div class="tab-item active" data-tab="home">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M3 12l9-8 9 8"/><path d="M5 10v9h4v-5h6v5h4v-9"/>
-    </svg>
+    <div class="tab-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 10l9-8 9 8"/><path d="M5 9v10h4v-6h6v6h4V9"/>
+      </svg>
+    </div>
     <span class="tab-label">主页</span>
   </div>
   <div class="tab-item" data-tab="cards">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="2" y="4" width="13" height="16" rx="2"/><rect x="9" y="4" width="13" height="16" rx="2"/>
-    </svg>
+    <div class="tab-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="4" width="13" height="16" rx="2"/><rect x="8" y="4" width="13" height="16" rx="2"/>
+      </svg>
+    </div>
     <span class="tab-label">翻牌</span>
   </div>
   <div class="tab-item" data-tab="scratch">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M12 2l1.8 5.5h5.7l-4.6 3.3 1.8 5.5L12 13l-4.7 3.3 1.8-5.5-4.6-3.3h5.7z"/>
-    </svg>
+    <div class="tab-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 1.5l2.2 6.8h7.1l-5.7 4.2 2.2 6.7L12 15l-5.8 4.2 2.2-6.7-5.7-4.2h7.1z"/>
+      </svg>
+    </div>
     <span class="tab-label">刮刮</span>
   </div>
-</div>
+</nav>
 
 <script>
 // === 计数器 ===
@@ -185,21 +212,20 @@
 
 // === 底栏切换 ===
 (function(){
-  var tabs=document.querySelectorAll('.tab-item');
   var panels={
     home:document.getElementById('panelHome'),
     cards:document.getElementById('panelCards'),
     scratch:document.getElementById('panelScratch')
   };
-  function switchTab(name){
-    tabs.forEach(function(t){t.classList.remove('active')});
-    Object.keys(panels).forEach(function(k){panels[k].classList.remove('active')});
-    document.querySelector('.tab-item[data-tab="'+name+'"]').classList.add('active');
-    panels[name].classList.add('active');
-    if(name==='scratch'&&!window._scratchReady)initScratch();
-  }
-  tabs.forEach(function(t){
-    t.addEventListener('click',function(){switchTab(this.dataset.tab)});
+  document.querySelectorAll('.tab-item').forEach(function(t){
+    t.addEventListener('click',function(){
+      var name=this.dataset.tab;
+      document.querySelectorAll('.tab-item').forEach(function(x){x.classList.remove('active')});
+      this.classList.add('active');
+      Object.keys(panels).forEach(function(k){panels[k].classList.remove('active')});
+      panels[name].classList.add('active');
+      if(name==='scratch'&&!window._scratchReady)initScratch();
+    });
   });
 })();
 
@@ -248,8 +274,7 @@ initCards();
 function initScratch(){
   window._scratchReady=true;
   var canvas=document.getElementById('scratchCanvas');
-  var parent=canvas.parentElement;
-  var w=Math.min(parent.clientWidth||300,300);
+  var w=Math.min(canvas.parentElement.clientWidth||300,300);
   var h=Math.round(w*0.44);
   canvas.width=w;canvas.height=h;
   canvas.style.width=w+'px';canvas.style.height=h+'px';
