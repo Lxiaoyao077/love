@@ -485,6 +485,158 @@
     .connector,.ring-path,.ring-dot,.glass-chroma,.wish-coin,.wish-ripple{animation:none}
     .nav-indicator{transition:none}
   }
+
+  /* ====== 游戏中心 ====== */
+  .game-hub{
+    display:flex;flex-wrap:wrap;gap:clamp(10px,3vw,14px);
+    max-width:380px;width:100%;justify-content:center;
+  }
+  .game-card{
+    width:calc(50% - 7px);min-width:140px;
+    padding:clamp(14px,3vw,18px) clamp(10px,2vw,14px);
+    border-radius:16px;border:0.5px solid oklch(0.55 0.02 65 / 0.22);
+    background:rgba(255,255,255,0.75);
+    cursor:pointer;-webkit-tap-highlight-color:transparent;
+    transition:all 0.35s cubic-bezier(0.05,0.7,0.1,1);
+    text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;
+    animation:cardIn 0.5s cubic-bezier(0.05,0.7,0.1,1) both;
+  }
+  .game-card:nth-child(1){animation-delay:0s}
+  .game-card:nth-child(2){animation-delay:0.05s}
+  .game-card:nth-child(3){animation-delay:0.1s}
+  .game-card:nth-child(4){animation-delay:0.15s}
+  .game-card:nth-child(5){animation-delay:0.2s}
+  .game-card:nth-child(6){animation-delay:0.25s}
+  .game-card:nth-child(7){animation-delay:0.3s}
+  @keyframes cardIn{
+    0%{opacity:0;transform:translateY(16px) scale(0.94)}
+    100%{opacity:1;transform:translateY(0) scale(1)}
+  }
+  .game-card:active{transform:scale(0.94);background:rgba(245,240,235,0.9)}
+  .game-card-icon{font-size:clamp(1.6rem,5vw,2.2rem);line-height:1}
+  .game-card-name{
+    font-family:"Noto Sans SC","PingFang SC",sans-serif;
+    font-size:0.72rem;font-weight:500;color:oklch(0.24 0.03 55);
+    letter-spacing:0.06em;
+  }
+  .game-back{
+    position:absolute;top:clamp(2rem,8vh,3rem);left:clamp(1rem,4vw,2rem);
+    font-family:"Noto Sans SC",sans-serif;font-size:0.72rem;
+    color:oklch(0.35 0.02 60);letter-spacing:0.1em;cursor:pointer;
+    padding:6px 12px;border-radius:20px;
+    background:rgba(245,245,245,0.5);border:0.5px solid oklch(0.6 0.02 65 / 0.2);
+    -webkit-tap-highlight-color:transparent;z-index:10;
+  }
+  .game-back:active{background:rgba(235,230,225,0.8)}
+
+  /* ====== 2048 ====== */
+  .t2048-board{
+    position:relative;width:clamp(280px,80vw,320px);aspect-ratio:1;
+    background:rgba(230,225,218,0.5);border-radius:12px;
+    padding:clamp(6px,2vw,10px);display:grid;
+    grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);
+    gap:clamp(5px,1.5vw,8px);
+  }
+  .t2048-tile{
+    border-radius:8px;display:flex;align-items:center;justify-content:center;
+    font-family:"Noto Sans SC",sans-serif;font-weight:700;
+    font-size:clamp(1rem,3.5vw,1.4rem);color:oklch(0.2 0.02 60);
+    background:rgba(210,205,195,0.4);transition:all 0.18s ease;
+  }
+  .t2048-tile[data-v="2"]{background:rgba(240,235,225,0.9);color:oklch(0.3 0.02 60)}
+  .t2048-tile[data-v="4"]{background:rgba(235,225,210,0.9);color:oklch(0.3 0.03 55)}
+  .t2048-tile[data-v="8"]{background:rgba(245,200,140,0.7);color:#fff}
+  .t2048-tile[data-v="16"]{background:rgba(245,180,120,0.7);color:#fff}
+  .t2048-tile[data-v="32"]{background:rgba(245,150,100,0.7);color:#fff}
+  .t2048-tile[data-v="64"]{background:rgba(245,120,80,0.7);color:#fff}
+  .t2048-tile[data-v="128"]{background:rgba(240,200,100,0.7);color:#fff;font-size:clamp(0.9rem,3vw,1.2rem)}
+  .t2048-tile[data-v="256"]{background:rgba(240,190,90,0.7);color:#fff;font-size:clamp(0.9rem,3vw,1.2rem)}
+  .t2048-tile[data-v="512"]{background:rgba(240,180,80,0.7);color:#fff;font-size:clamp(0.9rem,3vw,1.2rem)}
+  .t2048-tile[data-v="1024"]{background:rgba(240,170,60,0.7);color:#fff;font-size:clamp(0.75rem,2.5vw,1rem)}
+  .t2048-tile[data-v="2048"]{background:rgba(230,150,40,0.8);color:#fff;font-size:clamp(0.75rem,2.5vw,1rem)}
+  .t2048-score{
+    font-family:"Noto Sans SC",sans-serif;font-size:0.78rem;
+    color:oklch(0.3 0.03 55);letter-spacing:0.1em;margin-bottom:0.8rem;
+  }
+  .t2048-over{
+    text-align:center;margin-top:1rem;opacity:0;transition:all 0.5s;
+  }
+  .t2048-over.show{opacity:1}
+  .t2048-retry{
+    display:inline-block;padding:8px 28px;border-radius:20px;
+    border:0.5px solid oklch(0.45 0.03 50 / 0.3);
+    background:rgba(255,255,255,0.7);
+    font-family:"Noto Sans SC",sans-serif;font-size:0.72rem;
+    color:oklch(0.28 0.03 55);letter-spacing:0.15em;cursor:pointer;margin-top:0.5rem;
+  }
+  .t2048-retry:active{transform:scale(0.95)}
+
+  /* ====== 猜数字 ====== */
+  .guess-input-row{
+    display:flex;gap:8px;justify-content:center;margin-bottom:1rem;
+  }
+  .guess-digit{
+    width:44px;height:52px;border-radius:10px;
+    border:0.5px solid oklch(0.55 0.02 65 / 0.35);
+    background:rgba(255,255,255,0.8);text-align:center;
+    font-family:"Noto Sans SC",sans-serif;font-size:1.2rem;font-weight:500;
+    color:oklch(0.22 0.03 55);-webkit-appearance:none;outline:none;
+  }
+  .guess-digit:focus{border-color:oklch(0.45 0.06 155 / 0.5);box-shadow:0 0 0 2px oklch(0.5 0.06 155 / 0.12)}
+  .guess-submit{
+    display:block;margin:0 auto 1rem;padding:10px 32px;border-radius:20px;
+    border:0.5px solid oklch(0.45 0.03 50 / 0.3);
+    background:rgba(255,255,255,0.7);
+    font-family:"Noto Sans SC",sans-serif;font-size:0.78rem;
+    color:oklch(0.28 0.03 55);letter-spacing:0.1em;cursor:pointer;
+  }
+  .guess-submit:active{transform:scale(0.95)}
+  .guess-history{
+    max-width:300px;width:100%;max-height:200px;overflow-y:auto;
+    font-family:"Noto Sans SC",sans-serif;font-size:0.7rem;
+    color:oklch(0.32 0.02 60);letter-spacing:0.06em;
+    padding:0 0.5rem;
+  }
+  .guess-history-item{
+    padding:6px 12px;border-radius:8px;margin-bottom:4px;
+    background:rgba(245,245,245,0.5);
+  }
+  .guess-result-text{
+    text-align:center;font-family:"Noto Sans SC",sans-serif;font-size:0.78rem;
+    color:oklch(0.24 0.04 45);margin-bottom:0.8rem;letter-spacing:0.08em;
+    opacity:0;transition:opacity 0.4s;
+  }
+  .guess-result-text.show{opacity:1}
+
+  /* ====== 反应速度 ====== */
+  .react-area{
+    width:clamp(160px,45vw,200px);aspect-ratio:1;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;-webkit-tap-highlight-color:transparent;
+    transition:background 0.25s ease;
+    font-family:"Noto Sans SC",sans-serif;font-size:0.85rem;
+    letter-spacing:0.12em;color:oklch(0.35 0.02 65);
+    user-select:none;
+  }
+  .react-area.waiting{
+    background:rgba(220,60,60,0.12);border:2px solid rgba(220,60,60,0.25);
+  }
+  .react-area.ready{
+    background:rgba(80,180,100,0.18);border:2px solid rgba(80,180,100,0.35);color:#fff;
+  }
+  .react-area.result{
+    background:rgba(245,245,245,0.5);border:2px solid oklch(0.55 0.02 65 / 0.2);
+  }
+  .react-ms{
+    font-family:"Cormorant Garamond",serif;
+    font-size:clamp(2.2rem,7vw,3rem);font-weight:600;
+    color:oklch(0.2 0.035 45);
+  }
+  .react-ms span{font-size:0.9rem;font-weight:400;color:oklch(0.35 0.02 60)}
+  .react-best{
+    font-family:"Noto Sans SC",sans-serif;font-size:0.65rem;
+    color:oklch(0.35 0.02 65);letter-spacing:0.1em;margin-top:0.8rem;
+  }
 </style>
 </head>
 <body>
@@ -520,8 +672,25 @@
   <div class="footer-sep"></div>
 </div>
 
+<!-- ============ 游戏中心 ============ -->
+<div class="page-panel" id="gameHubPanel">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%">
+    <p class="game-title">· 游 戏 中 心 ·</p>
+    <div class="game-hub" id="gameHub">
+      <div class="game-card" data-game="flip"><span class="game-card-icon">🃏</span><span class="game-card-name">翻牌记忆</span></div>
+      <div class="game-card" data-game="scratch"><span class="game-card-icon">✨</span><span class="game-card-name">刮开看看</span></div>
+      <div class="game-card" data-game="quiz"><span class="game-card-icon">💡</span><span class="game-card-name">默契考验</span></div>
+      <div class="game-card" data-game="wish"><span class="game-card-icon">🪷</span><span class="game-card-name">许愿池</span></div>
+      <div class="game-card" data-game="t2048"><span class="game-card-icon">🔢</span><span class="game-card-name">2048</span></div>
+      <div class="game-card" data-game="guess"><span class="game-card-icon">🎯</span><span class="game-card-name">猜数字</span></div>
+      <div class="game-card" data-game="react"><span class="game-card-icon">⚡</span><span class="game-card-name">反应速度</span></div>
+    </div>
+  </div>
+</div>
+
 <!-- ============ 翻牌 ============ -->
 <div class="page-panel" id="flipPanel">
+  <button class="game-back" data-back="gameHubPanel">← 游戏中心</button>
   <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%">
     <p class="game-title">· 翻 牌 记 忆 ·</p>
     <div class="flip-grid" id="flipGrid"></div>
@@ -534,6 +703,7 @@
 
 <!-- ============ 刮刮卡 ============ -->
 <div class="page-panel" id="scratchPanel">
+  <button class="game-back" data-back="gameHubPanel">← 游戏中心</button>
   <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%">
     <p class="game-title">· 刮 开 看 看 ·</p>
     <div class="scratch-wrap" id="scratchWrap">
@@ -545,6 +715,7 @@
 
 <!-- ============ 问答 ============ -->
 <div class="page-panel" id="quizPanel">
+  <button class="game-back" data-back="gameHubPanel">← 游戏中心</button>
   <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%">
     <p class="game-title">· 默 契 大 考 验 ·</p>
     <div class="quiz-wrap" id="quizWrap">
@@ -562,6 +733,7 @@
 
 <!-- ============ 许愿池 ============ -->
 <div class="page-panel" id="wishPanel">
+  <button class="game-back" data-back="gameHubPanel">← 游戏中心</button>
   <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%">
     <p class="game-title">· 许 愿 池 ·</p>
     <div class="wish-wrap">
@@ -575,25 +747,58 @@
   </div>
 </div>
 
+<!-- ============ 2048 ============ -->
+<div class="page-panel" id="t2048Panel">
+  <button class="game-back" data-back="gameHubPanel">← 游戏中心</button>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%">
+    <p class="game-title">· 2 0 4 8 ·</p>
+    <p class="t2048-score">得分: <b id="t2048Score">0</b></p>
+    <div class="t2048-board" id="t2048Board"></div>
+    <div class="t2048-over" id="t2048Over">
+      <p>游戏结束！</p>
+      <button class="t2048-retry" id="t2048Retry">再来一局</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 猜数字 ============ -->
+<div class="page-panel" id="guessPanel">
+  <button class="game-back" data-back="gameHubPanel">← 游戏中心</button>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%">
+    <p class="game-title">· 猜 数 字 ·</p>
+    <p class="guess-result-text" id="guessResult"></p>
+    <div class="guess-input-row" id="guessInputRow">
+      <input class="guess-digit" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+      <input class="guess-digit" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+      <input class="guess-digit" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+      <input class="guess-digit" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+    </div>
+    <button class="guess-submit" id="guessSubmit">猜一猜</button>
+    <div class="guess-history" id="guessHistory"></div>
+  </div>
+</div>
+
+<!-- ============ 反应速度 ============ -->
+<div class="page-panel" id="reactPanel">
+  <button class="game-back" data-back="gameHubPanel">← 游戏中心</button>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%">
+    <p class="game-title">· 反 应 速 度 ·</p>
+    <div class="react-area waiting" id="reactArea">轻触开始</div>
+    <p class="react-best" id="reactBest">最快记录: --</p>
+  </div>
+</div>
+
 <!-- 底栏 -->
 <nav class="glass-nav" id="glassNav">
   <div class="glass-chroma"></div>
   <div class="nav-indicator" id="navIndicator"></div>
-  <div class="nav-item" data-tab="flip">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><rect x="5" y="5" width="14" height="14" rx="2"/><line x1="12" y1="7" x2="12" y2="17"/><line x1="12" y1="12" x2="6" y2="12"/><line x1="12" y1="12" x2="18" y2="12"/></svg>
-    <span class="nav-label">翻牌</span>
-  </div>
-  <div class="nav-item" data-tab="scratch">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>
-    <span class="nav-label">刮刮</span>
+  <div class="nav-item" data-tab="game">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M8 12v.01"/><path d="M12 9v.01"/><path d="M12 15v.01"/><path d="M16 12v.01"/></svg>
+    <span class="nav-label">游戏</span>
   </div>
   <div class="nav-item home active" data-tab="home">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9,21 9,13 15,13 15,21"/></svg>
     <span class="nav-label">主页</span>
-  </div>
-  <div class="nav-item" data-tab="quiz">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.8" fill="currentColor" stroke="none"/></svg>
-    <span class="nav-label">问答</span>
   </div>
   <div class="nav-item" data-tab="wish">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8 6 2 8 2 12c0 3 2 5 5 6l-1 4 4-2c1 0.5 2 1 4 1s3-0.5 4-1l4 2-1-4c3-1 5-3 5-6 0-4-6-6-10-10z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -604,7 +809,11 @@
 <script>
 /* ====== 核心框架 ====== */
 (function(){
-  const panels={flip:'flipPanel',scratch:'scratchPanel',home:'homePanel',quiz:'quizPanel',wish:'wishPanel'};
+  const panels={
+    game:'gameHubPanel',home:'homePanel',wish:'wishPanel',
+    flip:'flipPanel',scratch:'scratchPanel',quiz:'quizPanel',
+    t2048:'t2048Panel',guess:'guessPanel',react:'reactPanel'
+  };
   const nav=document.getElementById('glassNav');
   const indicator=document.getElementById('navIndicator');
   const items=nav.querySelectorAll('.nav-item');
@@ -618,10 +827,14 @@
 
   function switchPanel(tab){
     Object.values(panels).forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active')});
-    const panel=document.getElementById(panels[tab]);
-    if(!panel)return;
-    panel.classList.add('active');
-    panel.scrollIntoView({behavior:'smooth',block:'start'});
+    const pid=panels[tab];
+    if(pid)document.getElementById(pid).classList.add('active');
+    items.forEach(el=>{el.classList.remove('active');if(el.dataset.tab===tab)el.classList.add('active')});
+    activeItem=nav.querySelector('.nav-item.active');
+    moveIndicator(activeItem);
+    if(tab==='scratch'){setTimeout(()=>{window._initScratch&&window._initScratch()},100)}
+    if(tab==='t2048'){setTimeout(()=>{window._init2048&&window._init2048()},100)}
+    if(tab==='guess'){setTimeout(()=>{window._initGuess&&window._initGuess()},100)}
   }
 
   if(activeItem){requestAnimationFrame(()=>requestAnimationFrame(()=>moveIndicator(activeItem)))}
@@ -630,12 +843,27 @@
     item.addEventListener('click',function(e){
       e.preventDefault();
       const tab=this.dataset.tab;
-      items.forEach(i=>i.classList.remove('active'));
-      this.classList.add('active');activeItem=this;
-      moveIndicator(this);
       this.style.transform='scale(0.85)';
       setTimeout(()=>{this.style.transform=''},150);
       switchPanel(tab);
+    });
+  });
+
+  // Game hub card clicks
+  const hub=document.getElementById('gameHub');
+  if(hub){
+    hub.addEventListener('click',e=>{
+      const card=e.target.closest('.game-card');
+      if(!card)return;
+      switchPanel(card.dataset.game);
+    });
+  }
+
+  // Back buttons
+  document.querySelectorAll('.game-back').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const back=btn.dataset.back;
+      if(back)switchPanel(back==='gameHubPanel'?'game':back);
     });
   });
 
@@ -785,7 +1013,7 @@
   const questions=[
     {
       q:'TA 最喜欢叫你什么？',
-      opts:['宝宝','妈咪','daddy','小狗'],
+      opts:['宝宝','亲爱的','小笨蛋','傻瓜'],
       a:2
     },
     {
@@ -902,6 +1130,179 @@
       blessing.style.opacity='1';
       blessing.style.transform='translateY(0)';
     },120);
+  });
+})();
+
+/* ====== 2048 ====== */
+(function(){
+  let board,score,over;
+  const elBoard=document.getElementById('t2048Board');
+  const elScore=document.getElementById('t2048Score');
+  const elOver=document.getElementById('t2048Over');
+  const elRetry=document.getElementById('t2048Retry');
+
+  function empty(){const e=[];for(let r=0;r<4;r++)for(let c=0;c<4;c++)if(!board[r][c])e.push([r,c]);return e}
+
+  function randTile(){
+    const e=empty();if(!e.length)return;
+    const[r,c]=e[Math.floor(Math.random()*e.length)];
+    board[r][c]=Math.random()<0.9?2:4;
+  }
+
+  function render(){
+    elBoard.innerHTML='';
+    for(let r=0;r<4;r++)for(let c=0;c<4;c++){
+      const t=document.createElement('div');
+      t.className='t2048-tile';
+      if(board[r][c]){t.textContent=board[r][c];t.setAttribute('data-v',board[r][c])}
+      elBoard.appendChild(t);
+    }
+    elScore.textContent=score;
+  }
+
+  function slide(row){
+    let arr=row.filter(v=>v);
+    for(let i=0;i<arr.length-1;i++){if(arr[i]===arr[i+1]){arr[i]*=2;score+=arr[i];arr.splice(i+1,1);arr.push(0)}}
+    while(arr.length<4)arr.push(0);
+    return arr;
+  }
+
+  function move(dir){
+    const old=board.map(r=>[...r]);
+    if(dir==='left'){for(let r=0;r<4;r++)board[r]=slide(board[r])}
+    else if(dir==='right'){for(let r=0;r<4;r++)board[r]=slide([...board[r]].reverse()).reverse()}
+    else if(dir==='up'){for(let c=0;c<4;c++){const col=slide([board[0][c],board[1][c],board[2][c],board[3][c]]);for(let r=0;r<4;r++)board[r][c]=col[r]}}
+    else if(dir==='down'){for(let c=0;c<4;c++){const col=slide([board[3][c],board[2][c],board[1][c],board[0][c]]).reverse();for(let r=0;r<4;r++)board[r][c]=col[r]}}
+    const changed=JSON.stringify(old)!==JSON.stringify(board);
+    if(changed){randTile();render();checkGameOver()}
+  }
+
+  function checkGameOver(){
+    for(let r=0;r<4;r++)for(let c=0;c<4;c++){if(!board[r][c]){over=false;return}
+      const v=board[r][c];
+      if((r<3&&board[r+1][c]===v)||(c<3&&board[r][c+1]===v)){over=false;return}}
+    over=true;elOver.classList.add('show');
+  }
+
+  function init(){
+    board=[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];score=0;over=false;
+    elOver.classList.remove('show');
+    randTile();randTile();render();
+  }
+
+  let sx=0,sy=0;
+  elBoard.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY});
+  elBoard.addEventListener('touchend',e=>{
+    if(over)return;
+    const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)<20&&Math.abs(dy)<20)return;
+    move(Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up'));
+  });
+
+  let keyHandled=false;
+  document.addEventListener('keydown',e=>{
+    if(over||!document.getElementById('t2048Panel').classList.contains('active'))return;
+    if(keyHandled)return;keyHandled=true;
+    setTimeout(()=>{keyHandled=false},80);
+    const map={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down'};
+    if(map[e.key]){e.preventDefault();move(map[e.key])}
+  });
+
+  elRetry.addEventListener('click',init);
+  window._init2048=init;
+  init();
+})();
+
+/* ====== 猜数字 ====== */
+(function(){
+  let answer,cnt;
+  const inputs=document.querySelectorAll('#guessInputRow .guess-digit');
+  const elResult=document.getElementById('guessResult');
+  const elHistory=document.getElementById('guessHistory');
+  const elSubmit=document.getElementById('guessSubmit');
+  const elRow=document.getElementById('guessInputRow');
+
+  function newAnswer(){
+    const digits=[];
+    while(digits.length<4){const d=Math.floor(Math.random()*10);if(!digits.includes(d))digits.push(d)}
+    return digits.join('');
+  }
+
+  function init(){
+    answer=newAnswer();cnt=0;
+    elResult.textContent='';elResult.classList.remove('show');
+    elHistory.innerHTML='';
+    inputs.forEach(i=>i.value='');
+    inputs[0].focus();
+  }
+
+  inputs.forEach((inp,i)=>{
+    inp.addEventListener('input',()=>{
+      inp.value=inp.value.replace(/[^0-9]/g,'').slice(0,1);
+      if(inp.value&&i<3)inputs[i+1].focus();
+    });
+    inp.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!inp.value&&i>0)inputs[i-1].focus()});
+  });
+
+  function submit(){
+    const guessArr=Array.from(inputs).map(i=>i.value);
+    if(guessArr.some(v=>!v)){elResult.textContent='请填满4个数字';elResult.classList.add('show');return}
+    const guess=guessArr.join('');
+    if(new Set(guessArr).size!==4){elResult.textContent='数字不能重复哦';elResult.classList.add('show');return}
+    cnt++;
+    let a=0,b=0;
+    for(let i=0;i<4;i++){if(guess[i]===answer[i])a++;else if(answer.includes(guess[i]))b++}
+    const item=document.createElement('div');
+    item.className='guess-history-item';
+    item.textContent=`#${cnt}  ${guess}  →  ${a}A${b}B`;
+    elHistory.prepend(item);
+    inputs.forEach(i=>i.value='');
+    inputs[0].focus();
+    if(a===4){
+      elResult.textContent=`恭喜！答案就是 ${answer}，用了 ${cnt} 次`;
+      elResult.classList.add('show');
+      setTimeout(init,3000);
+    }else{
+      elResult.textContent=`${a}A${b}B`;
+      elResult.classList.add('show');
+    }
+  }
+
+  elSubmit.addEventListener('click',submit);
+  elRow.addEventListener('keydown',e=>{if(e.key==='Enter')submit()});
+
+  window._initGuess=init;
+  init();
+})();
+
+/* ====== 反应速度 ====== */
+(function(){
+  const area=document.getElementById('reactArea');
+  const elBest=document.getElementById('reactBest');
+  let state='waiting',timeoutId=null,startTime=0,best=Infinity;
+
+  function setState(s,text){
+    area.className='react-area '+s;area.textContent=text;
+    state=s;
+  }
+
+  area.addEventListener('click',()=>{
+    if(state==='waiting'){
+      setState('waiting','等待信号...');
+      const delay=1500+Math.random()*2500;
+      timeoutId=setTimeout(()=>{setState('ready','现在！');startTime=performance.now()},delay);
+    }else if(state==='ready'){
+      const rt=Math.round(performance.now()-startTime);
+      setState('result','');
+      area.innerHTML=`<div class="react-ms">${rt}<span>ms</span></div>`;
+      if(rt<best){best=rt;elBest.textContent=`最快记录: ${best} ms`}
+      setTimeout(()=>{setState('waiting','再来一次')},2000);
+    }else if(state==='result'){
+      clearTimeout(timeoutId);
+      setState('waiting','等待信号...');
+      const delay=1500+Math.random()*2500;
+      timeoutId=setTimeout(()=>{setState('ready','现在！');startTime=performance.now()},delay);
+    }
   });
 })();
 </script>
