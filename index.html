@@ -712,9 +712,7 @@
     flex:1;min-height:0;display:flex;flex-direction:column;
     max-height:100%;
   }
-  .music-source-tabs{display:flex;gap:0;margin-bottom:0.6rem;background:rgba(0,0,0,0.04);border-radius:10px;padding:3px;flex-shrink:0}
-  .music-source-tab{flex:1;text-align:center;padding:7px 0;font-size:0.72rem;font-family:"Noto Sans SC",sans-serif;color:oklch(0.35 0.03 45);border-radius:8px;border:none;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background 0.2s,color 0.2s;-webkit-appearance:none;appearance:none}
-  .music-source-tab.active{background:#fff;color:oklch(0.2 0.04 40);box-shadow:0 1px 4px rgba(0,0,0,0.08);font-weight:500}
+
   .music-search{display:flex;gap:8px;margin-bottom:0.5rem;flex-shrink:0}
   .music-search input{flex:1;padding:8px 12px;border:0.5px solid oklch(0.45 0.03 50 / 0.2);border-radius:10px;font-size:0.75rem;font-family:"Noto Sans SC",sans-serif;background:rgba(255,255,255,0.6);outline:none;color:oklch(0.25 0.03 45)}
   .music-search button{padding:8px 16px;border-radius:10px;border:none;background:oklch(0.45 0.03 50);color:#fff;font-size:0.72rem;font-family:"Noto Sans SC",sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;-webkit-appearance:none;appearance:none}
@@ -1017,10 +1015,6 @@
   <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;width:100%;padding-top:0.5rem">
     <p class="game-title" style="margin-bottom:0.5rem">· 音 乐 ·</p>
     <div class="music-scene">
-      <div class="music-source-tabs">
-        <button class="music-source-tab active" data-src="qq" onclick="switchMusicSrc('qq')">QQ音乐</button>
-        <button class="music-source-tab" data-src="netease" onclick="switchMusicSrc('netease')">网易云</button>
-      </div>
       <div class="music-search">
         <input type="text" id="musicSearchInput" placeholder="搜索歌曲..." onkeydown="if(event.key==='Enter')searchMusic()">
         <button onclick="searchMusic()">搜索</button>
@@ -1646,165 +1640,59 @@ function endMole(){
 
 window._initMole=function(){startMole()};
 
-/* ====== 音乐播放器 v5 — QQ搜索 + NetEase音频 ====== */
-var _DM='https://music.3e0.cn',_curSrc='qq',_sr=[],_mInit=false,_audio=null,_curIdx=-1;
-
-/* ==== 工具 ==== */
-function _jsonp(url,paramName,t){
-  return new Promise(function(resolve,reject){
-    var cb='_cb'+Date.now()+'_'+Math.floor(Math.random()*1e6);
-    var done=false;
-    window[cb]=function(data){
-      if(done)return;done=true;
-      delete window[cb];try{document.head.removeChild(s)}catch(e){}
-      resolve(data);
-    };
-    var s=document.createElement('script');
-    s.src=url+'&'+(paramName||'callback')+'='+cb;
-    s.onerror=function(){
-      if(done)return;done=true;
-      delete window[cb];try{document.head.removeChild(s)}catch(e){}
-      reject(new Error('jsonp err'));
-    };
-    document.head.appendChild(s);
-    var timeout=t||15000;
-    setTimeout(function(){
-      if(done)return;done=true;
-      delete window[cb];try{document.head.removeChild(s)}catch(e){}
-      reject(new Error('timeout'));
-    },timeout);
-  });
-}
+/* ====== 音乐播放器 v6 — iTunes 公开 API（实时搜索 + 30s试听） ====== */
+var _sr=[],_mInit=false,_audio=null,_curIdx=-1;
 function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-function _qqCover(amid,s){s=s||300;return amid?'https://y.gtimg.cn/music/photo_new/T002R'+s+'x'+s+'M000'+amid+'.jpg':''}
 
-/* ==== 常量 ==== */
-var _DM='https://music.3e0.cn',_curSrc='qq',_sr=[],_mInit=false,_audio=null,_curIdx=-1,_searchRetry=0;
-
-/* NetEase 已知 ID 表（优先音源） */
-var _NE_KNOWN={
-  '晴天':'186016','七里香':'186009','稻香':'186001','夜曲':'186002',
-  '青花瓷':'186014','告白气球':'416892261','简单爱':'186011','听妈妈的话':'186004',
-  '搁浅':'186015','说好的幸福呢':'186003','最长的电影':'185998','轨迹':'185996',
-  '安静':'185994','不能说的秘密':'185997','珊瑚海':'186020','彩虹':'186021',
-  '给我一首歌的时间':'186022','本草纲目':'186025','龙拳':'186033',
-  '等你下课':'514764901','Mojito':'1461408074','反方向的钟':'296537',
-  '兰亭序':'185963','一路向北':'185990','甜甜的':'186019','借口':'185995',
-  '退后':'186018','千里之外':'186024','菊花台':'186023','红尘客栈':'186026',
-  '发如雪':'186027','可爱女人':'186028','爱在西元前':'186029','半岛铁盒':'186030',
-  '东风破':'186031','以父之名':'186032','三年二班':'186035','将军':'186036',
-  '园游会':'186037','屋顶':'186038','枫':'186039','黑色幽默':'185991','暗号':'186006'
-};
-
-/* 默认歌单（确保有可播放内容） */
-var _DEFAULT_SONGS=[
-  {name:'晴天',artist:'周杰伦',songmid:'0039MnYb0qxYhV',albummid:'000MkMni19ClKG',neid:'186016'},
-  {name:'七里香',artist:'周杰伦',songmid:'004Z8Ihr0JIu5s',albummid:'003DFRzD192KKD',neid:'186009'},
-  {name:'稻香',artist:'周杰伦',songmid:'002Ne8Ut3QoDMx',albummid:'001jyBRQ0ETwLG',neid:'186001'},
-  {name:'夜曲',artist:'周杰伦',songmid:'001JD1dQ3QoDMx',albummid:'002eFUFm2XYZ7z',neid:'186002'},
-  {name:'青花瓷',artist:'周杰伦',songmid:'002eFUFm2XYZ7z',albummid:'000NfvPz1ZQYTa',neid:'186014'},
-  {name:'告白气球',artist:'周杰伦',songmid:'003RMaRI1iFoYd',albummid:'003y8dsH2wBHlo',neid:'416892261'},
-  {name:'简单爱',artist:'周杰伦',songmid:'000oGz9p3QoDMx',albummid:'000jCROo1DjBN6',neid:'186011'},
-  {name:'听妈妈的话',artist:'周杰伦',songmid:'001zMQr71F1Qo8',albummid:'000AH2113XnNQE',neid:'186004'},
-  {name:'搁浅',artist:'周杰伦',songmid:'0023fQDC1qgPUo',albummid:'002jLG9d1qgPUp',neid:'186015'},
-  {name:'一路向北',artist:'周杰伦',songmid:'003F1VGR1UIgY1',albummid:'003F1VGR1UIgY1',neid:'185990'},
-  {name:'甜甜的',artist:'周杰伦',songmid:'001Bxskt3VcZCA',albummid:'004WVA3R4LLAKS',neid:'186019'},
-  {name:'千里之外',artist:'周杰伦',songmid:'002pPeEV39fR0A',albummid:'004NGYH41nIon6',neid:'186024'}
-];
-
-/* NetEase 专属推荐歌单（当 tab=netease 时展示） */
-var _NE_PLAYLIST=_DEFAULT_SONGS;
-
-/* ==== QQ 搜索 / 解析 ==== */
-function _qqSearch(kw,attempt){
-  attempt=attempt||1;
-  var url='https://c.y.qq.com/soso/fcgi-bin/client_search_cp?format=jsonp&w='+encodeURIComponent(kw)+'&n=30&p=1&cr=1&lossless=0&flag_qc=0';
-  var timeout=attempt===1?12000:18000;
-  return _jsonp(url,'callback',timeout).catch(function(){
-    if(attempt<3) return _qqSearch(kw,attempt+1);
-    return Promise.reject(new Error('搜索超时，已重试3次'));
-  });
-}
-function _qqHot(){
-  var url='https://c.y.qq.com/soso/fcgi-bin/client_search_cp?format=jsonp&w=%E7%83%AD%E6%AD%8C&n=25&p=1&cr=1&lossless=0&flag_qc=0';
-  return _jsonp(url,'callback',15000);
-}
-function _qqParse(raw){
-  var list=raw&&raw.data&&raw.data.song&&raw.data.song.list;
-  if(!list||!list.length)return[];
-  return list.map(function(it){
-    var s=[];(it.singer||[]).forEach(function(x){if(x.name)s.push(x.name)});
-    var amid=it.albummid||'',smid=it.songmid||'';
-    var name=it.songname||it.name||'';
-    return {
-      id:smid||name,name:name,artist:s.join('/'),
-      album:it.albumname||'',songmid:smid,albummid:amid,
-      cover:amid?_qqCover(amid):'',
-      neid:_NE_KNOWN[name]||null
-    };
+/* ==== iTunes 搜索（Apple 公开 API，免费 & CORS） ==== */
+function _iTunesSearch(kw){
+  var url='https://itunes.apple.com/search?term='+encodeURIComponent(kw)+'&country=cn&media=music&entity=song&limit=30';
+  return fetch(url).then(function(r){return r.json()}).then(function(data){
+    var results=data&&data.results;
+    if(!results||!results.length)return[];
+    return results.filter(function(it){return it.kind==='song'}).map(function(it){
+      var cover=it.artworkUrl100?it.artworkUrl100.replace('100x100','300x300'):'';
+      return {
+        id:it.trackId+'',name:it.trackName||'',
+        artist:it.artistName||'',album:it.collectionName||'',
+        cover:cover,previewUrl:it.previewUrl||'',
+        duration:it.trackTimeMillis||0
+      };
+    });
   });
 }
 
-/* ==== 加载列表（按当前 tab 走不同逻辑） ==== */
+/* ==== 默认加载（热门中文歌） ==== */
 function loadSongsForTab(){
   var r=document.getElementById('musicResults');
   r.innerHTML='<div class="music-empty music-loading">加载中...</div>';
-  if(_curSrc==='netease'){
-    _sr=_NE_PLAYLIST.map(function(d){return _enrichDefault(d)});
-    renderSongs(_sr);
-  }else{
-    _qqHot().then(function(raw){
-      var songs=_qqParse(raw);
-      if(!songs.length){fallbackDefault();return}
-      _sr=songs;renderSongs(songs);
-    }).catch(function(e){
-      console.error('hot err',e);
-      fallbackDefault();
-    });
-  }
-}
-function fallbackDefault(){
-  _sr=_DEFAULT_SONGS.map(function(d){return _enrichDefault(d)});
-  renderSongs(_sr);
-}
-function _enrichDefault(d){
-  return {
-    id:d.songmid,name:d.name,artist:d.artist,
-    songmid:d.songmid,albummid:d.albummid||'',
-    cover:d.albummid?_qqCover(d.albummid):'',
-    neid:d.neid||_NE_KNOWN[d.name]||null
-  };
+  _iTunesSearch('周杰伦').then(function(songs){
+    if(!songs.length){
+      r.innerHTML='<div class="music-empty">暂未加载到歌曲，请搜索</div>';
+      return;
+    }
+    _sr=songs;renderSongs(songs);
+  }).catch(function(e){
+    console.error('load err',e);
+    r.innerHTML='<div class="music-empty">加载失败，请搜索</div>';
+  });
 }
 
-/* ==== 搜索（QQ 真实搜索 / NetEase 从推荐歌单过滤） ==== */
+/* ==== 搜索 ==== */
 function searchMusic(){
   var kw=document.getElementById('musicSearchInput').value.trim();
   if(!kw)return;
   var r=document.getElementById('musicResults');
   r.innerHTML='<div class="music-empty music-loading">搜索中...</div>';
-  if(_curSrc==='netease'){
-    // NetEase tab：从推荐歌单模糊匹配 + 也尝试QQ搜索作为补充
-    var re=new RegExp(kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i');
-    var filtered=_NE_PLAYLIST.filter(function(d){return re.test(d.name)||re.test(d.artist)})
-      .map(function(d){return _enrichDefault(d)});
-    if(filtered.length){_sr=filtered;renderSongs(filtered)}
-    else{r.innerHTML='<div class="music-empty">推荐歌单中未找到，可以切换到QQ音乐搜索</div>'}
-  }else{
-    _doQQSearch(kw);
-  }
-}
-function _doQQSearch(kw){
-  _qqSearch(kw).then(function(raw){
-    var songs=_qqParse(raw);
+  _iTunesSearch(kw).then(function(songs){
     if(!songs.length){
-      document.getElementById('musicResults').innerHTML='<div class="music-empty">未找到相关歌曲</div>';
+      r.innerHTML='<div class="music-empty">未找到相关歌曲</div>';
       return;
     }
     _sr=songs;renderSongs(songs);
   }).catch(function(e){
     console.error('search err',e);
-    document.getElementById('musicResults').innerHTML=
-      '<div class="music-empty">搜索超时，可能是网络波动<br><button class="mole-retry" onclick="searchMusic()" style="margin-top:8px">重试</button></div>';
+    r.innerHTML='<div class="music-empty">搜索失败，请检查网络后重试<br><button class="mole-retry" onclick="searchMusic()" style="margin-top:8px">重试</button></div>';
   });
 }
 
@@ -1814,7 +1702,6 @@ function renderSongs(songs){
   for(i=0;i<l;i++){
     var s=songs[i],t=escapeHtml(s.name||'未知'),a=escapeHtml(s.artist||'未知歌手');
     var cv=s.cover||'';
-    if(cv&&cv.indexOf('http://')===0)cv=cv.replace('http://','https://');
     var coverHtml=cv?'<img src="'+cv+'" onerror="this.parentElement.innerHTML=\'<span style=font-size:1.2rem>&#9835;</span>\'" loading="lazy">':'<span style="font-size:1.2rem">&#9835;</span>';
     h+='<div class="music-song" style="animation:musicFadeIn 0.3s ease both;animation-delay:'+(i*0.03)+'s" ontouchstart="playSong('+i+');return false" onclick="playSong('+i+')"><div class="music-song-cover">'+coverHtml+'</div><div class="music-song-info"><div class="music-song-title">'+t+'</div><div class="music-song-artist">'+a+'</div></div></div>';
   }
@@ -1822,25 +1709,14 @@ function renderSongs(songs){
   setTimeout(fixMusicScroll,100);
 }
 
-/* ==== 切换 tab ==== */
-function switchMusicSrc(src){
-  if(_curSrc===src)return;
-  _curSrc=src;
-  document.querySelectorAll('.music-source-tab').forEach(function(t){t.classList.toggle('active',t.dataset.src===src)});
-  // 两个 tab 均显示搜索框
-  var searchEl=document.querySelector('.music-search');
-  if(searchEl)searchEl.style.display='flex';
-  loadSongsForTab();
-}
-
-/* ==== 播放引擎：多源顺序回退 ==== */
+/* ==== 播放引擎：直接用 iTunes previewUrl ==== */
 function playSong(idx){
   var s=_sr[idx];if(!s)return;
   _curIdx=idx;
   var t=s.name||'未知',a=s.artist||'';
   var cv=s.cover||'';
-  // 销毁旧 Audio 防止残留事件
-  if(_audio){_audio.onerror=null;_audio.ontimeupdate=null;_audio.onended=null;_audio.onloadedmetadata=null;_audio.oncanplay=null;try{_audio.pause();_audio.src=''}catch(e){}}
+  // 销毁旧 Audio
+  if(_audio){_audio.onerror=null;_audio.ontimeupdate=null;_audio.onended=null;try{_audio.pause();_audio.src=''}catch(e){}}
   if(_audioTimeout)clearTimeout(_audioTimeout);
   _audio=new Audio();
   _audio.preload='auto';
@@ -1849,81 +1725,30 @@ function playSong(idx){
   updatePlayerUI(t,a,cv);
   updatePlayerStatus('加载中');
 
-  // 构建音源列表（按优先级）
-  var srcs=[];
-  // 1) DreamMeting QQ（已知仅缓存 晴天/七里香/听妈妈的话 的音频）
-  if(s.songmid) srcs.push({url:'https://music.3e0.cn/?server=tencent&type=url&id='+s.songmid,label:'QQ'});
-  // 2) 已知 NetEase ID → DreamMeting NetEase（目前均返回空）
-  var neId=s.neid||_NE_KNOWN[t]||_NE_KNOWN[t.replace(/\s+/g,'')]||null;
-  if(neId) srcs.push({url:'https://music.3e0.cn/?server=netease&type=url&id='+neId,label:'NE'});
-  // 3) NetEase 外链 → 302/404 已死，仅作极端兜底
-  if(neId) srcs.push({url:'https://music.163.com/song/media/outer/url?id='+neId+'.mp3',label:'NE外链'});
+  var url=s.previewUrl;
+  if(!url){updatePlayerStatus('无音源');syncFullPlayer();return}
 
-  if(!srcs.length){updatePlayerStatus('无音源');syncFullPlayer();return}
-  _audioSources=srcs;_audioSrcIdx=0;
-  _tryAudioSrc();
-}
-
-var _audioSources=[],_audioSrcIdx=0,_audioTimeout=null;
-function _tryAudioSrc(){
-  if(_audioSrcIdx>=_audioSources.length){
-    updatePlayerStatus('流失效');
-    syncFullPlayer();
-    return;
-  }
-  var item=_audioSources[_audioSrcIdx++];
-  var url=item.url;
-  if(_audioTimeout)clearTimeout(_audioTimeout);
   var done=false;
-
-  function _next(){
-    if(done)return;
-    done=true;
-    if(_audioTimeout)clearTimeout(_audioTimeout);
-    _tryAudioSrc();
-  }
-
-  _audio.onerror=_next;
-  _audio.onabort=_next;
-
+  _audio.onerror=function(){if(done)return;done=true;updatePlayerStatus('失播放');syncFullPlayer()};
   _audio.oncanplay=function(){
     if(done)return;
     var d=_audio.duration;
-    // 302 空音频：duration 为 0/NaN/Infinity 或极短
-    if(!d||isNaN(d)||!isFinite(d)||d<1){
-      _next();
-      return;
-    }
+    if(!d||isNaN(d)||!isFinite(d)||d<1){done=true;updatePlayerStatus('失播放');syncFullPlayer();return}
     done=true;
     if(_audioTimeout)clearTimeout(_audioTimeout);
     updatePlayerStatus('⏸');syncFullPlayer();
   };
-
   _audio.ontimeupdate=function(){if(!done)return;updateProgress();syncFullPlayer()};
   _audio.onended=function(){if(!done)return;updatePlayerStatus('▶');syncFullPlayer()};
 
   _audio.src=url;
   _audio.load();
-
-  // 12秒超时回退（移动网络较慢）
-  _audioTimeout=setTimeout(function(){
-    if(!done){done=true;_tryAudioSrc();}
-  },12000);
-
-  // 尝试播放
+  _audioTimeout=setTimeout(function(){if(!done){done=true;updatePlayerStatus('超时');syncFullPlayer()}},15000);
   var p=_audio.play();
-  if(p&&p.then){
-    p.catch(function(e){
-      if(!done){
-        setTimeout(function(){
-          if(!done&&_audio&&_audio.paused){
-            _audio.play().catch(function(){});
-          }
-        },400);
-      }
-    });
-  }
+  if(p&&p.then){p.catch(function(e){if(!done){setTimeout(function(){if(!done&&_audio&&_audio.paused){_audio.play().catch(function(){})}},400)}})}
 }
+
+var _audioTimeout=null;
 
 /* ====== 播放器 UI ====== */
 function updatePlayerUI(title,artist,cover){
@@ -1977,22 +1802,18 @@ window._initMusic=function(){
 };
 
 function fixMusicScroll(){
-  // 通过 JS 精确计算 music-results 的可用高度
   var r=document.getElementById('musicResults');
   var scene=document.querySelector('.music-scene');
   if(!r||!scene)return;
   r.style.overflowY='auto';
   r.style.webkitOverflowScrolling='touch';
-  // 动态计算：scene的可见高度 - tabs - search - player
   var sceneH=scene.clientHeight;
-  var tabsH=0,searchH=0,playerH=0;
-  var tabs=document.querySelector('.music-source-tabs');
+  var searchH=0,playerH=0;
   var srch=document.querySelector('.music-search');
   var pl=document.getElementById('musicPlayerWrap');
-  if(tabs)tabsH=tabs.offsetHeight;
-  if(srch)srchH=srch.offsetHeight;
+  if(srch)searchH=srch.offsetHeight;
   if(pl)playerH=pl.offsetHeight;
-  var avail=sceneH-tabsH-srchH-playerH-10;
+  var avail=sceneH-searchH-playerH-10;
   if(avail>100){
     r.style.maxHeight=avail+'px';
     r.style.flex='none';
