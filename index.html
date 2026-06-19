@@ -712,133 +712,174 @@
   .game-title{margin-bottom:0.5rem;flex-shrink:0}
   .version-badge{font-size:0.65rem}
 
-  /* ====== 音乐播放器主场景 ====== */
+  /* ====== 音乐播放器主场景 v7 ====== */
   .music-scene{
     width:clamp(300px,90vw,420px);margin:0 auto;
     flex:1;min-height:0;display:flex;flex-direction:column;
     max-height:100%;
   }
+  .music-source-tabs{display:flex;gap:0;margin-bottom:0.8rem;flex-shrink:0;justify-content:center;background:rgba(0,0,0,0.04);border-radius:12px;padding:3px}
+  .music-source-tab{background:transparent;border:none;color:oklch(0.35 0.03 50);padding:0.4rem 1.4rem;border-radius:10px;font-size:0.78rem;font-family:"Noto Sans SC",sans-serif;cursor:pointer;transition:all 0.25s;-webkit-tap-highlight-color:transparent;font-weight:500}
+  .music-source-tab.active{background:#fff;color:oklch(0.22 0.04 40);box-shadow:0 1px 6px rgba(0,0,0,0.08)}
+  .music-src-tag{display:inline-block;font-size:0.55rem;background:rgba(0,0,0,0.07);padding:1px 6px;border-radius:6px;margin-left:6px;vertical-align:middle;opacity:0.7}
 
-  .music-source-tabs{display:flex;gap:0.5rem;margin-bottom:0.5rem;flex-shrink:0;justify-content:center}
-  .music-source-tab{background:rgba(255,255,255,0.5);border:0.5px solid oklch(0.45 0.03 50 / 0.15);color:oklch(0.35 0.03 50);padding:0.3rem 1.2rem;border-radius:1rem;font-size:0.78rem;font-family:"Noto Sans SC",sans-serif;cursor:pointer;transition:all 0.25s;-webkit-tap-highlight-color:transparent}
-  .music-source-tab.active{background:oklch(0.45 0.03 50);color:#fff;border-color:oklch(0.45 0.03 50)}
-  .music-src-tag{display:inline-block;font-size:0.55rem;background:rgba(0,0,0,0.08);padding:1px 6px;border-radius:6px;margin-left:6px;vertical-align:middle;opacity:0.7}
-
-  .music-search{display:flex;gap:8px;margin-bottom:0.5rem;flex-shrink:0}
-  .music-search input{flex:1;padding:8px 12px;border:0.5px solid oklch(0.45 0.03 50 / 0.2);border-radius:10px;font-size:0.75rem;font-family:"Noto Sans SC",sans-serif;background:rgba(255,255,255,0.6);outline:none;color:oklch(0.25 0.03 45)}
-  .music-search button{padding:8px 16px;border-radius:10px;border:none;background:oklch(0.45 0.03 50);color:#fff;font-size:0.72rem;font-family:"Noto Sans SC",sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;-webkit-appearance:none;appearance:none}
-  .music-search button:active{opacity:0.8}
+  .music-search{display:flex;gap:8px;margin-bottom:0.8rem;flex-shrink:0}
+  .music-search input{flex:1;padding:10px 14px;border:1px solid oklch(0.45 0.03 50 / 0.12);border-radius:12px;font-size:0.8rem;font-family:"Noto Sans SC",sans-serif;background:rgba(255,255,255,0.7);outline:none;color:oklch(0.22 0.03 40);transition:border-color 0.2s}
+  .music-search input:focus{border-color:oklch(0.45 0.03 50 / 0.35)}
+  .music-search button{padding:10px 18px;border-radius:12px;border:none;background:oklch(0.45 0.03 50);color:#fff;font-size:0.75rem;font-family:"Noto Sans SC",sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;font-weight:500;-webkit-appearance:none;appearance:none}
+  .music-search button:active{opacity:0.85}
   .music-results{
-    flex:1;min-height:0;
-    overflow-y:auto;overflow-x:hidden;
-    -webkit-overflow-scrolling:touch;
-    margin-bottom:0.5rem;scrollbar-width:none;
-    /* JS动态计算maxHeight兜底 */
+    flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;
+    -webkit-overflow-scrolling:touch;margin-bottom:0.5rem;scrollbar-width:none;
   }
   .music-results::-webkit-scrollbar{display:none}
-  .music-song{display:flex;align-items:center;gap:10px;padding:10px 8px;border-radius:10px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background 0.15s;border-bottom:0.5px solid rgba(0,0,0,0.04)}
+  .music-song{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background 0.15s;margin-bottom:2px}
   .music-song:active{background:rgba(0,0,0,0.04)}
-  .music-song-cover{width:40px;height:40px;border-radius:8px;background:oklch(0.65 0.02 75);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+  .music-song.playing{background:oklch(0.45 0.03 50 / 0.08)}
+  .music-song-cover{width:46px;height:46px;border-radius:10px;background:oklch(0.68 0.02 75);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.3rem;position:relative}
   .music-song-cover img{width:100%;height:100%;object-fit:cover}
+  .music-song-cover .playing-indicator{
+    position:absolute;inset:0;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;display:none
+  }
+  .music-song.playing .playing-indicator{display:flex}
+  .playing-bars{display:flex;align-items:flex-end;gap:2px;height:14px}
+  .playing-bars span{width:2.5px;background:#fff;border-radius:1px;animation:pbounce 0.6s ease-in-out infinite alternate}
+  .playing-bars span:nth-child(1){height:6px;animation-delay:0s}
+  .playing-bars span:nth-child(2){height:10px;animation-delay:0.15s}
+  .playing-bars span:nth-child(3){height:14px;animation-delay:0.3s}
+  .playing-bars span:nth-child(4){height:8px;animation-delay:0.45s}
+  @keyframes pbounce{to{transform:scaleY(0.4)}}
   .music-song-info{flex:1;min-width:0}
-  .music-song-title{font-size:0.78rem;font-family:"Noto Sans SC",sans-serif;color:oklch(0.22 0.04 45);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .music-song-artist{font-size:0.65rem;color:oklch(0.35 0.02 50);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .music-empty{text-align:center;padding:2rem 1rem;color:oklch(0.35 0.02 55);font-size:0.75rem;font-family:"Noto Sans SC",sans-serif}
+  .music-song-title{font-size:0.82rem;font-family:"Noto Sans SC",sans-serif;color:oklch(0.22 0.04 45);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+  .music-song.playing .music-song-title{color:oklch(0.35 0.04 45);font-weight:600}
+  .music-song-artist{font-size:0.68rem;color:oklch(0.35 0.02 50);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .music-empty{text-align:center;padding:2.5rem 1rem;color:oklch(0.35 0.02 55);font-size:0.78rem;font-family:"Noto Sans SC",sans-serif}
 
-  /* 迷你播放器（底部固定） */
-  .mplayer-wrap{flex-shrink:0}
+  /* ====== 迷你播放器 ====== */
   .music-player-wrap{flex-shrink:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
-  .mplayer{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.65);border-radius:14px;padding:8px 10px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 2px 12px rgba(0,0,0,0.05)}
-  .mplayer-cover{width:38px;height:38px;border-radius:8px;flex-shrink:0;overflow:hidden;background:oklch(0.65 0.02 75);display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+  .mplayer{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.8);border-radius:16px;padding:10px 14px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 2px 16px rgba(0,0,0,0.06),0 0 0 0.5px rgba(0,0,0,0.06)}
+  .mplayer-cover{width:44px;height:44px;border-radius:12px;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,oklch(0.68 0.04 75),oklch(0.58 0.03 65));display:flex;align-items:center;justify-content:center;font-size:1.3rem}
   .mplayer-cover img{width:100%;height:100%;object-fit:cover}
+  .mplayer-cover.spin img{animation:coverSpin 12s linear infinite}
+  @keyframes coverSpin{to{transform:rotate(360deg)}}
   .mplayer-info{flex:1;min-width:0}
-  .mplayer-title{font-size:0.75rem;font-family:"Noto Sans SC",sans-serif;color:oklch(0.2 0.04 40);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
-  .mplayer-artist{font-size:0.6rem;color:oklch(0.35 0.02 50);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .mplayer-ctrl{width:36px;height:36px;border-radius:50%;border:1px solid oklch(0.45 0.03 50 / 0.25);background:rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;flex-shrink:0;font-size:0.7rem;color:oklch(0.35 0.03 45)}
-  .mplayer-ctrl:active{transform:scale(0.92)}
-  .mplayer-bar{height:3px;background:rgba(0,0,0,0.08);border-radius:2px;margin-top:6px;cursor:pointer;position:relative}
-  .mplayer-bar-fill{height:100%;background:oklch(0.45 0.03 50);border-radius:2px;width:0%;transition:width 0.3s linear}
+  .mplayer-title{font-size:0.8rem;font-family:"Noto Sans SC",sans-serif;color:oklch(0.18 0.04 40);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+  .mplayer-title .src-tag{font-size:0.55rem;font-weight:400;opacity:0.5;margin-left:4px}
+  .mplayer-artist{font-size:0.65rem;color:oklch(0.35 0.02 50);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .mplayer-ctrl{width:40px;height:40px;border-radius:50%;border:none;background:oklch(0.2 0.04 40);display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;flex-shrink:0;color:#fff;font-size:0.9rem;transition:transform 0.15s}
+  .mplayer-ctrl:active{transform:scale(0.9)}
+  .mplayer-bar-wrap{position:relative;height:20px;margin-top:-10px;cursor:pointer;-webkit-tap-highlight-color:transparent;z-index:1}
+  .mplayer-bar{position:absolute;top:50%;left:14px;right:14px;height:3px;background:rgba(0,0,0,0.06);border-radius:2px;transform:translateY(-50%)}
+  .mplayer-bar-fill{height:100%;background:oklch(0.4 0.04 45);border-radius:2px;width:0%;transition:width 0.3s linear;position:relative}
+  .mplayer-bar-fill::after{content:'';position:absolute;right:-5px;top:50%;transform:translateY(-50%);width:10px;height:10px;border-radius:50%;background:oklch(0.4 0.04 45);opacity:0;transition:opacity 0.2s}
+  .mplayer-bar-wrap:active .mplayer-bar-fill::after{opacity:1}
 
-  /* 全屏播放器 - QZMusic 风格 */
+  /* ====== 全屏播放器 v2 ====== */
   @keyframes fpFadeIn{from{opacity:0}to{opacity:1}}
-  @keyframes fpSlideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+  @keyframes fpSlideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
   @keyframes musicFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
   @keyframes musicLoadingPulse{0%,100%{opacity:0.4}50%{opacity:1}}
   .music-loading{animation:musicLoadingPulse 1.2s ease-in-out infinite}
   .fp-overlay{
     position:fixed;inset:0;z-index:200;
-    display:none;flex-direction:column;align-items:center;justify-content:flex-start;
-    padding:clamp(1.5rem,5vh,3rem) clamp(1.5rem,5vw,2rem) clamp(2rem,6vh,3rem);
+    display:none;flex-direction:column;align-items:center;
+    background:#0d0d12;
   }
-  .fp-overlay.show{display:flex;animation:fpFadeIn 0.35s ease}
-  .fp-overlay.show .fp-inner{animation:fpSlideUp 0.4s cubic-bezier(0.22,1,0.36,1) both}
-  /* 模糊背景层 */
+  .fp-overlay.show{display:flex;animation:fpFadeIn 0.3s ease}
+  .fp-overlay.show .fp-inner{animation:fpSlideUp 0.45s cubic-bezier(0.22,1,0.36,1) both}
   .fp-bg{
     position:absolute;inset:0;z-index:0;
     background-size:cover;background-position:center;
-    filter:blur(40px) brightness(0.6);
-    -webkit-filter:blur(40px) brightness(0.6);
-    transform:scale(1.2);
-    transition:background-image 0.6s ease;
+    filter:blur(60px) brightness(0.35);
+    -webkit-filter:blur(60px) brightness(0.35);
+    transform:scale(1.3);
+    transition:background-image 0.8s ease;
   }
-  .fp-bg-dimmer{position:absolute;inset:0;z-index:1;background:rgba(0,0,0,0.35)}
-  /* 内容层 */
-  .fp-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;width:100%;max-width:360px;flex:1;justify-content:center}
-  .fp-close{
-    position:absolute;top:clamp(0.8rem,3vh,1.5rem);right:1rem;z-index:3;
-    width:32px;height:32px;border-radius:50%;border:none;
-    background:rgba(255,255,255,0.2);color:rgba(255,255,255,0.9);
+  .fp-bg-dimmer{position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg,rgba(0,0,0,0.2) 0%,rgba(0,0,0,0.35) 50%,rgba(0,0,0,0.5) 100%);}
+  .fp-inner{
+    position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;
+    width:100%;max-width:380px;flex:1;justify-content:center;
+    padding:clamp(1rem,4vh,2rem) 1.5rem clamp(2rem,8vh,3rem);
+  }
+  .fp-top-bar{
+    position:absolute;top:0;left:0;right:0;z-index:3;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:clamp(0.8rem,3vh,1.2rem) 1rem;
+  }
+  .fp-back-btn{
+    width:36px;height:36px;border-radius:50%;border:none;
+    background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.9);
     display:flex;align-items:center;justify-content:center;
-    cursor:pointer;font-size:0.9rem;-webkit-tap-highlight-color:transparent;
-    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+    cursor:pointer;-webkit-tap-highlight-color:transparent;
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    font-size:1rem;
   }
-  .fp-close:active{transform:scale(0.92);background:rgba(255,255,255,0.35)}
+  .fp-back-btn:active{transform:scale(0.92)}
+  .fp-cover-wrap{
+    position:relative;width:clamp(240px,65vw,320px);height:clamp(240px,65vw,320px);
+    margin-bottom:clamp(1.5rem,5vh,2.5rem);
+  }
   .fp-cover{
-    width:clamp(200px,58vw,300px);height:clamp(200px,58vw,300px);
-    border-radius:16px;overflow:hidden;margin-bottom:clamp(1.2rem,4vh,2rem);
-    box-shadow:0 12px 48px rgba(0,0,0,0.25);
+    width:100%;height:100%;border-radius:20px;overflow:hidden;
+    box-shadow:0 16px 60px rgba(0,0,0,0.4);
   }
   .fp-cover img{width:100%;height:100%;object-fit:cover;display:block}
   .fp-cover-placeholder{
-    width:100%;height:100%;background:linear-gradient(135deg,#2d2d3f,#1a1a2e);
-    display:flex;align-items:center;justify-content:center;font-size:4rem;
+    width:100%;height:100%;
+    background:linear-gradient(145deg,#2a2a3a 0%,#1a1a2a 50%,#252535 100%);
+    display:flex;align-items:center;justify-content:center;font-size:5rem;
   }
+  .fp-song-info{text-align:center;margin-bottom:clamp(1.2rem,4vh,1.8rem);width:100%}
   .fp-title{
-    font-size:1.25rem;font-weight:600;color:#fff;margin-bottom:0.3rem;
-    text-align:center;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-    font-family:"Noto Serif SC",serif;text-shadow:0 1px 4px rgba(0,0,0,0.3);
+    font-size:1.35rem;font-weight:700;color:#fff;margin-bottom:0.25rem;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    font-family:"Noto Serif SC",serif;letter-spacing:0.02em;
+    max-width:300px;margin-left:auto;margin-right:auto;
   }
   .fp-artist{
-    font-size:0.85rem;color:rgba(255,255,255,0.7);margin-bottom:clamp(1.5rem,5vh,2.5rem);
-    font-family:"Noto Sans SC",sans-serif;text-shadow:0 1px 2px rgba(0,0,0,0.3);
+    font-size:0.85rem;color:rgba(255,255,255,0.6);
+    font-family:"Noto Sans SC",sans-serif;
   }
-  .fp-progress-wrap{width:100%;margin-bottom:clamp(1.2rem,4vh,1.8rem)}
+  .fp-progress-wrap{width:100%;margin-bottom:clamp(1.5rem,5vh,2rem)}
   .fp-progress-bar{
-    height:3px;background:rgba(255,255,255,0.2);border-radius:2px;cursor:pointer;position:relative;
+    width:100%;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;cursor:pointer;position:relative;
   }
-  .fp-time-row{
-    display:flex;justify-content:space-between;font-size:0.65rem;color:rgba(255,255,255,0.5);
-    margin-top:8px;font-family:"Noto Sans SC",sans-serif;
-  }
-  /* 进度条填充与拖拽圆点 */
   .fp-progress-fill-wrap{position:relative;height:100%;border-radius:2px}
-  .fp-progress-fill{height:100%;background:#ff6b35;border-radius:2px;width:0%;transition:width 0.3s linear;position:relative}
-  .fp-progress-fill::after{content:'';position:absolute;right:-5px;top:50%;transform:translateY(-50%);width:10px;height:10px;border-radius:50%;background:#ff6b35;box-shadow:0 0 6px rgba(255,107,53,0.6);opacity:0;transition:opacity 0.2s}
-  .fp-progress-bar:hover .fp-progress-fill::after,.fp-progress-bar:active .fp-progress-fill::after{opacity:1}
-  .fp-controls{
-    display:flex;align-items:center;gap:clamp(1.5rem,8vw,2.5rem);
-  }
+  .fp-progress-fill{height:100%;background:#fff;border-radius:2px;width:0%;transition:width 0.3s linear;position:relative}
+  .fp-progress-fill::after{content:'';position:absolute;right:-6px;top:50%;transform:translateY(-50%);width:12px;height:12px;border-radius:50%;background:#fff;box-shadow:0 0 8px rgba(255,255,255,0.5);opacity:0;transition:opacity 0.2s}
+  .fp-progress-bar:active .fp-progress-fill::after{opacity:1}
+  .fp-time-row{display:flex;justify-content:space-between;font-size:0.7rem;color:rgba(255,255,255,0.45);margin-top:10px;font-family:"Noto Sans SC",sans-serif}
+  .fp-controls{display:flex;align-items:center;justify-content:center;gap:clamp(1.8rem,8vw,2.8rem);margin-bottom:clamp(1rem,3vh,1.5rem)}
   .fp-btn{
-    width:44px;height:44px;border-radius:50%;border:none;
-    background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.9);
+    width:42px;height:42px;border-radius:50%;border:none;
+    background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.85);
     display:flex;align-items:center;justify-content:center;
     cursor:pointer;-webkit-tap-highlight-color:transparent;
-    transition:transform 0.15s,background 0.2s;
-    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    transition:transform 0.15s,background 0.2s;font-size:1.2rem;
   }
-  .fp-btn:active{transform:scale(0.9);background:rgba(255,255,255,0.25)}
-  .fp-btn-play{width:60px;height:60px;background:#ff6b35;color:#fff;box-shadow:0 4px 20px rgba(255,107,53,0.4)}
-  .fp-btn-play:active{background:#e85d2c;box-shadow:0 2px 12px rgba(255,107,53,0.3)}
+  .fp-btn:active{transform:scale(0.9);background:rgba(255,255,255,0.2)}
+  .fp-btn-play{
+    width:64px;height:64px;background:#fff;color:#111;
+    box-shadow:0 4px 24px rgba(255,255,255,0.25);font-size:1.5rem;
+  }
+  .fp-btn-play:active{transform:scale(0.92);box-shadow:0 2px 12px rgba(255,255,255,0.2)}
+  .fp-extra{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 0.5rem}
+  .fp-extra-btn{
+    width:32px;height:32px;border:none;background:transparent;
+    color:rgba(255,255,255,0.5);font-size:0.9rem;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;transition:color 0.2s;
+  }
+  .fp-extra-btn.active{color:#fff}
+  .fp-extra-btn:active{color:rgba(255,255,255,0.8)}
+  .fp-volume-wrap{
+    display:flex;align-items:center;gap:8px;width:100%;
+    margin-top:clamp(0.5rem,2vh,1rem);
+  }
+  .fp-volume-bar{
+    flex:1;height:3px;background:rgba(255,255,255,0.15);border-radius:2px;cursor:pointer;position:relative;
+  }
+  .fp-volume-fill{height:100%;background:rgba(255,255,255,0.5);border-radius:2px;width:70%}
 </style>
 </head>
 <body>
@@ -1023,16 +1064,14 @@
 
 <!-- ============ 音乐 ============ -->
 <div class="page-panel" id="musicPanel">
-  <button class="game-back" data-back="gameHubPanel">← 游戏中心</button>
-  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;width:100%;padding-top:clamp(3rem,10vh,3.5rem)">
-    <p class="game-title" style="margin-bottom:0.5rem;margin-top:0">· 音 乐 ·</p>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;width:100%;padding-top:clamp(0.8rem,3vh,1.5rem)">
     <div class="music-scene">
       <div class="music-source-tabs">
         <button class="music-source-tab active" data-src="itunes" onclick="switchMusicSrc('itunes')">iTunes</button>
-        <button class="music-source-tab" data-src="qq" onclick="switchMusicSrc('qq')">QQ</button>
+        <button class="music-source-tab" data-src="qq" onclick="switchMusicSrc('qq')">QQ 音乐</button>
       </div>
       <div class="music-search">
-        <input type="text" id="musicSearchInput" placeholder="搜索歌曲..." onkeydown="if(event.key==='Enter')searchMusic()">
+        <input type="text" id="musicSearchInput" placeholder="搜索歌曲..." onkeydown="if(event.key==='Enter')searchMusic()" enterkeyhint="search">
         <button onclick="searchMusic()">搜索</button>
       </div>
       <div class="music-results" id="musicResults">
@@ -1041,25 +1080,40 @@
       <div class="music-player-wrap" id="musicPlayerWrap" onclick="openFullPlayer()"></div>
     </div>
   </div>
-  <!-- 全屏播放器 - QZMusic 风格 -->
+  <!-- 全屏播放器 -->
   <div class="fp-overlay" id="fpOverlay">
     <div class="fp-bg" id="fpBg"></div>
     <div class="fp-bg-dimmer"></div>
-    <div class="fp-close" onclick="closeFullPlayer()">✕</div>
+    <div class="fp-top-bar">
+      <button class="fp-back-btn" onclick="closeFullPlayer()">&#8249;</button>
+    </div>
     <div class="fp-inner">
-      <div class="fp-cover" id="fpCover"><div class="fp-cover-placeholder">&#127925;</div></div>
-      <div class="fp-title" id="fpTitle">-</div>
-      <div class="fp-artist" id="fpArtist">-</div>
+      <div class="fp-cover-wrap">
+        <div class="fp-cover" id="fpCover"><div class="fp-cover-placeholder">&#127925;</div></div>
+      </div>
+      <div class="fp-song-info">
+        <div class="fp-title" id="fpTitle">-</div>
+        <div class="fp-artist" id="fpArtist">-</div>
+      </div>
       <div class="fp-progress-wrap">
-        <div class="fp-progress-bar" id="fpProgressBar" ontouchstart="seekFullPlayer(event);return false" onclick="seekFullPlayer(event)">
+        <div class="fp-progress-bar" id="fpProgressBar" ontouchstart="seekFullPlayer(event);return false" onmousedown="seekFullPlayer(event)">
           <div class="fp-progress-fill-wrap"><div class="fp-progress-fill" id="fpProgressFill"></div></div>
         </div>
         <div class="fp-time-row"><span id="fpCurTime">00:00</span><span id="fpDur">00:00</span></div>
       </div>
       <div class="fp-controls">
-        <button class="fp-btn" ontouchstart="prevTrack();return false" onclick="prevTrack()" style="font-size:1rem">⏮</button>
+        <button class="fp-btn" id="fpShuffleBtn" ontouchstart="toggleShuffle();return false" onclick="toggleShuffle()" style="font-size:0.85rem">🔀</button>
+        <button class="fp-btn" ontouchstart="prevTrack();return false" onclick="prevTrack()" style="font-size:1.1rem">⏮</button>
         <button class="fp-btn fp-btn-play" id="fpPlayBtn" ontouchstart="togglePlay();return false" onclick="togglePlay()">▶</button>
-        <button class="fp-btn" ontouchstart="nextTrack();return false" onclick="nextTrack()" style="font-size:1rem">⏭</button>
+        <button class="fp-btn" ontouchstart="nextTrack();return false" onclick="nextTrack()" style="font-size:1.1rem">⏭</button>
+        <button class="fp-btn" id="fpRepeatBtn" ontouchstart="toggleRepeat();return false" onclick="toggleRepeat()" style="font-size:0.85rem">🔁</button>
+      </div>
+      <div class="fp-volume-wrap">
+        <span style="color:rgba(255,255,255,0.4);font-size:0.75rem">🔈</span>
+        <div class="fp-volume-bar" id="fpVolumeBar" ontouchstart="seekVolume(event);return false" onmousedown="seekVolume(event)">
+          <div class="fp-volume-fill" id="fpVolumeFill"></div>
+        </div>
+        <span style="color:rgba(255,255,255,0.4);font-size:0.75rem">🔊</span>
       </div>
     </div>
   </div>
@@ -1656,57 +1710,73 @@ function endMole(){
 
 window._initMole=function(){startMole()};
 
-/* ====== 音乐播放器 v6 — iTunes 公开 API（实时搜索 + 30s试听） ====== */
+/* ====== 音乐播放器 v7 ====== */
 var _sr=[],_mInit=false,_audio=null,_curIdx=-1,_musicSource='itunes';
-var API_BASE='http://111.229.170.162:3701';
-function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+var _shuffle=false,_repeat=0,_volumeLevel=0.8;
+
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
 /* ==== 音源切换 ==== */
 function switchMusicSrc(src){
   _musicSource=src;
-  var tabs=document.querySelectorAll('.music-source-tab');
-  for(var i=0;i<tabs.length;i++)tabs[i].classList.toggle('active',tabs[i].dataset.src===src);
-  // 清空列表重新搜索
+  document.querySelectorAll('.music-source-tab').forEach(function(el){el.classList.toggle('active',el.dataset.src===src)});
   document.getElementById('musicResults').innerHTML='<div class="music-empty">切换音源，输入关键词搜索</div>';
   _sr=[];_curIdx=-1;
-  if(_audio){try{_audio.pause();_audio.src=''}catch(e){}}
+  stopAudio();
+}
+
+function stopAudio(){
+  if(_audio){try{_audio.pause();_audio.src=''}catch(e){}_audio=null}
+  if(_audioTimeout)clearTimeout(_audioTimeout);
+  updatePlayerUI('','','');
+  var w=document.getElementById('musicPlayerWrap');if(w)w.innerHTML='';
+  syncFullPlayer();
 }
 
 /* ==== iTunes 搜索 ==== */
 function _iTunesSearch(kw){
-  var url='https://itunes.apple.com/search?term='+encodeURIComponent(kw)+'&country=cn&media=music&entity=song&limit=30';
-  return fetch(url).then(function(r){return r.json()}).then(function(data){
-    var results=data&&data.results;
-    if(!results||!results.length)return[];
-    return results.filter(function(it){return it.kind==='song'}).map(function(it){
-      var cover=it.artworkUrl100?it.artworkUrl100.replace('100x100','300x300'):'';
-      return {
-        id:it.trackId+'',name:it.trackName||'',
-        artist:it.artistName||'',album:it.collectionName||'',
-        cover:cover,previewUrl:it.previewUrl||'',
-        duration:it.trackTimeMillis||0,source:'itunes'
-      };
+  return fetch('https://itunes.apple.com/search?term='+encodeURIComponent(kw)+'&country=cn&media=music&entity=song&limit=30')
+    .then(function(r){return r.json()}).then(function(data){
+      if(!data||!data.results)return[];
+      return data.results.filter(function(it){return it.kind==='song'&&it.previewUrl}).map(function(it){
+        return {
+          id:'it_'+it.trackId,name:it.trackName||'未知',artist:it.artistName||'未知歌手',
+          cover:it.artworkUrl100?it.artworkUrl100.replace('100x100','300x300'):'',
+          previewUrl:it.previewUrl,duration:it.trackTimeMillis||0,source:'itunes'
+        };
+      });
     });
-  });
 }
 
-/* ==== QQ 搜索（通过后端代理） ==== */
+/* ==== QQ 搜索 — corsproxy.io 绕过 CORS ==== */
 function _qqSearch(kw){
-  return fetch(API_BASE+'/api/search/qq?kw='+encodeURIComponent(kw)).then(function(r){return r.json()}).then(function(data){
-    var list=(data&&data.songs)||[];
-    return list.map(function(it){
-      return {
-        id:'qq_'+it.mid,name:it.name||'',artist:it.artist||'',
-        cover:it.cover||'',mid:it.mid,source:'qq',duration:0
-      };
+  var qqUrl='https://u.y.qq.com/cgi-bin/musicu.fcg';
+  var body=JSON.stringify({"req_0":{"module":"music.search.SearchCgiService","method":"DoSearchForQQMusicDesktop","param":{"query":kw,"page_no":1,"num_per_page":25}}});
+  var proxyUrl='https://corsproxy.io/?'+encodeURIComponent(qqUrl);
+  return fetch(proxyUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:body})
+    .then(function(r){return r.json()}).then(function(data){
+      var list=(((data||{}).req_0||{}).data||{}).body||{};
+      var songs=(list.song||{}).list||[];
+      return songs.map(function(it){
+        var mid=it.mid||'',album=it.album||{};
+        return {
+          id:'qq_'+mid,name:it.name||it.title||'未知',artist:(it.singer||[]).map(function(s){return s.name}).join(' / ')||'未知歌手',
+          cover:album.mid?'https://y.gtimg.cn/music/photo_new/T002R300x300M000'+album.mid+'.jpg':'',
+          mid:mid,source:'qq',duration:(it.interval||0)*1000
+        };
+      });
     });
-  });
 }
 
-/* ==== 获取 QQ 播放 URL（调后端 API） ==== */
+/* ==== QQ 播放 URL — corsproxy.io ==== */
 function _qqPlayUrl(mid){
-  return fetch(API_BASE+'/api/play?mid='+encodeURIComponent(mid)+'&source=tx').then(function(r){return r.json()}).then(function(d){
-    return d&&d.url||'';
+  var qqUrl='https://c.y.qq.com/v8/fcg-bin/fcg_play_single_song.fcg?songmid='+mid+'&platform=yqq&format=json';
+  var proxyUrl='https://corsproxy.io/?'+encodeURIComponent(qqUrl);
+  return fetch(proxyUrl).then(function(r){return r.json()}).then(function(d){
+    var u=((d||{}).data||{}).url||'';
+    if(!u)return'';
+    // 替换为 https
+    return u.replace(/^http:/,'https:');
   }).catch(function(){return''});
 }
 
@@ -1714,14 +1784,11 @@ function _qqPlayUrl(mid){
 function loadSongsForTab(){
   var r=document.getElementById('musicResults');
   r.innerHTML='<div class="music-empty music-loading">加载中...</div>';
-  var p;
-  if(_musicSource==='qq')p=_qqSearch('周杰伦');
-  else p=_iTunesSearch('周杰伦');
-  p.then(function(songs){
-    if(!songs.length){r.innerHTML='<div class="music-empty">暂未加载到歌曲，请搜索</div>';return}
-    _sr=songs;renderSongs(songs);
+  var p=_musicSource==='qq'?_qqSearch('周杰伦'):_iTunesSearch('周杰伦');
+  p.then(function(s){
+    if(!s.length){r.innerHTML='<div class="music-empty">暂无歌曲，请搜索</div>';return}
+    _sr=s;renderSongs(s);
   }).catch(function(e){
-    console.error('load err',e);
     r.innerHTML='<div class="music-empty">加载失败，请搜索</div>';
   });
 }
@@ -1732,27 +1799,22 @@ function searchMusic(){
   if(!kw)return;
   var r=document.getElementById('musicResults');
   r.innerHTML='<div class="music-empty music-loading">搜索中...</div>';
-  var p;
-  if(_musicSource==='qq')p=_qqSearch(kw);
-  else p=_iTunesSearch(kw);
-  p.then(function(songs){
-    if(!songs.length){r.innerHTML='<div class="music-empty">未找到相关歌曲</div>';return}
-    _sr=songs;renderSongs(songs);
+  var p=_musicSource==='qq'?_qqSearch(kw):_iTunesSearch(kw);
+  p.then(function(s){
+    if(!s.length){r.innerHTML='<div class="music-empty">未找到相关歌曲</div>';return}
+    _sr=s;renderSongs(s);
   }).catch(function(e){
-    console.error('search err',e);
-    r.innerHTML='<div class="music-empty">搜索失败，请检查网络后重试<br><button class="mole-retry" onclick="searchMusic()" style="margin-top:8px">重试</button></div>';
+    r.innerHTML='<div class="music-empty">搜索失败，请检查网络<br><button class="mole-retry" onclick="searchMusic()" style="margin-top:12px;padding:6px 18px;border-radius:8px;border:1px solid #ccc;background:#fff;cursor:pointer">重试</button></div>';
   });
 }
 
 /* ==== 渲染列表 ==== */
 function renderSongs(songs){
-  var h='',i,l=songs.length;
-  var tag=_musicSource==='qq'?'<span class=music-src-tag>QQ</span>':'<span class=music-src-tag>iTunes</span>';
-  for(i=0;i<l;i++){
-    var s=songs[i],t=escapeHtml(s.name||'未知'),a=escapeHtml(s.artist||'未知歌手');
-    var cv=s.cover||'';
-    var coverHtml=cv?'<img src="'+cv+'" onerror="this.parentElement.innerHTML=\'<span style=font-size:1.2rem>&#9835;</span>\'" loading="lazy">':'<span style="font-size:1.2rem">&#9835;</span>';
-    h+='<div class="music-song" style="animation:musicFadeIn 0.3s ease both;animation-delay:'+(i*0.03)+'s" ontouchstart="playSong('+i+');return false" onclick="playSong('+i+')"><div class="music-song-cover">'+coverHtml+'</div><div class="music-song-info"><div class="music-song-title">'+t+tag+'</div><div class="music-song-artist">'+a+'</div></div></div>';
+  var h='',l=songs.length,tag=_musicSource==='qq'?'QQ':'iTunes';
+  for(var i=0;i<l;i++){
+    var s=songs[i],cv=s.cover||'';
+    var coverHtml=cv?'<img src="'+cv+'" onerror="this.parentElement.innerHTML=\'&#9835;\'" loading="lazy">':'&#9835;';
+    h+='<div class="music-song'+(i===_curIdx?' playing':'')+'" style="animation:musicFadeIn 0.3s ease both;animation-delay:'+(i*0.03)+'s" ontouchstart="playSong('+i+');return false" onclick="playSong('+i+')"><div class="music-song-cover">'+coverHtml+'<div class="playing-indicator"><div class="playing-bars"><span></span><span></span><span></span><span></span></div></div></div><div class="music-song-info"><div class="music-song-title">'+escHtml(s.name)+'</div><div class="music-song-artist">'+escHtml(s.artist)+' <span class="music-src-tag">'+tag+'</span></div></div></div>';
   }
   document.getElementById('musicResults').innerHTML=h;
   setTimeout(fixMusicScroll,100);
@@ -1762,161 +1824,160 @@ function renderSongs(songs){
 function playSong(idx){
   var s=_sr[idx];if(!s)return;
   _curIdx=idx;
-  var t=s.name||'未知',a=s.artist||'';
-  var cv=s.cover||'';
-  // 销毁旧 Audio
-  if(_audio){_audio.onerror=null;_audio.ontimeupdate=null;_audio.onended=null;try{_audio.pause();_audio.src=''}catch(e){}}
-  if(_audioTimeout)clearTimeout(_audioTimeout);
-  _audio=new Audio();
-  _audio.preload='auto';
-  _audio.volume=0.9;
-
+  // 更新列表高亮
+  var items=document.querySelectorAll('.music-song');
+  for(var i=0;i<items.length;i++)items[i].classList.toggle('playing',i===idx);
+  var t=s.name||'未知',a=s.artist||'未知',cv=s.cover||'';
+  stopAudio();
+  _audio=new Audio();_audio.preload='auto';_audio.volume=_volumeLevel;
   updatePlayerUI(t,a,cv);
-  updatePlayerStatus('加载中');
 
   function doPlay(url){
-    if(!url){updatePlayerStatus('无音源');syncFullPlayer();return}
+    if(!url){updatePlayerBtn('无音源');syncFullPlayer();return}
     var done=false;
-    _audio.onerror=function(){if(done)return;done=true;updatePlayerStatus('失播放');syncFullPlayer()};
+    _audio.onerror=function(){if(done)return;done=true;updatePlayerBtn('▶');syncFullPlayer()};
     _audio.oncanplay=function(){
-      if(done)return;
-      var d=_audio.duration;
-      if(!d||isNaN(d)||!isFinite(d)||d<1){done=true;updatePlayerStatus('失播放');syncFullPlayer();return}
-      done=true;
+      if(done)return;done=true;
       if(_audioTimeout)clearTimeout(_audioTimeout);
-      updatePlayerStatus('⏸');syncFullPlayer();
+      updatePlayerBtn('⏸');updateCoverSpin(true);syncFullPlayer();
     };
-    _audio.ontimeupdate=function(){if(!done)return;updateProgress();syncFullPlayer()};
-    _audio.onended=function(){if(!done)return;updatePlayerStatus('▶');syncFullPlayer()};
-    _audio.src=url;
-    _audio.load();
-    _audioTimeout=setTimeout(function(){if(!done){done=true;updatePlayerStatus('超时');syncFullPlayer()}},15000);
+    _audio.ontimeupdate=function(){updateProgress();syncFullPlayer()};
+    _audio.onended=function(){if(_repeat===2){_audio.currentTime=0;_audio.play();return};if(_repeat===1||_shuffle){autoNext();return};updatePlayerBtn('▶');updateCoverSpin(false);syncFullPlayer()};
+    _audio.src=url;_audio.load();
+    _audioTimeout=setTimeout(function(){if(!done){done=true;updatePlayerBtn('▶');syncFullPlayer()}},18000);
     var p2=_audio.play();
-    if(p2&&p2.then){p2.catch(function(e){if(!done){setTimeout(function(){if(!done&&_audio&&_audio.paused){_audio.play().catch(function(){})}},400)}})}
+    if(p2&&p2.then){p2.catch(function(){setTimeout(function(){if(!done&&_audio&&_audio.paused){_audio.play().catch(function(){})}},300)})}
   }
 
-  if(s.source==='qq'&&s.mid){
-    _qqPlayUrl(s.mid).then(doPlay);
-  } else {
-    doPlay(s.previewUrl||'');
-  }
+  if(s.source==='qq'&&s.mid){_qqPlayUrl(s.mid).then(doPlay)}
+  else{doPlay(s.previewUrl||'')}
+}
+
+function autoNext(){
+  if(!_sr.length)return;
+  var n=_curIdx+1;
+  if(_shuffle){var next;do{next=Math.floor(Math.random()*_sr.length)}while(next===_curIdx&&_sr.length>1);n=next}
+  if(n>=_sr.length)n=0;
+  playSong(n);
 }
 
 var _audioTimeout=null;
 
-/* ====== 播放器 UI（同前） ====== */
+/* ==== 迷你播放器 UI ==== */
 function updatePlayerUI(title,artist,cover){
-  var w=document.getElementById('musicPlayerWrap');
+  if(!title){document.getElementById('musicPlayerWrap').innerHTML='';return}
   var srcTag=_musicSource==='qq'?'QQ':'iTunes';
-  w.innerHTML='<div class="mplayer"><div class="mplayer-cover" id="mplayerCover">'+(cover?'<img src="'+cover+'" onerror="this.parentElement.innerHTML=\'🎵\'">':'🎵')+'</div><div class="mplayer-info"><div class="mplayer-title">'+escapeHtml(title)+' <span style=font-size:0.6rem;opacity:0.6>'+srcTag+'</span></div><div class="mplayer-artist">'+escapeHtml(artist)+'</div></div><button class="mplayer-ctrl" id="mplayerBtn" ontouchstart="togglePlay();return false" onclick="togglePlay()">⏸</button></div><div class="mplayer-bar" id="mplayerBar" ontouchstart="seekBar(event);return false" onclick="seekBar(event)"><div class="mplayer-bar-fill" id="mplayerFill"></div></div>';
-  setTimeout(syncFullPlayer,50);
+  var coverPart=cover?'<img src="'+cover+'" onerror="this.style.display=\'none\';this.parentElement.textContent=\'🎵\'">':'🎵';
+  document.getElementById('musicPlayerWrap').innerHTML='<div class="mplayer"><div class="mplayer-cover spin" id="mplayerCover">'+coverPart+'</div><div class="mplayer-info"><div class="mplayer-title">'+escHtml(title)+'<span class="src-tag">'+srcTag+'</span></div><div class="mplayer-artist">'+escHtml(artist)+'</div></div><div class="mplayer-ctrl" id="mplayerBtn" ontouchstart="togglePlay();return false" onclick="togglePlay()">⏸</div></div><div class="mplayer-bar-wrap" id="mplayerBarWrap" ontouchstart="seekBar(event);return false" onmousedown="seekBar(event)"><div class="mplayer-bar"><div class="mplayer-bar-fill" id="mplayerFill"></div></div></div>';
 }
 
-function updatePlayerStatus(st){
+function updatePlayerBtn(st){
   var b=document.getElementById('mplayerBtn');if(b)b.textContent=st;
+}
+
+function updateCoverSpin(playing){
+  var el=document.getElementById('mplayerCover');
+  if(!el)return;
+  if(playing)el.classList.add('spin');else el.classList.remove('spin');
 }
 
 function togglePlay(){
   if(!_audio)return;
-  if(_audio.paused){
-    var p=_audio.play();
-    if(p&&p.then){p.catch(function(){})}
-    updatePlayerStatus('⏸');
-  }else{_audio.pause();updatePlayerStatus('▶')}
+  if(_audio.paused){_audio.play().catch(function(){});updatePlayerBtn('⏸');updateCoverSpin(true)}
+  else{_audio.pause();updatePlayerBtn('▶');updateCoverSpin(false)}
   syncFullPlayer();
 }
 
 function updateProgress(){
-  if(!_audio||!_audio.duration)return;
+  if(!_audio||!_audio.duration||isNaN(_audio.duration))return;
   var p=(_audio.currentTime/_audio.duration)*100;
   var f=document.getElementById('mplayerFill');if(f)f.style.width=p+'%';
 }
 
 function seekBar(e){
-  if(!_audio||!_audio.duration)return;
-  var bar=document.getElementById('mplayerBar');
-  var r=bar.getBoundingClientRect();
-  var x=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
-  var p=Math.max(0,Math.min(1,x/r.width));
-  _audio.currentTime=p*_audio.duration;
+  if(!_audio||!_audio.duration)return;e.preventDefault();
+  var bar=document.getElementById('mplayerBar');if(!bar)return;
+  var r=bar.getBoundingClientRect(),x=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
+  _audio.currentTime=Math.max(0,Math.min(1,x/r.width))*_audio.duration;
 }
 
+/* ==== 初始化 ==== */
 window._initMusic=function(){
-  if(!_mInit){
-    _mInit=true;
-    loadSongsForTab();
-    window.addEventListener('resize',fixMusicScroll);
-  }
-  updateProgress();
-  syncFullPlayer();
-  setTimeout(fixMusicScroll,200);
+  if(!_mInit){_mInit=true;loadSongsForTab();window.addEventListener('resize',fixMusicScroll)}
+  updateProgress();syncFullPlayer();setTimeout(fixMusicScroll,200);
 };
 
 function fixMusicScroll(){
-  var r=document.getElementById('musicResults');
-  var scene=document.querySelector('.music-scene');
+  var r=document.getElementById('musicResults'),scene=document.querySelector('.music-scene');
   if(!r||!scene)return;
-  r.style.overflowY='auto';
-  r.style.webkitOverflowScrolling='touch';
-  var sceneH=scene.clientHeight;
-  var searchH=0,playerH=0;
-  var srcTabs=document.querySelector('.music-source-tabs');
-  var srch=document.querySelector('.music-search');
-  var pl=document.getElementById('musicPlayerWrap');
-  if(srcTabs)searchH+=srcTabs.offsetHeight;
-  if(srch)searchH+=srch.offsetHeight;
-  if(pl)playerH=pl.offsetHeight;
-  var avail=sceneH-searchH-playerH-10;
-  if(avail>100){r.style.maxHeight=avail+'px';r.style.flex='none'}
-  else{r.style.maxHeight='';r.style.flex='1'}
+  r.style.overflowY='auto';r.style.webkitOverflowScrolling='touch';
+  var sh=scene.clientHeight,hh=0,ph=0;
+  var t=document.querySelector('.music-source-tabs'),s=document.querySelector('.music-search'),p=document.getElementById('musicPlayerWrap');
+  if(t)hh+=t.offsetHeight;if(s)hh+=s.offsetHeight;if(p)ph=p.offsetHeight;
+  var a=sh-hh-ph-10;
+  r.style.maxHeight=a>120?a+'px':'';r.style.flex=a>120?'none':'1';
 }
 
 /* ====== 全屏播放器 ====== */
 function openFullPlayer(){
-  var ov=document.getElementById('fpOverlay');
-  if(!ov)return;
-  ov.classList.add('show');
-  syncFullPlayer();
+  var ov=document.getElementById('fpOverlay');if(!ov)return;
+  ov.classList.add('show');syncFullPlayer();
 }
 function closeFullPlayer(){
   document.getElementById('fpOverlay').classList.remove('show');
 }
 function syncFullPlayer(){
-  var ov=document.getElementById('fpOverlay');
-  if(!ov||!ov.classList.contains('show'))return;
-  var mc=document.getElementById('mplayerCover');
-  var fpCover=document.getElementById('fpCover');
-  if(mc&&fpCover){
+  var ov=document.getElementById('fpOverlay');if(!ov||!ov.classList.contains('show'))return;
+  // 封面
+  var mc=document.getElementById('mplayerCover'),fp=document.getElementById('fpCover');
+  if(mc&&fp){
     var img=mc.querySelector('img');
-    if(img){
-      fpCover.innerHTML='<img src="'+img.src+'" onerror="this.parentElement.innerHTML=\'<div class=fp-cover-placeholder>&#127925;</div>\'">';
-      document.getElementById('fpBg').style.backgroundImage='url('+img.src+')';
-    }else{
-      fpCover.innerHTML='<div class="fp-cover-placeholder">&#127925;</div>';
-      document.getElementById('fpBg').style.backgroundImage='none';
-    }
+    fp.innerHTML=img?'<img src="'+img.src+'" onerror="this.parentElement.innerHTML=\'<div class=fp-cover-placeholder>&#127925;</div>\'">':'<div class="fp-cover-placeholder">&#127925;</div>';
+    document.getElementById('fpBg').style.backgroundImage=img?'url('+img.src+')':'none';
   }
-  var mt=document.querySelector('.mplayer-title');
-  var ma=document.querySelector('.mplayer-artist');
-  if(mt)document.getElementById('fpTitle').textContent=mt.textContent;
-  if(ma)document.getElementById('fpArtist').textContent=ma.textContent;
-  if(_audio&&_audio.duration){
-    var p=(_audio.currentTime/_audio.duration)*100;
-    document.getElementById('fpProgressFill').style.width=p+'%';
-    document.getElementById('fpCurTime').textContent=_fmtTime(_audio.currentTime);
-    document.getElementById('fpDur').textContent=_fmtTime(_audio.duration);
-  }
-  var pb=document.getElementById('fpPlayBtn');
-  if(pb)pb.textContent=_audio&&!_audio.paused?'⏸':'▶';
+  // 标题/歌手
+  var mt=document.querySelector('.mplayer-title'),ma=document.querySelector('.mplayer-artist');
+  document.getElementById('fpTitle').textContent=mt?mt.textContent.replace(/(iTunes|QQ)/,'').trim():'-';
+  document.getElementById('fpArtist').textContent=ma?ma.textContent:'-';
+  // 进度
+  var dur=_audio&&_audio.duration&&isFinite(_audio.duration)?_audio.duration:0;
+  var cur=_audio&&_audio.currentTime?_audio.currentTime:0;
+  document.getElementById('fpProgressFill').style.width=dur?(cur/dur*100)+'%':'0%';
+  document.getElementById('fpCurTime').textContent=_fmtTime(cur);
+  document.getElementById('fpDur').textContent=_fmtTime(dur);
+  // 播放按钮
+  document.getElementById('fpPlayBtn').textContent=_audio&&!_audio.paused?'⏸':'▶';
+  // 音量
+  document.getElementById('fpVolumeFill').style.width=(_volumeLevel*100)+'%';
+  // 随机/循环
+  document.getElementById('fpShuffleBtn').classList.toggle('active',_shuffle);
+  var rb=document.getElementById('fpRepeatBtn');
+  rb.textContent=_repeat===2?'🔂':_repeat===1?'🔁':'🔁';
+  rb.classList.toggle('active',_repeat>0);
 }
+
 function seekFullPlayer(e){
-  if(!_audio||!_audio.duration)return;
-  var bar=document.getElementById('fpProgressBar');
-  var r=bar.getBoundingClientRect();
+  if(!_audio||!_audio.duration)return;e.preventDefault();
+  var bar=document.getElementById('fpProgressBar'),r=bar.getBoundingClientRect();
   var x=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
-  var p=Math.max(0,Math.min(1,x/r.width));
-  _audio.currentTime=p*_audio.duration;
+  _audio.currentTime=Math.max(0,Math.min(1,x/r.width))*_audio.duration;
 }
+
+function seekVolume(e){
+  e.preventDefault();
+  var bar=document.getElementById('fpVolumeBar'),r=bar.getBoundingClientRect();
+  var x=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
+  _volumeLevel=Math.max(0,Math.min(1,x/r.width));
+  if(_audio)_audio.volume=_volumeLevel;
+  document.getElementById('fpVolumeFill').style.width=(_volumeLevel*100)+'%';
+}
+
+function toggleShuffle(){_shuffle=!_shuffle;syncFullPlayer()}
+function toggleRepeat(){
+  _repeat=(_repeat+1)%3;
+  syncFullPlayer();
+}
+
 function prevTrack(){
   if(_curIdx<=0||!_sr.length)return;
   playSong(_curIdx-1);
@@ -1926,8 +1987,9 @@ function nextTrack(){
   playSong(_curIdx+1);
 }
 function _fmtTime(sec){
+  if(!sec||!isFinite(sec))return'00:00';
   var m=Math.floor(sec/60),s=Math.floor(sec%60);
-  return (m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+  return(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
 }
 </script>
 </body>
