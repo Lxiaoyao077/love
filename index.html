@@ -1567,10 +1567,6 @@ function _qqParse(raw){
     return {id:it.songmid,name:it.songname||it.name||'',artist:s.join('/'),album:it.albumname||'',songmid:it.songmid};
   });
 }
-function _qqUrl(songmid){
-  return fetch('https://api.topyu.top/api/qqmusic?id='+songmid+'&br=128').then(function(r){return r.json()});
-}
-
 /* ====== 加载热歌列表 ====== */
 function loadHotSongs(){
   var r=document.getElementById('musicResults');
@@ -1630,6 +1626,11 @@ function playSong(idx){
   var t=s.name||'未知',a=s.artist||'';
   updatePlayerUI(t,a,'');
 
+  // 关键修复：在用户手势同步阶段创建 Audio 并触发 play，解锁浏览器音频上下文
+  // 移动端浏览器要求 play() 必须在用户手势的同步调用栈内执行
+  _audio=_audio||new Audio();
+  _audio.play().catch(function(){});
+
   if(_curSrc==='kugou'){
     _playKugou(s,t,a);
   }else{
@@ -1642,47 +1643,79 @@ function _playKugou(s,t,a){
   if(!hash){updatePlayerStatus('无音源');return}
   _kugouUrl(hash,s.album_id||'').then(function(raw){
     var data=raw&&raw.data;
-    var url=data&&data.play_url;
-    if(!url){updatePlayerStatus('无播放源');return}
-    _startAudio(url);
-    // 封面
-    if(data.img){
-      var c=document.getElementById('mplayerCover');
-      if(c)c.innerHTML='<img src="'+data.img.replace('http://','https://')+'" onerror="this.parentElement.innerHTML=\'🎵\'">';
+    var url=data&&(data.play_url||data.url);
+    if(!url){
+      // 回退：尝试用 api.topyu.top 代理获取播放地址
+      return fetch('https://api.topyu.top/api/kgmusic?id='+hash).then(function(r){return r.json()}).then(function(d){
+        url=d&&(d.url||d.data||d.play_url);
+        if(!url){updatePlayerStatus('无播放源');return}
+        _startAudio(url);
+        _setKugouCover(data);
+      });
     }
+    _startAudio(url);
+    _setKugouCover(data);
   }).catch(function(e){
     console.error('kugou play err',e);
     updatePlayerStatus('播放失败');
   });
 }
+function _setKugouCover(data){
+  var c=document.getElementById('mplayerCover');
+  if(!c)return;
+  // 多重回退：data.img → data.cover → 默认emoji
+  var img=data&&(data.img||data.cover);
+  if(img){
+    var u=img.replace(/^http:/,'https:');
+    c.innerHTML='<img src="'+u+'" onerror="this.parentElement.innerHTML=\'🎵\'">';
+  }
+}
 
 function _playQQ(s,t,a){
   var mid=s.songmid||s.id;
   if(!mid){updatePlayerStatus('无音源');return}
-  _qqUrl(mid).then(function(d){
-    var url=d&&(d.url||d.data);
-    if(!url){updatePlayerStatus('无播放源');return}
-    _startAudio(url);
-    // QQ封面
-    if(mid){
-      var cover='https://y.qq.com/music/photo_new/T002R300x300M000'+mid+'.jpg';
-      var c=document.getElementById('mplayerCover');
-      if(c)c.innerHTML='<img src="'+cover+'" onerror="this.parentElement.innerHTML=\'🎵\'">';
-    }
+
+  function _tryQQ(src){
+    return fetch(src).then(function(r){return r.json()}).then(function(d){
+      var url=d&&(d.url||d.data);
+      if(!url)throw new Error('no url');
+      _startAudio(url);
+      _setQQCover(mid);
+    });
+  }
+
+  // 多个 QQ 音源代理，逐个回退
+  _tryQQ('https://api.topyu.top/api/qqmusic?id='+mid+'&br=128').catch(function(){
+    return _tryQQ('https://api.qqsuu.cn/api/qqmusic?id='+mid+'&br=128');
   }).catch(function(e){
     console.error('qq play err',e);
     updatePlayerStatus('播放失败');
   });
 }
+function _setQQCover(mid){
+  if(!mid)return;
+  var c=document.getElementById('mplayerCover');
+  if(!c)return;
+  var cover='https://y.qq.com/music/photo_new/T002R300x300M000'+mid+'.jpg';
+  c.innerHTML='<img src="'+cover+'" onerror="this.parentElement.innerHTML=\'🎵\'">';
+}
 
 function _startAudio(url){
-  _audio=_audio||new Audio();
+  if(!_audio)_audio=new Audio();
   _audio.src=url;
-  _audio.play().catch(function(){updatePlayerStatus('播放被拦截')});
+  _audio.load();
+  _audio.play().then(function(){
+    updatePlayerStatus('⏸');
+  }).catch(function(e){
+    console.error('audio play err',e);
+    updatePlayerStatus('播放失败');
+  });
   _audio.ontimeupdate=function(){updateProgress()};
   _audio.onended=function(){updatePlayerStatus('▸')};
-  _audio.onerror=function(){updatePlayerStatus('流失效')};
-  updatePlayerStatus('⏸');
+  _audio.onerror=function(e){
+    console.error('audio error',e,_audio.error);
+    updatePlayerStatus('流失效');
+  };
 }
 
 /* ====== 播放器 UI ====== */
