@@ -731,59 +731,79 @@
   .mplayer-bar{height:3px;background:rgba(0,0,0,0.08);border-radius:2px;margin-top:6px;cursor:pointer;position:relative}
   .mplayer-bar-fill{height:100%;background:oklch(0.45 0.03 50);border-radius:2px;width:0%;transition:width 0.3s linear}
 
-  /* 全屏播放器覆盖层 */
+  /* 全屏播放器 - QZMusic 风格 */
   .fp-overlay{
     position:fixed;inset:0;z-index:200;
-    background:rgba(255,255,255,0.97);
-    backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
-    display:none;flex-direction:column;align-items:center;justify-content:center;
-    padding:clamp(2rem,6vh,4rem) clamp(1.5rem,6vw,2rem);
+    display:none;flex-direction:column;align-items:center;justify-content:flex-start;
+    padding:clamp(1.5rem,5vh,3rem) clamp(1.5rem,5vw,2rem) clamp(2rem,6vh,3rem);
   }
   .fp-overlay.show{display:flex}
+  /* 模糊背景层 */
+  .fp-bg{
+    position:absolute;inset:0;z-index:0;
+    background-size:cover;background-position:center;
+    filter:blur(40px) brightness(0.6);
+    -webkit-filter:blur(40px) brightness(0.6);
+    transform:scale(1.2);
+  }
+  .fp-bg-dimmer{position:absolute;inset:0;z-index:1;background:rgba(0,0,0,0.35)}
+  /* 内容层 */
+  .fp-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;width:100%;max-width:360px;flex:1;justify-content:center}
   .fp-close{
-    position:absolute;top:clamp(1rem,4vh,2rem);right:1.5rem;
-    width:36px;height:36px;border-radius:50%;border:0.5px solid rgba(0,0,0,0.12);
-    background:rgba(255,255,255,0.6);display:flex;align-items:center;justify-content:center;
-    cursor:pointer;font-size:1rem;color:oklch(0.35 0.03 50);-webkit-tap-highlight-color:transparent;
+    position:absolute;top:clamp(0.8rem,3vh,1.5rem);right:1rem;z-index:3;
+    width:32px;height:32px;border-radius:50%;border:none;
+    background:rgba(255,255,255,0.2);color:rgba(255,255,255,0.9);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;font-size:0.9rem;-webkit-tap-highlight-color:transparent;
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
   }
-  .fp-close:active{transform:scale(0.92);background:rgba(0,0,0,0.05)}
+  .fp-close:active{transform:scale(0.92);background:rgba(255,255,255,0.35)}
   .fp-cover{
-    width:clamp(180px,55vw,280px);height:clamp(180px,55vw,280px);
-    border-radius:18px;overflow:hidden;margin-bottom:clamp(1.5rem,5vh,2.5rem);
-    box-shadow:0 8px 40px rgba(0,0,0,0.1);
-    background:oklch(0.65 0.02 75);
-    display:flex;align-items:center;justify-content:center;font-size:3.5rem;
+    width:clamp(200px,58vw,300px);height:clamp(200px,58vw,300px);
+    border-radius:16px;overflow:hidden;margin-bottom:clamp(1.2rem,4vh,2rem);
+    box-shadow:0 12px 48px rgba(0,0,0,0.25);
   }
-  .fp-cover img{width:100%;height:100%;object-fit:cover}
+  .fp-cover img{width:100%;height:100%;object-fit:cover;display:block}
+  .fp-cover-placeholder{
+    width:100%;height:100%;background:linear-gradient(135deg,#2d2d3f,#1a1a2e);
+    display:flex;align-items:center;justify-content:center;font-size:4rem;
+  }
   .fp-title{
-    font-size:1.1rem;font-weight:600;font-family:"Noto Serif SC",serif;
-    color:oklch(0.2 0.04 40);margin-bottom:0.25rem;text-align:center;
-    max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    font-size:1.25rem;font-weight:600;color:#fff;margin-bottom:0.3rem;
+    text-align:center;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    font-family:"Noto Serif SC",serif;text-shadow:0 1px 4px rgba(0,0,0,0.3);
   }
   .fp-artist{
-    font-size:0.8rem;color:oklch(0.35 0.02 50);margin-bottom:clamp(1.5rem,5vh,2.5rem);
-    font-family:"Noto Sans SC",sans-serif;
+    font-size:0.85rem;color:rgba(255,255,255,0.7);margin-bottom:clamp(1.5rem,5vh,2.5rem);
+    font-family:"Noto Sans SC",sans-serif;text-shadow:0 1px 2px rgba(0,0,0,0.3);
   }
-  .fp-progress-wrap{
-    width:clamp(240px,72vw,360px);margin-bottom:clamp(1.2rem,4vh,2rem);
-  }
+  .fp-progress-wrap{width:100%;margin-bottom:clamp(1.2rem,4vh,1.8rem)}
   .fp-progress-bar{
-    height:4px;background:rgba(0,0,0,0.08);border-radius:2px;cursor:pointer;position:relative;
+    height:3px;background:rgba(255,255,255,0.2);border-radius:2px;cursor:pointer;position:relative;
   }
-  .fp-progress-fill{height:100%;background:oklch(0.45 0.03 50);border-radius:2px;width:0%;transition:width 0.3s linear}
   .fp-time-row{
-    display:flex;justify-content:space-between;font-size:0.6rem;color:oklch(0.4 0.02 50);
-    margin-top:6px;font-family:"Noto Sans SC",sans-serif;
+    display:flex;justify-content:space-between;font-size:0.65rem;color:rgba(255,255,255,0.5);
+    margin-top:8px;font-family:"Noto Sans SC",sans-serif;
   }
-  .fp-controls{display:flex;align-items:center;gap:clamp(1.5rem,8vw,2.5rem)}
+  /* 进度条填充与拖拽圆点 */
+  .fp-progress-fill-wrap{position:relative;height:100%;border-radius:2px}
+  .fp-progress-fill{height:100%;background:#ff6b35;border-radius:2px;width:0%;transition:width 0.3s linear;position:relative}
+  .fp-progress-fill::after{content:'';position:absolute;right:-5px;top:50%;transform:translateY(-50%);width:10px;height:10px;border-radius:50%;background:#ff6b35;box-shadow:0 0 6px rgba(255,107,53,0.6);opacity:0;transition:opacity 0.2s}
+  .fp-progress-bar:hover .fp-progress-fill::after,.fp-progress-bar:active .fp-progress-fill::after{opacity:1}
+  .fp-controls{
+    display:flex;align-items:center;gap:clamp(1.5rem,8vw,2.5rem);
+  }
   .fp-btn{
-    width:50px;height:50px;border-radius:50%;border:1px solid oklch(0.45 0.03 50 / 0.2);
-    background:rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;
-    cursor:pointer;font-size:1.2rem;color:oklch(0.3 0.04 45);-webkit-tap-highlight-color:transparent;
-    transition:transform 0.15s;
+    width:44px;height:44px;border-radius:50%;border:none;
+    background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.9);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;-webkit-tap-highlight-color:transparent;
+    transition:transform 0.15s,background 0.2s;
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
   }
-  .fp-btn:active{transform:scale(0.9)}
-  .fp-btn-play{width:62px;height:62px;font-size:1.5rem;background:oklch(0.4 0.04 45);color:#fff;border:none}
+  .fp-btn:active{transform:scale(0.9);background:rgba(255,255,255,0.25)}
+  .fp-btn-play{width:60px;height:60px;background:#ff6b35;color:#fff;box-shadow:0 4px 20px rgba(255,107,53,0.4)}
+  .fp-btn-play:active{background:#e85d2c;box-shadow:0 2px 12px rgba(255,107,53,0.3)}
 </style>
 </head>
 <body>
@@ -972,8 +992,8 @@
     <p class="game-title" style="margin-bottom:0.5rem">· 音 乐 ·</p>
     <div class="music-scene">
       <div class="music-source-tabs">
-        <button class="music-source-tab active" data-src="kugou" onclick="switchMusicSrc('kugou')">酷狗</button>
-        <button class="music-source-tab" data-src="qq" onclick="switchMusicSrc('qq')">QQ音乐</button>
+        <button class="music-source-tab active" data-src="qq" onclick="switchMusicSrc('qq')">QQ音乐</button>
+        <button class="music-source-tab" data-src="netease" onclick="switchMusicSrc('netease')">网易云</button>
       </div>
       <div class="music-search">
         <input type="text" id="musicSearchInput" placeholder="搜索歌曲..." onkeydown="if(event.key==='Enter')searchMusic()">
@@ -985,22 +1005,26 @@
       <div class="music-player-wrap" id="musicPlayerWrap" onclick="openFullPlayer()"></div>
     </div>
   </div>
-  <!-- 全屏播放器 -->
+  <!-- 全屏播放器 - QZMusic 风格 -->
   <div class="fp-overlay" id="fpOverlay">
+    <div class="fp-bg" id="fpBg"></div>
+    <div class="fp-bg-dimmer"></div>
     <div class="fp-close" onclick="closeFullPlayer()">✕</div>
-    <div class="fp-cover" id="fpCover">🎵</div>
-    <div class="fp-title" id="fpTitle">-</div>
-    <div class="fp-artist" id="fpArtist">-</div>
-    <div class="fp-progress-wrap">
-      <div class="fp-progress-bar" id="fpProgressBar" onclick="seekFullPlayer(event)">
-        <div class="fp-progress-fill" id="fpProgressFill"></div>
+    <div class="fp-inner">
+      <div class="fp-cover" id="fpCover"><div class="fp-cover-placeholder">&#127925;</div></div>
+      <div class="fp-title" id="fpTitle">-</div>
+      <div class="fp-artist" id="fpArtist">-</div>
+      <div class="fp-progress-wrap">
+        <div class="fp-progress-bar" id="fpProgressBar" ontouchstart="seekFullPlayer(event);return false" onclick="seekFullPlayer(event)">
+          <div class="fp-progress-fill-wrap"><div class="fp-progress-fill" id="fpProgressFill"></div></div>
+        </div>
+        <div class="fp-time-row"><span id="fpCurTime">00:00</span><span id="fpDur">00:00</span></div>
       </div>
-      <div class="fp-time-row"><span id="fpCurTime">00:00</span><span id="fpDur">00:00</span></div>
-    </div>
-    <div class="fp-controls">
-      <button class="fp-btn" onclick="prevTrack()" style="font-size:0.9rem">⏮</button>
-      <button class="fp-btn fp-btn-play" id="fpPlayBtn" onclick="togglePlay()">▶</button>
-      <button class="fp-btn" onclick="nextTrack()" style="font-size:0.9rem">⏭</button>
+      <div class="fp-controls">
+        <button class="fp-btn" ontouchstart="prevTrack();return false" onclick="prevTrack()" style="font-size:1rem">⏮</button>
+        <button class="fp-btn fp-btn-play" id="fpPlayBtn" ontouchstart="togglePlay();return false" onclick="togglePlay()">▶</button>
+        <button class="fp-btn" ontouchstart="nextTrack();return false" onclick="nextTrack()" style="font-size:1rem">⏭</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1596,10 +1620,10 @@ function endMole(){
 
 window._initMole=function(){startMole()};
 
-/* ====== 音乐播放器 v4 — DreamMeting API 代理播放（对标 QZMusic 音源方案） ====== */
-var _DM='https://music.3e0.cn',_curSrc='kugou',_sr=[],_mInit=false,_audio=null,_curIdx=-1;
+/* ====== 音乐播放器 v5 — QQ搜索 + NetEase音频 ====== */
+var _DM='https://music.3e0.cn',_curSrc='qq',_sr=[],_mInit=false,_audio=null,_curIdx=-1;
 
-/* JSONP 助手 — 仅用于搜索（酷狗/QQ 原生搜索仍用 JSONP） */
+/* JSONP 助手 */
 function _jsonp(url,paramName){
   return new Promise(function(resolve,reject){
     var cb='_cb'+Date.now()+'_'+Math.floor(Math.random()*1e6);
@@ -1612,24 +1636,13 @@ function _jsonp(url,paramName){
   });
 }
 
-/* DreamMeting 音频/封面链接生成 — 对标 QZMusic 插件 getUrl/getPic */
-function _dmAudio(mid){return _DM+'/?server=tencent&type=url&id='+mid}
+/* DreamMeting 辅助 */
 function _dmCover(mid){return _DM+'/?server=tencent&type=pic&id='+mid}
 
-/* ====== 酷狗搜索（JSONP 直连，搜索正常） ====== */
-function _kugouSearch(kw){
-  return _jsonp('https://songsearch.kugou.com/song_search_v2?keyword='+encodeURIComponent(kw)+'&page=1&pagesize=30&userid=-1&clientver=&platform=WebFilter&tag=em&filter=2&iscorrection=1&privilege_filter=0','callback');
-}
-function _kugouHot(){
-  return _jsonp('https://songsearch.kugou.com/song_search_v2?keyword=%E7%83%AD%E6%AD%8C&page=1&pagesize=25&userid=-1&clientver=&platform=WebFilter&tag=em&filter=2&iscorrection=1&privilege_filter=0','callback');
-}
-function _kugouParse(raw){
-  var lists=raw&&raw.data&&raw.data.lists;
-  if(!lists||!lists.length)return[];
-  return lists.map(function(it){return{id:it.FileHash,name:it.SongName,artist:it.SingerName,album:it.AlbumName||'',hash:it.FileHash,cover:it.Image||it.AlbumImage||'',_kg:true}});
-}
+/* QQ 原生 CDN 封面（比 DreamMeting 更快） */
+function _qqCover(albummid,size){size=size||300;return 'https://y.gtimg.cn/music/photo_new/T002R'+size+'x'+size+'M000'+albummid+'.jpg'}
 
-/* ====== QQ 搜索（JSONP 直连，搜索正常） ====== */
+/* ====== QQ 搜索 ====== */
 function _qqSearch(kw){
   return _jsonp('https://c.y.qq.com/soso/fcgi-bin/client_search_cp?format=jsonp&w='+encodeURIComponent(kw)+'&n=30&p=1&cr=1&lossless=0&flag_qc=0','callback');
 }
@@ -1642,52 +1655,60 @@ function _qqParse(raw){
   return list.map(function(it){
     var s=[];
     (it.singer||[]).forEach(function(x){s.push(x.name||'')});
-    return {id:it.songmid,name:it.songname||it.name||'',artist:s.join('/'),album:it.albumname||'',songmid:it.songmid,albummid:it.albummid||'',cover:_dmCover(it.albummid||it.songmid)};
+    var amid=it.albummid||'';
+    return {
+      id:it.songmid,name:it.songname||it.name||'',artist:s.join('/'),
+      album:it.albumname||'',songmid:it.songmid,albummid:amid,
+      cover:amid?_qqCover(amid):'',
+      neid:null  // will be resolved later if needed
+    };
   });
 }
 
-/* ====== 默认歌单（含精确 songmid，热歌加载失败时回退） ====== */
-var _DEFAULT_SONGS={
-  kugou:[
-    {name:'晴天',artist:'周杰伦',songmid:'0039MnYb0qxYhV',cover:_dmCover('000MkMni19ClKG')},
-    {name:'七里香',artist:'周杰伦',songmid:'004Z8Ihr0JIu5s',cover:_dmCover('003DFRzD192KKD')},
-    {name:'稻香',artist:'周杰伦',songmid:'002Ne8Ut3QoDMx',cover:_dmCover('001jyBRQ0ETwLG')},
-    {name:'夜曲',artist:'周杰伦',songmid:'001JD1dQ3QoDMx',cover:_dmCover('002eFUFm2XYZ7z')},
-    {name:'青花瓷',artist:'周杰伦',songmid:'002eFUFm2XYZ7z',cover:_dmCover('000NfvPz1ZQYTa')},
-    {name:'告白气球',artist:'周杰伦',songmid:'003RMaRI1iFoYd',cover:_dmCover('003y8dsH2wBHlo')},
-    {name:'简单爱',artist:'周杰伦',songmid:'000oGz9p3QoDMx',cover:_dmCover('000jCROo1DjBN6')},
-    {name:'听妈妈的话',artist:'周杰伦',songmid:'001zMQr71F1Qo8',cover:_dmCover('000AH2113XnNQE')}
-  ],
-  qq:[
-    {name:'晴天',artist:'周杰伦',songmid:'0039MnYb0qxYhV',cover:_dmCover('000MkMni19ClKG')},
-    {name:'七里香',artist:'周杰伦',songmid:'004Z8Ihr0JIu5s',cover:_dmCover('003DFRzD192KKD')},
-    {name:'稻香',artist:'周杰伦',songmid:'002Ne8Ut3QoDMx',cover:_dmCover('001jyBRQ0ETwLG')},
-    {name:'夜曲',artist:'周杰伦',songmid:'001JD1dQ3QoDMx',cover:_dmCover('002eFUFm2XYZ7z')},
-    {name:'青花瓷',artist:'周杰伦',songmid:'002eFUFm2XYZ7z',cover:_dmCover('000NfvPz1ZQYTa')},
-    {name:'告白气球',artist:'周杰伦',songmid:'003RMaRI1iFoYd',cover:_dmCover('003y8dsH2wBHlo')},
-    {name:'简单爱',artist:'周杰伦',songmid:'000oGz9p3QoDMx',cover:_dmCover('000jCROo1DjBN6')},
-    {name:'听妈妈的话',artist:'周杰伦',songmid:'001zMQr71F1Qo8',cover:_dmCover('000AH2113XnNQE')}
-  ]
+/* ====== 知名歌曲 NetEase ID 映射（优先使用 NetEase 音频源） ====== */
+var _NE_KNOWN={
+  '晴天':'186016','七里香':'186009','稻香':'186001','夜曲':'186002',
+  '青花瓷':'186014','告白气球':'416892261','简单爱':'186011','听妈妈的话':'186004',
+  '搁浅':'186015','说好的幸福呢':'186003','最长的电影':'185998','轨迹':'185996',
+  '安静':'185994','不能说的秘密':'185997','珊瑚海':'186020','彩虹':'186021',
+  '给我一首歌的时间':'186022','本草纲目':'186025','龙拳':'186033',
+  '告白气球':'416892261','等你下课':'514764901','Mojito':'1461408074',
+  '反方向的钟':'296537','兰亭序':'185963','一路向北':'185990'
 };
+
+/* 默认歌单 */
+var _DEFAULT_SONGS=[
+  {name:'晴天',artist:'周杰伦',songmid:'0039MnYb0qxYhV',albummid:'000MkMni19ClKG'},
+  {name:'七里香',artist:'周杰伦',songmid:'004Z8Ihr0JIu5s',albummid:'003DFRzD192KKD'},
+  {name:'稻香',artist:'周杰伦',songmid:'002Ne8Ut3QoDMx',albummid:'001jyBRQ0ETwLG'},
+  {name:'夜曲',artist:'周杰伦',songmid:'001JD1dQ3QoDMx',albummid:'002eFUFm2XYZ7z'},
+  {name:'青花瓷',artist:'周杰伦',songmid:'002eFUFm2XYZ7z',albummid:'000NfvPz1ZQYTa'},
+  {name:'告白气球',artist:'周杰伦',songmid:'003RMaRI1iFoYd',albummid:'003y8dsH2wBHlo'},
+  {name:'简单爱',artist:'周杰伦',songmid:'000oGz9p3QoDMx',albummid:'000jCROo1DjBN6'},
+  {name:'听妈妈的话',artist:'周杰伦',songmid:'001zMQr71F1Qo8',albummid:'000AH2113XnNQE'}
+];
 
 /* ====== 加载热歌列表 ====== */
 function loadHotSongs(){
   var r=document.getElementById('musicResults');
   r.innerHTML='<div class="music-empty">加载中...</div>';
-  var fn=_curSrc==='kugou'?_kugouHot:_qqHot;
-  var parser=_curSrc==='kugou'?_kugouParse:_qqParse;
-  fn().then(function(raw){
-    var songs=parser(raw);
-    if(!songs.length){_showDefaultSongs();return}
+  _qqHot().then(function(raw){
+    var songs=_qqParse(raw);
+    if(!songs.length){_sr=_DEFAULT_SONGS.map(function(d){return _enrichSong(d)});renderSongs(_sr);return}
     _sr=songs;renderSongs(songs);
   }).catch(function(e){
-    console.error('hot load err, using defaults',e);
-    _showDefaultSongs();
+    console.error('hot load err',e);
+    _sr=_DEFAULT_SONGS.map(function(d){return _enrichSong(d)});renderSongs(_sr);
   });
 }
-function _showDefaultSongs(){
-  var songs=_DEFAULT_SONGS[_curSrc]||_DEFAULT_SONGS.qq;
-  _sr=songs;renderSongs(songs);
+
+function _enrichSong(d){
+  return {
+    id:d.songmid,name:d.name,artist:d.artist,
+    songmid:d.songmid,albummid:d.albummid||'',
+    cover:d.albummid?_qqCover(d.albummid):'',
+    neid:null
+  };
 }
 
 /* ====== 搜索 ====== */
@@ -1696,10 +1717,8 @@ function searchMusic(){
   if(!kw)return;
   var r=document.getElementById('musicResults');
   r.innerHTML='<div class="music-empty">搜索中...</div>';
-  var fn=_curSrc==='kugou'?_kugouSearch(_kw()):_qqSearch(_kw());
-  var parser=_curSrc==='kugou'?_kugouParse:_qqParse;
-  fn.then(function(raw){
-    var songs=parser(raw);
+  _qqSearch(kw).then(function(raw){
+    var songs=_qqParse(raw);
     if(!songs.length){r.innerHTML='<div class="music-empty">未找到相关歌曲</div>';return}
     _sr=songs;renderSongs(songs);
   }).catch(function(e){
@@ -1715,7 +1734,7 @@ function renderSongs(songs){
   for(i=0;i<l;i++){
     var s=songs[i],t=escapeHtml(s.name||'未知'),a=escapeHtml(s.artist||'未知歌手');
     var cv=s.cover||'';
-    // Kugou 封面修复：HTTP→HTTPS，失效时回退 emoji
+    // HTTP→HTTPS 修复
     if(cv&&cv.indexOf('http://')===0)cv=cv.replace('http://','https://');
     var coverHtml=cv?'<img src="'+cv+'" onerror="this.parentElement.innerHTML=\'🎵\'">':'🎵';
     h+='<div class="music-song" ontouchstart="playSong('+i+');return false" onclick="playSong('+i+')"><div class="music-song-cover">'+coverHtml+'</div><div class="music-song-info"><div class="music-song-title">'+t+'</div><div class="music-song-artist">'+a+'</div></div></div>';
@@ -1731,64 +1750,33 @@ function switchMusicSrc(src){
   loadHotSongs();
 }
 
-/* ====== 播放 — 统一经 DreamMeting API 获取音频（对标 QZMusic 插件 getUrl） ====== */
-var _curIdx=-1;
+/* ====== 播放 — 优先 NetEase 外链，回退 DreamMeting ====== */
 function playSong(idx){
   var s=_sr[idx];if(!s)return;
   _curIdx=idx;
   var t=s.name||'未知',a=s.artist||'';
-
-  // 用户手势阶段解锁音频上下文
+  var cv=s.cover||'';
+  // 解锁音频上下文
   _audio=_audio||new Audio();
   _audio.play().catch(function(){});
 
-  if(s.songmid){
-    // QQ 搜索或默认歌单：直接用 songmid 播放
-    _directPlay(s.songmid,t,a,s.cover||'');
-  }else if(s._kg){
-    // 酷狗搜索结果：用歌名+歌手跨平台搜索 QQ songmid
-    _kgCrossPlay(s,t,a);
-  }else{
-    updatePlayerUI(t,a,'');
-    updatePlayerStatus('无音源');
+  // 优先已知 NetEase ID
+  var neId=_NE_KNOWN[t]||_NE_KNOWN[t.replace(/\s+/g,'')]||null;
+  if(neId){
+    updatePlayerUI(t,a,cv);
+    updatePlayerStatus('加载中');
+    _startAudio('https://music.163.com/song/media/outer/url?id='+neId+'.mp3');
+    return;
   }
-}
-
-function _directPlay(songmid,title,artist,cover){
-  updatePlayerUI(title,artist,cover);
-  updatePlayerStatus('加载中');
-  _startAudio(_dmAudio(songmid));
-}
-
-function _kgCrossPlay(s,t,a){
+  // 回退 DreamMeting
+  if(s.songmid){
+    updatePlayerUI(t,a,cv);
+    updatePlayerStatus('加载中');
+    _startAudio(_DM+'/?server=tencent&type=url&id='+s.songmid);
+    return;
+  }
   updatePlayerUI(t,a,'');
-  updatePlayerStatus('匹配中');
-  // 用歌名搜索 QQ，取第一个结果；失败则用歌名+歌手再搜
-  _qqSearch(t).then(function(raw){
-    var list=raw&&raw.data&&raw.data.song&&raw.data.song.list;
-    if(!list||!list.length){
-      return _qqSearch(t+' '+a);
-    }
-    return raw;
-  }).then(function(raw){
-    var list=raw&&raw.data&&raw.data.song&&raw.data.song.list;
-    if(!list||!list.length){_fallbackDefault(t,a);return}
-    var song=list[0];
-    var mid=song.songmid||song.id;
-    if(!mid){_fallbackDefault(t,a);return}
-    updatePlayerUI(t,a,_dmCover(song.albummid||mid));
-    _startAudio(_dmAudio(mid));
-  }).catch(function(e){
-    console.error('kg cross search err',e);
-    _fallbackDefault(t,a);
-  });
-}
-function _fallbackDefault(t,a){
-  var d=_DEFAULT_SONGS.qq.find(function(x){return x.name===t||x.name.indexOf(t)>=0||t.indexOf(x.name)>=0});
-  if(d&&d.songmid){
-    updatePlayerUI(t,a,d.cover||'');
-    _startAudio(_dmAudio(d.songmid));
-  }else{updatePlayerStatus('无音源');}
+  updatePlayerStatus('无音源');
 }
 
 function _startAudio(url){
@@ -1806,6 +1794,14 @@ function _startAudio(url){
   _audio.onended=function(){updatePlayerStatus('▶');syncFullPlayer()};
   _audio.onerror=function(e){
     console.error('audio error',e,_audio.error);
+    // 如果 NetEase 外链失败，尝试 DreamMeting 回退
+    if(_audio.src.indexOf('music.163.com')>=0){
+      var s=_sr[_curIdx];
+      if(s&&s.songmid){
+        _startAudio(_DM+'/?server=tencent&type=url&id='+s.songmid);
+        return;
+      }
+    }
     updatePlayerStatus('流失效');
   };
 }
@@ -1846,7 +1842,6 @@ function seekBar(e){
 window._initMusic=function(){
   if(!_mInit){_mInit=true;loadHotSongs()}
   updateProgress();
-  // 同步全屏播放器进度
   syncFullPlayer();
 };
 
@@ -1863,11 +1858,22 @@ function closeFullPlayer(){
 function syncFullPlayer(){
   var ov=document.getElementById('fpOverlay');
   if(!ov||!ov.classList.contains('show'))return;
-  // 同步封面/标题/歌手
+  // 同步封面/背景
   var mc=document.getElementById('mplayerCover');
+  var fpCover=document.getElementById('fpCover');
+  if(mc&&fpCover){
+    var img=mc.querySelector('img');
+    if(img){
+      fpCover.innerHTML='<img src="'+img.src+'" onerror="this.parentElement.innerHTML=\'<div class=fp-cover-placeholder>&#127925;</div>\'">';
+      document.getElementById('fpBg').style.backgroundImage='url('+img.src+')';
+    }else{
+      fpCover.innerHTML='<div class="fp-cover-placeholder">&#127925;</div>';
+      document.getElementById('fpBg').style.backgroundImage='none';
+    }
+  }
+  // 同步标题/歌手
   var mt=document.querySelector('.mplayer-title');
   var ma=document.querySelector('.mplayer-artist');
-  if(mc)document.getElementById('fpCover').innerHTML=mc.innerHTML;
   if(mt)document.getElementById('fpTitle').textContent=mt.textContent;
   if(ma)document.getElementById('fpArtist').textContent=ma.textContent;
   // 同步进度
