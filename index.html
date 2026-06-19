@@ -638,47 +638,42 @@
     color:oklch(0.35 0.02 65);letter-spacing:0.1em;margin-top:0.8rem;
   }
 
-  /* ====== 打地鼠 ====== */
-  .mole-scene{
-    width:clamp(280px,80vw,340px);margin:0 auto;
-  }
+  /* ====== 打地鼠 v2 ====== */
+  .mole-scene{width:clamp(280px,86vw,360px);margin:0 auto}
   .mole-score-bar{
     display:flex;justify-content:space-between;align-items:center;
-    width:100%;margin-bottom:0.6rem;
-    font-family:"Noto Sans SC",sans-serif;font-size:0.72rem;
+    width:100%;margin-bottom:0.5rem;
+    font-family:"Noto Sans SC",sans-serif;font-size:0.75rem;
     color:oklch(0.3 0.03 55);
   }
-  .mole-grid{
-    display:grid;grid-template-columns:repeat(3,1fr);
-    gap:clamp(6px,2vw,10px);
-    user-select:none;-webkit-user-select:none;
-  }
-  .mole-hole{
-    position:relative;aspect-ratio:1;
-    background:radial-gradient(ellipse 60% 55% at 50% 60%,#6b4c30 0%,#4a3020 100%);
-    border-radius:50% 50% 40% 40%;
-    display:flex;align-items:flex-end;justify-content:center;
-    cursor:pointer;-webkit-tap-highlight-color:transparent;
-  }
-  .mole-mound{
-    position:absolute;bottom:0;left:50%;transform:translateX(-50%);
-    width:86%;height:38%;
-    background:radial-gradient(ellipse 80% 60% at 50% 100%,#c49a6c 0%,#a0784c 60%,#8b6535 100%);
-    border-radius:50% 50% 0 0;z-index:2;pointer-events:none;
-  }
-  .mole-mole{
-    position:relative;z-index:5;
-    font-size:clamp(28px,7vw,38px);
-    opacity:0;transform:translateY(30px);
-    transition:opacity 0.08s,transform 0.08s;
-    line-height:1;pointer-events:auto;
-  }
-  .mole-mole.up{opacity:1;transform:translateY(-12px)}
-  .mole-mole.hit{opacity:1;transform:translateY(-12px) scale(1.2);filter:saturate(0.3) hue-rotate(-20deg)}
   .mole-timer{
     font-family:"Cormorant Garamond",serif;font-size:1.1rem;font-weight:600;
     color:oklch(0.2 0.035 45);
   }
+  .mole-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    gap:8px;touch-action:manipulation;
+    user-select:none;-webkit-user-select:none;
+  }
+  .mole-cell{
+    position:relative;aspect-ratio:1;min-height:80px;
+    background:radial-gradient(ellipse 60% 50% at 50% 55%,#6b4c30 0%,#4a3020 100%);
+    border:none;border-radius:50% 50% 38% 38%;
+    cursor:pointer;-webkit-tap-highlight-color:transparent;
+    -webkit-appearance:none;appearance:none;padding:0;outline:none;
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+  .mole-cell:active{transform:scale(0.96)}
+  .mole-emoji{
+    font-size:clamp(32px,8vw,44px);line-height:1;
+    transition:transform 0.06s,opacity 0.06s;
+    opacity:0;transform:translateY(36px);
+    user-select:none;-webkit-user-select:none;
+    pointer-events:none;
+  }
+  .mole-emoji.show{opacity:1;transform:translateY(0)}
+  .mole-emoji.whack{opacity:1;transform:translateY(0) scale(1.3)}
   .mole-end{
     text-align:center;margin-top:0.8rem;opacity:0;transition:opacity 0.4s;pointer-events:none;
   }
@@ -693,6 +688,7 @@
     background:rgba(255,255,255,0.7);
     font-family:"Noto Sans SC",sans-serif;font-size:0.72rem;
     color:oklch(0.28 0.03 55);cursor:pointer;
+    -webkit-appearance:none;appearance:none;
   }
   .mole-retry:active{transform:scale(0.95)}
 </style>
@@ -847,7 +843,7 @@
   </div>
 </div>
 
-<!-- ============ 打地鼠 ============ -->
+<!-- ============ 打地鼠 v2 ============ -->
 <div class="page-panel" id="molePanel">
   <button class="game-back" data-back="gameHubPanel">← 游戏中心</button>
   <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%">
@@ -858,19 +854,19 @@
         <span class="mole-timer" id="moleTimer">30s</span>
       </div>
       <div class="mole-grid" id="moleGrid">
-        <div class="mole-hole"><div class="mole-mound"></div><div class="mole-mole">🐹</div></div>
-        <div class="mole-hole"><div class="mole-mound"></div><div class="mole-mole">🐹</div></div>
-        <div class="mole-hole"><div class="mole-mound"></div><div class="mole-mole">🐹</div></div>
-        <div class="mole-hole"><div class="mole-mound"></div><div class="mole-mole">🐹</div></div>
-        <div class="mole-hole"><div class="mole-mound"></div><div class="mole-mole">🐹</div></div>
-        <div class="mole-hole"><div class="mole-mound"></div><div class="mole-mole">🐹</div></div>
-        <div class="mole-hole"><div class="mole-mound"></div><div class="mole-mole">🐹</div></div>
-        <div class="mole-hole"><div class="mole-mound"></div><div class="mole-mole">🐹</div></div>
-        <div class="mole-hole"><div class="mole-mound"></div><div class="mole-mole">🐹</div></div>
+        <button class="mole-cell" id="mc0" ontouchstart="moleTap(0);return false" onclick="moleTap(0)"><span class="mole-emoji" id="me0">🐹</span></button>
+        <button class="mole-cell" id="mc1" ontouchstart="moleTap(1);return false" onclick="moleTap(1)"><span class="mole-emoji" id="me1">🐹</span></button>
+        <button class="mole-cell" id="mc2" ontouchstart="moleTap(2);return false" onclick="moleTap(2)"><span class="mole-emoji" id="me2">🐹</span></button>
+        <button class="mole-cell" id="mc3" ontouchstart="moleTap(3);return false" onclick="moleTap(3)"><span class="mole-emoji" id="me3">🐹</span></button>
+        <button class="mole-cell" id="mc4" ontouchstart="moleTap(4);return false" onclick="moleTap(4)"><span class="mole-emoji" id="me4">🐹</span></button>
+        <button class="mole-cell" id="mc5" ontouchstart="moleTap(5);return false" onclick="moleTap(5)"><span class="mole-emoji" id="me5">🐹</span></button>
+        <button class="mole-cell" id="mc6" ontouchstart="moleTap(6);return false" onclick="moleTap(6)"><span class="mole-emoji" id="me6">🐹</span></button>
+        <button class="mole-cell" id="mc7" ontouchstart="moleTap(7);return false" onclick="moleTap(7)"><span class="mole-emoji" id="me7">🐹</span></button>
+        <button class="mole-cell" id="mc8" ontouchstart="moleTap(8);return false" onclick="moleTap(8)"><span class="mole-emoji" id="me8">🐹</span></button>
       </div>
       <div class="mole-end" id="moleEnd">
         <p id="moleEndText">时间到！</p>
-        <button class="mole-retry" id="moleRetry">再来一局</button>
+        <button class="mole-retry" id="moleRetry" onclick="startMole()">再来一局</button>
       </div>
     </div>
   </div>
@@ -1395,88 +1391,72 @@
   });
 })();
 
-/* ====== 打地鼠 ====== */
-(function(){
-  const holes=document.querySelectorAll('#moleGrid .mole-hole');
-  const moles=document.querySelectorAll('#moleGrid .mole-mole');
-  const elScore=document.getElementById('moleScore');
-  const elTimer=document.getElementById('moleTimer');
-  const elEnd=document.getElementById('moleEnd');
-  const elEndText=document.getElementById('moleEndText');
-  const elRetry=document.getElementById('moleRetry');
+/* ====== 打地鼠 v2 ====== */
+var _m={playing:false,score:0,time:30,active:-1,tid:null,mid:null,hit:false};
 
-  const GAME_DURATION=30;
-  let score=0,timeLeft=GAME_DURATION,activeIdx=-1;
-  let timerId=null,moleTimeout=null,playing=false,cleaning=false;
+function startMole(){
+  _m.playing=true;_m.score=0;_m.time=30;_m.active=-1;_m.hit=false;
+  clearTimeout(_m.tid);clearTimeout(_m.mid);
+  for(var i=0;i<9;i++)document.getElementById('me'+i).className='mole-emoji';
+  document.getElementById('moleScore').textContent='0';
+  document.getElementById('moleTimer').textContent='30s';
+  document.getElementById('moleTimer').style.color='';
+  document.getElementById('moleEnd').classList.remove('show');
+  _m.mid=setTimeout(showMole,400);
+  _m.tid=setTimeout(tickMole,1000);
+}
 
-  function showMole(){
-    if(!playing)return;
-    let next;
-    do{next=Math.floor(Math.random()*9)}while(next===activeIdx);
-    activeIdx=next;
-    moles[activeIdx].classList.add('up');
-    moleTimeout=setTimeout(hideMole,600+Math.random()*800);
-  }
+function showMole(){
+  if(!_m.playing)return;
+  var n;do{n=Math.floor(Math.random()*9)}while(n===_m.active);
+  _m.active=n;
+  document.getElementById('me'+n).className='mole-emoji show';
+  _m.mid=setTimeout(hideMole,600+Math.random()*800);
+}
 
-  function hideMole(){
-    if(activeIdx>=0){moles[activeIdx].classList.remove('up','hit')}
-    activeIdx=-1;
-    if(!playing)return;
-    moleTimeout=setTimeout(showMole,400+Math.random()*600);
-  }
+function hideMole(){
+  if(_m.active>=0)document.getElementById('me'+_m.active).className='mole-emoji';
+  _m.active=-1;
+  if(!_m.playing)return;
+  _m.mid=setTimeout(showMole,400+Math.random()*600);
+}
 
-  function whack(i){
-    if(!playing||activeIdx!==i||cleaning)return;
-    cleaning=true;
-    clearTimeout(moleTimeout);
-    moles[i].classList.add('hit');
-    score++;
-    elScore.textContent=score;
-    navigator.vibrate&&navigator.vibrate(20);
-    setTimeout(()=>{
-      moles[i].classList.remove('up','hit');
-      activeIdx=-1;
-      cleaning=false;
-      if(playing)moleTimeout=setTimeout(showMole,300+Math.random()*500);
-    },200);
-  }
+function moleTap(n){
+  if(!_m.playing||_m.active!==n||_m.hit)return;
+  _m.hit=true;
+  clearTimeout(_m.mid);
+  var el=document.getElementById('me'+n);
+  el.className='mole-emoji whack';
+  _m.score++;
+  document.getElementById('moleScore').textContent=_m.score;
+  navigator.vibrate&&navigator.vibrate(15);
+  setTimeout(function(){
+    el.className='mole-emoji';
+    _m.active=-1;_m.hit=false;
+    if(_m.playing)_m.mid=setTimeout(showMole,300+Math.random()*500);
+  },200);
+}
 
-  holes.forEach((hole,i)=>{hole.addEventListener('pointerdown',e=>{e.preventDefault();whack(i)})});
-  moles.forEach((mole,i)=>{mole.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();whack(i)})});
+function tickMole(){
+  if(!_m.playing)return;
+  _m.time--;
+  document.getElementById('moleTimer').textContent=_m.time+'s';
+  if(_m.time<=5)document.getElementById('moleTimer').style.color='oklch(0.5 0.16 25)';
+  if(_m.time<=0){endMole();return}
+  _m.tid=setTimeout(tickMole,1000);
+}
 
-  function tick(){
-    if(!playing)return;
-    timeLeft--;
-    elTimer.textContent=timeLeft+'s';
-    if(timeLeft<=5)elTimer.style.color='oklch(0.5 0.16 25)';
-    if(timeLeft<=0){endGame();return}
-    timerId=setTimeout(tick,1000);
-  }
+function endMole(){
+  _m.playing=false;
+  clearTimeout(_m.tid);clearTimeout(_m.mid);
+  if(_m.active>=0){document.getElementById('me'+_m.active).className='mole-emoji';_m.active=-1}
+  document.getElementById('moleEndText').textContent=_m.score>=20?'太厉害了':_m.score>=10?'不错哦':'继续加油';
+  document.getElementById('moleEnd').classList.add('show');
+  document.getElementById('moleTimer').textContent='0s';
+  document.getElementById('moleTimer').style.color='';
+}
 
-  function endGame(){
-    playing=false;
-    clearTimeout(timerId);clearTimeout(moleTimeout);
-    if(activeIdx>=0){moles[activeIdx].classList.remove('up','hit');activeIdx=-1}
-    elEndText.textContent=score>=20?'太厉害了':score>=10?'不错哦':'继续加油';
-    elEnd.classList.add('show');
-    elTimer.textContent='0s';elTimer.style.color='';
-  }
-
-  function start(){
-    score=0;timeLeft=GAME_DURATION;activeIdx=-1;playing=true;cleaning=false;
-    moles.forEach(m=>m.classList.remove('up','hit'));
-    elScore.textContent='0';
-    elTimer.textContent=GAME_DURATION+'s';elTimer.style.color='';
-    elEnd.classList.remove('show');
-    clearTimeout(timerId);clearTimeout(moleTimeout);
-    moleTimeout=setTimeout(showMole,400);
-    timerId=setTimeout(tick,1000);
-  }
-
-  elRetry.addEventListener('click',()=>{start()});
-
-  window._initMole=()=>{start()};
-})();
+window._initMole=function(){startMole()};
 </script>
 </body>
 </html>
