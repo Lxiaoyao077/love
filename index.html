@@ -658,23 +658,22 @@
     background:radial-gradient(ellipse 60% 55% at 50% 60%,#6b4c30 0%,#4a3020 100%);
     border-radius:50% 50% 40% 40%;
     display:flex;align-items:flex-end;justify-content:center;
-    cursor:pointer;
-    -webkit-tap-highlight-color:transparent;
+    cursor:pointer;-webkit-tap-highlight-color:transparent;
   }
   .mole-mound{
     position:absolute;bottom:0;left:50%;transform:translateX(-50%);
     width:86%;height:38%;
     background:radial-gradient(ellipse 80% 60% at 50% 100%,#c49a6c 0%,#a0784c 60%,#8b6535 100%);
-    border-radius:50% 50% 0 0;z-index:2;
+    border-radius:50% 50% 0 0;z-index:2;pointer-events:none;
   }
   .mole-mole{
     font-size:clamp(28px,7vw,38px);z-index:1;
-    transform:translateY(120%);transition:transform 0.1s ease;
-    line-height:1;pointer-events:none;
-    filter:drop-shadow(0 2px 1px rgba(0,0,0,0.15));
+    opacity:0;transform:translateY(20px);
+    transition:opacity 0.08s,transform 0.08s;
+    line-height:1;pointer-events:auto;
   }
-  .mole-mole.up{transform:translateY(-75%)}
-  .mole-mole.hit{transform:translateY(-75%) scale(0.8);filter:drop-shadow(0 2px 1px rgba(0,0,0,0.15)) saturate(0.3) hue-rotate(-20deg)}
+  .mole-mole.up{opacity:1;transform:translateY(0)}
+  .mole-mole.hit{opacity:1;transform:translateY(0) scale(1.2);filter:saturate(0.3) hue-rotate(-20deg)}
   .mole-timer{
     font-family:"Cormorant Garamond",serif;font-size:1.1rem;font-weight:600;
     color:oklch(0.2 0.035 45);
@@ -1442,6 +1441,7 @@
   }
 
   holes.forEach((hole,i)=>{hole.addEventListener('pointerdown',e=>{e.preventDefault();whack(i)})});
+  moles.forEach((mole,i)=>{mole.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();whack(i)})});
 
   function tick(){
     if(!playing)return;
