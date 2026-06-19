@@ -695,7 +695,7 @@
   /* ====== 音乐面板容器（固定视口高度，确保列表可滚动） ====== */
   #musicPanel{
     height:100vh;height:100dvh;overflow:hidden;
-    padding-top:clamp(3rem,10vh,5rem);padding-bottom:0;
+    padding-top:clamp(3rem,10vh,5rem);padding-bottom:100px;
     display:flex;flex-direction:column;
   }
   #musicPanel .game-back{flex-shrink:0;height:auto}
@@ -708,7 +708,7 @@
   /* ====== 音乐播放器主场景 ====== */
   .music-scene{
     width:clamp(300px,90vw,420px);margin:0 auto;
-    flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;
+    flex:1;min-height:0;display:flex;flex-direction:column;
   }
   .music-source-tabs{display:flex;gap:0;margin-bottom:0.6rem;background:rgba(0,0,0,0.04);border-radius:10px;padding:3px;flex-shrink:0}
   .music-source-tab{flex:1;text-align:center;padding:7px 0;font-size:0.72rem;font-family:"Noto Sans SC",sans-serif;color:oklch(0.35 0.03 45);border-radius:8px;border:none;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background 0.2s,color 0.2s;-webkit-appearance:none;appearance:none}
@@ -1813,7 +1813,6 @@ function renderSongs(songs){
     h+='<div class="music-song" style="animation:musicFadeIn 0.3s ease both;animation-delay:'+(i*0.03)+'s" ontouchstart="playSong('+i+');return false" onclick="playSong('+i+')"><div class="music-song-cover">'+coverHtml+'</div><div class="music-song-info"><div class="music-song-title">'+t+'</div><div class="music-song-artist">'+a+'</div></div></div>';
   }
   document.getElementById('musicResults').innerHTML=h;
-  setTimeout(fixMusicScroll,50);
 }
 
 /* ==== 切换 tab ==== */
@@ -1833,8 +1832,11 @@ function playSong(idx){
   _curIdx=idx;
   var t=s.name||'未知',a=s.artist||'';
   var cv=s.cover||'';
-  _audio=_audio||new Audio();
-  _audio.play().catch(function(){});
+  // 销毁旧 Audio 防止残留事件
+  if(_audio){_audio.onerror=null;_audio.ontimeupdate=null;_audio.onended=null;_audio.onloadedmetadata=null;_audio.oncanplay=null;try{_audio.pause();_audio.src=''}catch(e){}}
+  _audio=new Audio();
+  _audio.preload='auto';
+  _audio.volume=0.9;
 
   updatePlayerUI(t,a,cv);
   updatePlayerStatus('加载中');
@@ -1842,59 +1844,79 @@ function playSong(idx){
   // 构建音源列表（按优先级）
   var srcs=[];
   // 1) DreamMeting QQ
-  if(s.songmid) srcs.push('https://music.3e0.cn/?server=tencent&type=url&id='+s.songmid);
+  if(s.songmid) srcs.push({url:'https://music.3e0.cn/?server=tencent&type=url&id='+s.songmid,label:'QQ'});
   // 2) 已知 NetEase ID → DreamMeting NetEase
   var neId=s.neid||_NE_KNOWN[t]||_NE_KNOWN[t.replace(/\s+/g,'')]||null;
-  if(neId) srcs.push('https://music.3e0.cn/?server=netease&type=url&id='+neId);
+  if(neId) srcs.push({url:'https://music.3e0.cn/?server=netease&type=url&id='+neId,label:'NetEase'});
   // 3) NetEase 外链（浏览器端可能可用）
-  if(neId) srcs.push('https://music.163.com/song/media/outer/url?id='+neId+'.mp3');
+  if(neId) srcs.push({url:'https://music.163.com/song/media/outer/url?id='+neId+'.mp3',label:'NetEase外链'});
 
   if(!srcs.length){updatePlayerStatus('无音源');syncFullPlayer();return}
   _audioSources=srcs;_audioSrcIdx=0;
   _tryAudioSrc();
 }
 
-var _audioSources=[],_audioSrcIdx=0;
+var _audioSources=[],_audioSrcIdx=0,_audioTimeout=null;
 function _tryAudioSrc(){
   if(_audioSrcIdx>=_audioSources.length){
     updatePlayerStatus('流失效');
     syncFullPlayer();
-    // 最后手段：弹 QQ音乐网页版
-    _audio.onerror=null;
     return;
   }
-  var url=_audioSources[_audioSrcIdx++];
-  if(!_audio)_audio=new Audio();
+  var item=_audioSources[_audioSrcIdx++];
+  var url=item.url;
+  // 清除旧的超时
+  if(_audioTimeout)clearTimeout(_audioTimeout);
+  var loaded=false,errored=false;
+
+  function _cleanup(){
+    loaded=true;
+    if(_audioTimeout)clearTimeout(_audioTimeout);
+  }
+
   _audio.onerror=function(){
-    var code=_audio.error?(_audio.error.code||0):0;
-    if(code===3||code===4||code===0){
-      // MEDIA_ERR_DECODE / MEDIA_ERR_SRC_NOT_SUPPORTED / 未知 → 试下一个
-      console.log('audio src fail, trying next, code='+code);
-      _tryAudioSrc();
-    }else{
-      updatePlayerStatus('流失效');
-      syncFullPlayer();
-    }
+    if(loaded||errored)return;errored=true;_cleanup();
+    // 任何错误都尝试下一个源
+    _tryAudioSrc();
   };
-  _audio.ontimeupdate=function(){updateProgress();syncFullPlayer()};
-  _audio.onended=function(){updatePlayerStatus('▶');syncFullPlayer()};
-  _audio.onloadedmetadata=function(){
-    // 如果 duration 为 0 或 NaN，说明是空数据
-    if(!_audio.duration||isNaN(_audio.duration)){
-      console.log('empty audio, trying next');
-      _tryAudioSrc();return;
-    }
-  };
-  _audio.src=url;_audio.load();
-  _audio.play().then(function(){
+
+  _audio.oncanplay=function(){
+    if(loaded||errored||!_audio.duration||isNaN(_audio.duration))return;
+    _cleanup();
     updatePlayerStatus('⏸');syncFullPlayer();
-  }).catch(function(e){
-    console.log('play blocked, retrying...');
-    // 移动端可能 block，等 loadedmetadata 再试
-    setTimeout(function(){
-      if(_audio.paused)_audio.play().catch(function(){});
-    },200);
-  });
+  };
+
+  _audio.onloadedmetadata=function(){
+    if(loaded||errored)return;
+  };
+
+  _audio.ontimeupdate=function(){if(!loaded&&!errored)return;updateProgress();syncFullPlayer()};
+  _audio.onended=function(){if(!loaded&&!errored)return;updatePlayerStatus('▶');syncFullPlayer()};
+
+  _audio.src=url;
+  _audio.load();
+
+  // 超时回退：8秒后还没开始播放就试下一个源
+  _audioTimeout=setTimeout(function(){
+    if(!loaded&&!errored){
+      errored=true;
+      _tryAudioSrc();
+    }
+  },8000);
+
+  // 尝试播放
+  var p=_audio.play();
+  if(p&&p.then){
+    p.catch(function(e){
+      if(loaded||errored)return;
+      // 移动端可能因用户手势策略被拦截，等元数据后再重试
+      setTimeout(function(){
+        if(!loaded&&!errored&&_audio.paused){
+          _audio.play().catch(function(){});
+        }
+      },300);
+    });
+  }
 }
 
 /* ====== 播放器 UI ====== */
@@ -1933,28 +1955,18 @@ function seekBar(e){
 window._initMusic=function(){
   if(!_mInit){
     _mInit=true;
-    window.addEventListener('resize',fixMusicScroll);
     loadSongsForTab();
-    // 等 DOM 渲染完再算高度
-    setTimeout(fixMusicScroll,200);
   }
   updateProgress();
   syncFullPlayer();
 };
 
 function fixMusicScroll(){
+  // 纯 CSS flex 布局自动处理滚动，此函数仅作兼容保留
   var r=document.getElementById('musicResults');
-  var s=document.querySelector('.music-scene');
-  if(!r||!s)return;
-  // 计算 results 可用高度：场景高度 - 标签 - 搜索栏 - 迷你播放器
-  var tabs=document.querySelector('.music-source-tabs');
-  var search=document.querySelector('.music-search');
-  var pw=document.querySelector('.music-player-wrap');
-  var th=tabs?tabs.offsetHeight+parseInt(getComputedStyle(tabs).marginBottom):0;
-  var sh=search&&search.style.display!=='none'?search.offsetHeight+parseInt(getComputedStyle(search).marginBottom):0;
-  var ph=pw?pw.offsetHeight+8:60;
-  var avail=s.clientHeight-th-sh-ph;
-  if(avail>100) r.style.maxHeight=avail+'px';
+  if(!r)return;
+  r.style.overflowY='auto';
+  r.style.webkitOverflowScrolling='touch';
 }
 
 /* ====== 全屏播放器 ====== */
