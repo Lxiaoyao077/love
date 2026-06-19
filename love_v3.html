@@ -1079,7 +1079,7 @@ body{
       <div class="game-card" data-game="react"><span class="game-card-icon">⚡</span><span class="game-card-name">反应速度</span></div>
       <div class="game-card" data-game="mole"><span class="game-card-icon">🔨</span><span class="game-card-name">打地鼠</span></div>
     </div>
-    <div class="version-badge">v1.4</div>
+    <div class="version-badge">v1.5</div>
   </div>
 </div>
 
@@ -1221,6 +1221,7 @@ body{
         <button class="music-source-tab" data-src="qq" onclick="switchMusicSrc('qq')">QQ</button>
         <button class="music-source-tab" data-src="kugou" onclick="switchMusicSrc('kugou')">酷狗</button>
         <button class="music-source-tab" data-src="kuwo" onclick="switchMusicSrc('kuwo')">酷我</button>
+        <button class="music-source-tab" data-src="migu" onclick="switchMusicSrc('migu')">咪咕</button>
         <button class="music-source-tab" data-src="netease" onclick="switchMusicSrc('netease')">网易云</button>
       </div>
       <div class="music-search">
@@ -1903,99 +1904,44 @@ function _iTunesSearch(kw){
     });
 }
 
-/* ==== QQ 搜索 — corsproxy.io 绕过 CORS ==== */
-function _qqSearch(kw){
-  var qqUrl='https://u.y.qq.com/cgi-bin/musicu.fcg';
-  var body=JSON.stringify({"req_0":{"module":"music.search.SearchCgiService","method":"DoSearchForQQMusicDesktop","param":{"query":kw,"page_no":1,"num_per_page":25}}});
-  var proxyUrl='https://corsproxy.io/?'+encodeURIComponent(qqUrl);
-  return fetch(proxyUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:body})
-    .then(function(r){return r.json()}).then(function(data){
-      var list=(((data||{}).req_0||{}).data||{}).body||{};
-      var songs=(list.song||{}).list||[];
-      return songs.map(function(it){
-        var mid=it.mid||'',album=it.album||{};
+/* ==== TuneHub 聚合搜索（优先） ==== */
+function _tunehubSearch(kw){
+  var url='https://music-dl.sayqz.com/api/?type=aggregateSearch&keyword='+encodeURIComponent(kw);
+  return fetch(url,{signal:AbortSignal.timeout(8000)}).then(function(r){return r.json()}).then(function(data){
+    if(data.code===200&&Array.isArray(data.data)){
+      return data.data.map(function(s){
+        var src=s.source||'netease';
         return {
-          id:'qq_'+mid,name:it.name||it.title||'未知',artist:(it.singer||[]).map(function(s){return s.name}).join(' / ')||'未知歌手',
-          cover:album.mid?'https://y.gtimg.cn/music/photo_new/T002R300x300M000'+album.mid+'.jpg':'',
-          mid:mid,source:'qq',duration:(it.interval||0)*1000
+          id:s.id||'',name:s.name||'未知',artist:s.artist||'未知歌手',
+          cover:s.pic||'',source:src,gdId:s.id||'',
+          duration:s.duration||0
         };
       });
-    });
-}
-
-/* ==== QQ 播放 URL — corsproxy.io ==== */
-function _qqPlayUrl(mid){
-  var body=JSON.stringify({"req_0":{"module":"music.vkey.GetVkey","method":"CgiGetVkey","param":{"guid":"10000","songmid":[mid],"songtype":[0],"uin":"0","loginflag":0,"platform":"20"}}});
-  var proxyUrl='https://corsproxy.io/?'+encodeURIComponent('https://u.y.qq.com/cgi-bin/musicu.fcg');
-  return fetch(proxyUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:body})
-    .then(function(r){return r.json()}).then(function(d){
-      var list=(((d||{}).req_0||{}).data||{}).midurlinfo||[];
-      var item=list[0];
-      if(!item||!item.purl)return'';
-      var purl=item.purl;
-      return purl.startsWith('http')?purl.replace(/^http:/,'https:'):('https://isure-stream.qqmusic.qq.com/'+purl);
-    }).catch(function(){return''});
-}
-
-/* ==== 酷狗搜索 — corsproxy.io ==== */
-function _kugouSearch(kw){
-  var url='https://corsproxy.io/?'+encodeURIComponent('https://complexsearch.kugou.com/v2/search/song?keyword='+encodeURIComponent(kw)+'&page=1&pagesize=25&platform=WebFilter');
-  return fetch(url).then(function(r){return r.json()}).then(function(data){
-    var lists=((data||{}).data||{}).lists||[];
-    return lists.map(function(it){
-      var cover=it.AlbumID?'https://imge.kugou.com/stdmusic/240/'+it.AlbumID+'.jpg':'';
-      return {
-        id:'kg_'+it.FileHash,name:it.SongName||'未知',artist:it.SingerName||'未知歌手',
-        cover:cover,hash:it.FileHash,album_id:it.AlbumID||'',source:'kugou',
-        duration:(it.Duration||0)*1000
-      };
-    });
+    }
+    return[];
   });
 }
 
-function _kugouPlayUrl(hash,album_id){
-  var url='https://corsproxy.io/?'+encodeURIComponent('https://wwwapi.kugou.com/yy/index.php?r=play/getdata&hash='+hash+'&album_id='+(album_id||''));
-  return fetch(url).then(function(r){return r.json()}).then(function(d){
-    return ((d||{}).data||{}).play_url||'';
-  }).catch(function(){return''});
-}
-
-/* ==== 网易云搜索 — corsproxy.io ==== */
-function _neteaseSearch(kw){
-  var url='https://corsproxy.io/?'+encodeURIComponent('https://music.163.com/api/search/get?s='+encodeURIComponent(kw)+'&type=1&limit=25&offset=0');
-  return fetch(url).then(function(r){return r.json()}).then(function(data){
-    var songs=((data||{}).result||{}).songs||[];
-    return songs.map(function(it){
-      return {
-        id:'ne_'+it.id,name:it.name||'未知',artist:(it.artists||[]).map(function(a){return a.name}).join(' / ')||'未知歌手',
-        cover:(it.album||{}).picUrl||'',songId:it.id,source:'netease',
-        duration:(it.duration||0)
-      };
-    });
-  });
-}
-
-function _neteasePlayUrl(id){
-  return Promise.resolve('https://music.163.com/song/media/outer/url?id='+id+'.mp3');
-}
-
-/* ==== 酷我搜索 — music-api.gdstudio.xyz ==== */
-function _kuwoSearch(kw){
-  var url='https://music-api.gdstudio.xyz/api.php?types=search&source=kuwo&name='+encodeURIComponent(kw)+'&count=20&pages=1';
+/* ==== GD Studio 统一搜索 & 播放 ==== */
+function _gdSearch(kw,src){
+  var url='https://music-api.gdstudio.xyz/api.php?types=search&source='+src+'&name='+encodeURIComponent(kw)+'&count=20&pages=1';
   return fetch(url,{signal:AbortSignal.timeout(8000)}).then(function(r){return r.json()}).then(function(data){
     if(!Array.isArray(data))return[];
     return data.map(function(s){
       return {
-        id:'kw_'+s.id,name:s.name||'未知',artist:s.artist||'未知歌手',
-        cover:s.cover||s.pic||'',kuwoId:s.id||s.songid||'',
-        source:'kuwo',duration:s.duration||0
+        id:s.id||s.songid||s.song_id||'',
+        name:s.name||s.title||s.songname||'未知',
+        artist:s.artist||s.singer||s.author||'未知歌手',
+        cover:s.cover||s.pic||s.img||'',
+        source:src,gdId:s.id||s.songid||s.song_id||'',
+        duration:s.duration||s.time||0
       };
     });
   });
 }
 
-function _kuwoPlayUrl(kuwoId){
-  var url='https://music-api.gdstudio.xyz/api.php?types=url&source=kuwo&id='+kuwoId;
+function _gdPlayUrl(id,src){
+  var url='https://music-api.gdstudio.xyz/api.php?types=url&source='+src+'&id='+id;
   return fetch(url,{signal:AbortSignal.timeout(8000)}).then(function(r){return r.json()}).then(function(d){
     return d.url||'';
   }).catch(function(){return''});
@@ -2005,18 +1951,11 @@ function _kuwoPlayUrl(kuwoId){
 function loadSongsForTab(){
   var r=document.getElementById('musicResults');
   r.innerHTML='<div class="music-empty music-loading">加载中...</div>';
-  var p;
-  if(_musicSource==='qq')p=_qqSearch('周杰伦');
-  else if(_musicSource==='kugou')p=_kugouSearch('周杰伦');
-  else if(_musicSource==='kuwo')p=_kuwoSearch('周杰伦');
-  else if(_musicSource==='netease')p=_neteaseSearch('周杰伦');
-  else p=_iTunesSearch('周杰伦');
-  p.then(function(s){
-    if(!s.length){r.innerHTML='<div class="music-empty">暂无歌曲，请搜索</div>';return}
-    _sr=s;renderSongs(s);
-  }).catch(function(e){
-    r.innerHTML='<div class="music-empty">加载失败，请搜索</div>';
-  });
+  if(_musicSource==='itunes'){_iTunesSearch('周杰伦').then(onLoad).catch(onErr)}
+  else{_tunehubSearch('周杰伦').then(function(s){if(s.length>0){onLoad(s);return}_gdLoadFallback('周杰伦')}).catch(function(){_gdLoadFallback('周杰伦')})}
+  function _gdLoadFallback(kw){_gdSearch(kw,_musicSource).then(function(s){if(s.length>0)onLoad(s);else onErr()}).catch(onErr)}
+  function onLoad(s){if(!s.length){r.innerHTML='<div class="music-empty">暂无歌曲，请搜索</div>';return}_sr=s;renderSongs(s)}
+  function onErr(){r.innerHTML='<div class="music-empty">加载失败，请搜索</div>'}
 }
 
 /* ==== 搜索 ==== */
@@ -2025,23 +1964,16 @@ function searchMusic(){
   if(!kw)return;
   var r=document.getElementById('musicResults');
   r.innerHTML='<div class="music-empty music-loading">搜索中...</div>';
-  var p;
-  if(_musicSource==='qq')p=_qqSearch(kw);
-  else if(_musicSource==='kugou')p=_kugouSearch(kw);
-  else if(_musicSource==='kuwo')p=_kuwoSearch(kw);
-  else if(_musicSource==='netease')p=_neteaseSearch(kw);
-  else p=_iTunesSearch(kw);
-  p.then(function(s){
-    if(!s.length){r.innerHTML='<div class="music-empty">未找到相关歌曲</div>';return}
-    _sr=s;renderSongs(s);
-  }).catch(function(e){
-    r.innerHTML='<div class="music-empty">搜索失败，请检查网络<br><button class="mole-retry" onclick="searchMusic()" style="margin-top:12px;padding:6px 18px;border-radius:8px;border:1px solid #ccc;background:#fff;cursor:pointer">重试</button></div>';
-  });
+  if(_musicSource==='itunes'){_iTunesSearch(kw).then(onResult).catch(onFail)}
+  else{_tunehubSearch(kw).then(function(s){if(s.length>0){onResult(s);return}_gdSearch(kw,_musicSource).then(function(s2){if(s2.length>0){onResult(s2);return}fallbackSources(kw)}).catch(function(){fallbackSources(kw)})}).catch(function(){_gdSearch(kw,_musicSource).then(function(s2){if(s2.length>0)onResult(s2);else fallbackSources(kw)}).catch(function(){fallbackSources(kw)})})}
+  function fallbackSources(kw){var alt=['kuwo','migu','kugou','netease','qq'].filter(function(x){return x!==_musicSource});function tryNext(i){if(i>=alt.length){onFail();return}_gdSearch(kw,alt[i]).then(function(s3){if(s3.length>0){onResult(s3);return}tryNext(i+1)}).catch(function(){tryNext(i+1)})}tryNext(0)}
+  function onResult(s){if(!s.length){r.innerHTML='<div class="music-empty">未找到相关歌曲</div>';return}_sr=s;renderSongs(s)}
+  function onFail(){r.innerHTML='<div class="music-empty">搜索失败，请检查网络<br><button class="mole-retry" onclick="searchMusic()" style="margin-top:12px;padding:6px 18px;border-radius:8px;border:1px solid #ccc;background:#fff;cursor:pointer">重试</button></div>'}
 }
 
 /* ==== 渲染列表 ==== */
 function renderSongs(songs){
-  var h='',l=songs.length,tagMap={itunes:'iTunes',qq:'QQ',kugou:'酷狗',kuwo:'酷我',netease:'网易云'},tag=tagMap[_musicSource]||'iTunes';
+  var h='',l=songs.length,tagMap={itunes:'iTunes',qq:'QQ',kugou:'酷狗',kuwo:'酷我',migu:'咪咕',netease:'网易云'},tag=tagMap[_musicSource]||'iTunes';
   for(var i=0;i<l;i++){
     var s=songs[i],cv=s.cover||'';
     var coverHtml=cv?'<img src="'+cv+'" onerror="this.parentElement.innerHTML=\'&#9835;\'" loading="lazy">':'&#9835;';
@@ -2077,10 +2009,7 @@ function playSong(idx){
     if(p&&p.then){p.then(function(){},function(){setTimeout(function(){if(!done&&_audio&&_audio===a2&&a2.paused){var p3=a2.play();if(p3&&p3.then)p3.catch(function(){})}},200)})}
   }
 
-  if(s.source==='qq'&&s.mid){_qqPlayUrl(s.mid).then(doPlay)}
-  else if(s.source==='kugou'&&s.hash){_kugouPlayUrl(s.hash,s.album_id).then(doPlay)}
-  else if(s.source==='kuwo'&&s.kuwoId){_kuwoPlayUrl(s.kuwoId).then(doPlay)}
-  else if(s.source==='netease'&&s.songId){_neteasePlayUrl(s.songId).then(doPlay)}
+  if(s.source!='itunes'&&s.gdId){_gdPlayUrl(s.gdId,s.source).then(doPlay)}
   else{doPlay(s.previewUrl||'')}
 }
 
@@ -2097,7 +2026,7 @@ var _audioTimeout=null;
 /* ==== 迷你播放器 UI ==== */
 function updatePlayerUI(title,artist,cover){
   if(!title){document.getElementById('musicPlayerWrap').innerHTML='';return}
-  var srcTagMap={itunes:'iTunes',qq:'QQ',kugou:'酷狗',kuwo:'酷我',netease:'网易云'},srcTag=srcTagMap[_musicSource]||'iTunes';
+  var srcTagMap={itunes:'iTunes',qq:'QQ',kugou:'酷狗',kuwo:'酷我',migu:'咪咕',netease:'网易云'},srcTag=srcTagMap[_musicSource]||'iTunes';
   var coverPart=cover?'<img src="'+cover+'" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'<div class=\"mplayer-cover-empty\"></div>\'">':'<div class="mplayer-cover-empty"></div>';
   document.getElementById('musicPlayerWrap').innerHTML='<div class="mplayer"><div class="mplayer-cover spin" id="mplayerCover">'+coverPart+'</div><div class="mplayer-info"><div class="mplayer-title">'+escHtml(title)+'<span class="src-tag">'+srcTag+'</span></div><div class="mplayer-artist">'+escHtml(artist)+'</div></div><div class="mplayer-ctrl" id="mplayerBtn" ontouchstart="togglePlay();return false" onclick="togglePlay()"><svg class="mp-play-icon" width="14" height="14" viewBox="0 0 24 24"><polygon points="7 3 20 12 7 21 7 3" fill="currentColor"/></svg><svg class="mp-pause-icon" width="14" height="14" viewBox="0 0 24 24" style="display:none"><rect x="5" y="3" width="5" height="18" rx="1" fill="currentColor"/><rect x="14" y="3" width="5" height="18" rx="1" fill="currentColor"/></svg></div></div><div class="mplayer-bar-wrap" id="mplayerBarWrap" ontouchstart="seekBar(event);return false" onmousedown="seekBar(event)"><div class="mplayer-bar"><div class="mplayer-bar-fill" id="mplayerFill"></div></div></div>';
 }
