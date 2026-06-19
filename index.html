@@ -695,13 +695,14 @@
   /* ====== 音乐面板容器（固定视口高度，确保列表可滚动） ====== */
   #musicPanel{
     height:100vh;height:100dvh;overflow:hidden;
-    padding-top:clamp(3rem,10vh,5rem);padding-bottom:100px;
     display:flex;flex-direction:column;
+    position:relative;
   }
-  #musicPanel .game-back{flex-shrink:0;height:auto}
+  #musicPanel .game-back{flex-shrink:0;height:auto;padding:clamp(3rem,10vh,5rem) clamp(1.5rem,6vw,3rem) 0}
   #musicPanel > div:first-of-type{
     flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;
-    overflow:hidden;padding-top:0.5rem;
+    padding:0.5rem clamp(1.5rem,6vw,3rem) 0;
+    position:relative;
   }
   .game-title{margin-bottom:0.5rem;flex-shrink:0}
 
@@ -709,6 +710,7 @@
   .music-scene{
     width:clamp(300px,90vw,420px);margin:0 auto;
     flex:1;min-height:0;display:flex;flex-direction:column;
+    max-height:100%;
   }
   .music-source-tabs{display:flex;gap:0;margin-bottom:0.6rem;background:rgba(0,0,0,0.04);border-radius:10px;padding:3px;flex-shrink:0}
   .music-source-tab{flex:1;text-align:center;padding:7px 0;font-size:0.72rem;font-family:"Noto Sans SC",sans-serif;color:oklch(0.35 0.03 45);border-radius:8px;border:none;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background 0.2s,color 0.2s;-webkit-appearance:none;appearance:none}
@@ -718,8 +720,11 @@
   .music-search button{padding:8px 16px;border-radius:10px;border:none;background:oklch(0.45 0.03 50);color:#fff;font-size:0.72rem;font-family:"Noto Sans SC",sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;-webkit-appearance:none;appearance:none}
   .music-search button:active{opacity:0.8}
   .music-results{
-    flex:1;min-height:0;overflow-y:auto;
-    -webkit-overflow-scrolling:touch;margin-bottom:0.5rem;scrollbar-width:none;
+    flex:1;min-height:0;
+    overflow-y:auto;overflow-x:hidden;
+    -webkit-overflow-scrolling:touch;
+    margin-bottom:0.5rem;scrollbar-width:none;
+    /* JS动态计算maxHeight兜底 */
   }
   .music-results::-webkit-scrollbar{display:none}
   .music-song{display:flex;align-items:center;gap:10px;padding:10px 8px;border-radius:10px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background 0.15s;border-bottom:0.5px solid rgba(0,0,0,0.04)}
@@ -1645,7 +1650,7 @@ window._initMole=function(){startMole()};
 var _DM='https://music.3e0.cn',_curSrc='qq',_sr=[],_mInit=false,_audio=null,_curIdx=-1;
 
 /* ==== 工具 ==== */
-function _jsonp(url,paramName){
+function _jsonp(url,paramName,t){
   return new Promise(function(resolve,reject){
     var cb='_cb'+Date.now()+'_'+Math.floor(Math.random()*1e6);
     var done=false;
@@ -1662,11 +1667,12 @@ function _jsonp(url,paramName){
       reject(new Error('jsonp err'));
     };
     document.head.appendChild(s);
+    var timeout=t||15000;
     setTimeout(function(){
       if(done)return;done=true;
       delete window[cb];try{document.head.removeChild(s)}catch(e){}
       reject(new Error('timeout'));
-    },6000);
+    },timeout);
   });
 }
 function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
@@ -1710,16 +1716,18 @@ var _DEFAULT_SONGS=[
 var _NE_PLAYLIST=_DEFAULT_SONGS;
 
 /* ==== QQ 搜索 / 解析 ==== */
-function _qqSearch(kw){
+function _qqSearch(kw,attempt){
+  attempt=attempt||1;
   var url='https://c.y.qq.com/soso/fcgi-bin/client_search_cp?format=jsonp&w='+encodeURIComponent(kw)+'&n=30&p=1&cr=1&lossless=0&flag_qc=0';
-  return _jsonp(url,'callback').catch(function(){
-    // 重试一次
-    return _jsonp(url+'&t='+Date.now(),'callback');
+  var timeout=attempt===1?12000:18000;
+  return _jsonp(url,'callback',timeout).catch(function(){
+    if(attempt<3) return _qqSearch(kw,attempt+1);
+    return Promise.reject(new Error('搜索超时，已重试3次'));
   });
 }
 function _qqHot(){
   var url='https://c.y.qq.com/soso/fcgi-bin/client_search_cp?format=jsonp&w=%E7%83%AD%E6%AD%8C&n=25&p=1&cr=1&lossless=0&flag_qc=0';
-  return _jsonp(url,'callback');
+  return _jsonp(url,'callback',15000);
 }
 function _qqParse(raw){
   var list=raw&&raw.data&&raw.data.song&&raw.data.song.list;
@@ -1768,20 +1776,19 @@ function _enrichDefault(d){
   };
 }
 
-/* ==== 搜索（QQ tab 搜索，NetEase tab 从推荐歌单过滤） ==== */
+/* ==== 搜索（QQ 真实搜索 / NetEase 从推荐歌单过滤） ==== */
 function searchMusic(){
   var kw=document.getElementById('musicSearchInput').value.trim();
   if(!kw)return;
   var r=document.getElementById('musicResults');
   r.innerHTML='<div class="music-empty music-loading">搜索中...</div>';
-  _searchRetry=0;
   if(_curSrc==='netease'){
-    // NetEase tab：从推荐歌单模糊匹配
+    // NetEase tab：从推荐歌单模糊匹配 + 也尝试QQ搜索作为补充
     var re=new RegExp(kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i');
     var filtered=_NE_PLAYLIST.filter(function(d){return re.test(d.name)||re.test(d.artist)})
       .map(function(d){return _enrichDefault(d)});
     if(filtered.length){_sr=filtered;renderSongs(filtered)}
-    else{r.innerHTML='<div class="music-empty">未找到相关歌曲</div>'}
+    else{r.innerHTML='<div class="music-empty">推荐歌单中未找到，可以切换到QQ音乐搜索</div>'}
   }else{
     _doQQSearch(kw);
   }
@@ -1796,9 +1803,8 @@ function _doQQSearch(kw){
     _sr=songs;renderSongs(songs);
   }).catch(function(e){
     console.error('search err',e);
-    if(_searchRetry<1){_searchRetry++;_doQQSearch(kw)}
-    else{document.getElementById('musicResults').innerHTML=
-      '<div class="music-empty">搜索超时，可能是网络波动<br><button class="mole-retry" onclick="searchMusic()" style="margin-top:8px">重试</button></div>'}
+    document.getElementById('musicResults').innerHTML=
+      '<div class="music-empty">搜索超时，可能是网络波动<br><button class="mole-retry" onclick="searchMusic()" style="margin-top:8px">重试</button></div>';
   });
 }
 
@@ -1809,10 +1815,11 @@ function renderSongs(songs){
     var s=songs[i],t=escapeHtml(s.name||'未知'),a=escapeHtml(s.artist||'未知歌手');
     var cv=s.cover||'';
     if(cv&&cv.indexOf('http://')===0)cv=cv.replace('http://','https://');
-    var coverHtml=cv?'<img src="'+cv+'" onerror="this.parentElement.innerHTML=\'<span style=font-size:1.2rem>&#9835;</span>\'">':'<span style="font-size:1.2rem">&#9835;</span>';
+    var coverHtml=cv?'<img src="'+cv+'" onerror="this.parentElement.innerHTML=\'<span style=font-size:1.2rem>&#9835;</span>\'" loading="lazy">':'<span style="font-size:1.2rem">&#9835;</span>';
     h+='<div class="music-song" style="animation:musicFadeIn 0.3s ease both;animation-delay:'+(i*0.03)+'s" ontouchstart="playSong('+i+');return false" onclick="playSong('+i+')"><div class="music-song-cover">'+coverHtml+'</div><div class="music-song-info"><div class="music-song-title">'+t+'</div><div class="music-song-artist">'+a+'</div></div></div>';
   }
   document.getElementById('musicResults').innerHTML=h;
+  setTimeout(fixMusicScroll,100);
 }
 
 /* ==== 切换 tab ==== */
@@ -1820,9 +1827,9 @@ function switchMusicSrc(src){
   if(_curSrc===src)return;
   _curSrc=src;
   document.querySelectorAll('.music-source-tab').forEach(function(t){t.classList.toggle('active',t.dataset.src===src)});
-  // NetEase tab 隐藏搜索框（纯推荐歌单）
+  // 两个 tab 均显示搜索框
   var searchEl=document.querySelector('.music-search');
-  if(searchEl)searchEl.style.display=src==='netease'?'none':'flex';
+  if(searchEl)searchEl.style.display='flex';
   loadSongsForTab();
 }
 
@@ -1834,6 +1841,7 @@ function playSong(idx){
   var cv=s.cover||'';
   // 销毁旧 Audio 防止残留事件
   if(_audio){_audio.onerror=null;_audio.ontimeupdate=null;_audio.onended=null;_audio.onloadedmetadata=null;_audio.oncanplay=null;try{_audio.pause();_audio.src=''}catch(e){}}
+  if(_audioTimeout)clearTimeout(_audioTimeout);
   _audio=new Audio();
   _audio.preload='auto';
   _audio.volume=0.9;
@@ -1843,13 +1851,13 @@ function playSong(idx){
 
   // 构建音源列表（按优先级）
   var srcs=[];
-  // 1) DreamMeting QQ
+  // 1) DreamMeting QQ（已知仅缓存 晴天/七里香/听妈妈的话 的音频）
   if(s.songmid) srcs.push({url:'https://music.3e0.cn/?server=tencent&type=url&id='+s.songmid,label:'QQ'});
-  // 2) 已知 NetEase ID → DreamMeting NetEase
+  // 2) 已知 NetEase ID → DreamMeting NetEase（目前均返回空）
   var neId=s.neid||_NE_KNOWN[t]||_NE_KNOWN[t.replace(/\s+/g,'')]||null;
-  if(neId) srcs.push({url:'https://music.3e0.cn/?server=netease&type=url&id='+neId,label:'NetEase'});
-  // 3) NetEase 外链（浏览器端可能可用）
-  if(neId) srcs.push({url:'https://music.163.com/song/media/outer/url?id='+neId+'.mp3',label:'NetEase外链'});
+  if(neId) srcs.push({url:'https://music.3e0.cn/?server=netease&type=url&id='+neId,label:'NE'});
+  // 3) NetEase 外链 → 302/404 已死，仅作极端兜底
+  if(neId) srcs.push({url:'https://music.163.com/song/media/outer/url?id='+neId+'.mp3',label:'NE外链'});
 
   if(!srcs.length){updatePlayerStatus('无音源');syncFullPlayer();return}
   _audioSources=srcs;_audioSrcIdx=0;
@@ -1865,56 +1873,54 @@ function _tryAudioSrc(){
   }
   var item=_audioSources[_audioSrcIdx++];
   var url=item.url;
-  // 清除旧的超时
   if(_audioTimeout)clearTimeout(_audioTimeout);
-  var loaded=false,errored=false;
+  var done=false;
 
-  function _cleanup(){
-    loaded=true;
+  function _next(){
+    if(done)return;
+    done=true;
     if(_audioTimeout)clearTimeout(_audioTimeout);
+    _tryAudioSrc();
   }
 
-  _audio.onerror=function(){
-    if(loaded||errored)return;errored=true;_cleanup();
-    // 任何错误都尝试下一个源
-    _tryAudioSrc();
-  };
+  _audio.onerror=_next;
+  _audio.onabort=_next;
 
   _audio.oncanplay=function(){
-    if(loaded||errored||!_audio.duration||isNaN(_audio.duration))return;
-    _cleanup();
+    if(done)return;
+    var d=_audio.duration;
+    // 302 空音频：duration 为 0/NaN/Infinity 或极短
+    if(!d||isNaN(d)||!isFinite(d)||d<1){
+      _next();
+      return;
+    }
+    done=true;
+    if(_audioTimeout)clearTimeout(_audioTimeout);
     updatePlayerStatus('⏸');syncFullPlayer();
   };
 
-  _audio.onloadedmetadata=function(){
-    if(loaded||errored)return;
-  };
-
-  _audio.ontimeupdate=function(){if(!loaded&&!errored)return;updateProgress();syncFullPlayer()};
-  _audio.onended=function(){if(!loaded&&!errored)return;updatePlayerStatus('▶');syncFullPlayer()};
+  _audio.ontimeupdate=function(){if(!done)return;updateProgress();syncFullPlayer()};
+  _audio.onended=function(){if(!done)return;updatePlayerStatus('▶');syncFullPlayer()};
 
   _audio.src=url;
   _audio.load();
 
-  // 超时回退：8秒后还没开始播放就试下一个源
+  // 12秒超时回退（移动网络较慢）
   _audioTimeout=setTimeout(function(){
-    if(!loaded&&!errored){
-      errored=true;
-      _tryAudioSrc();
-    }
-  },8000);
+    if(!done){done=true;_tryAudioSrc();}
+  },12000);
 
   // 尝试播放
   var p=_audio.play();
   if(p&&p.then){
     p.catch(function(e){
-      if(loaded||errored)return;
-      // 移动端可能因用户手势策略被拦截，等元数据后再重试
-      setTimeout(function(){
-        if(!loaded&&!errored&&_audio.paused){
-          _audio.play().catch(function(){});
-        }
-      },300);
+      if(!done){
+        setTimeout(function(){
+          if(!done&&_audio&&_audio.paused){
+            _audio.play().catch(function(){});
+          }
+        },400);
+      }
     });
   }
 }
@@ -1932,8 +1938,14 @@ function updatePlayerStatus(st){
 
 function togglePlay(){
   if(!_audio)return;
-  if(_audio.paused){_audio.play().catch(function(){});updatePlayerStatus('⏸')}
-  else{_audio.pause();updatePlayerStatus('▶')}
+  if(_audio.paused){
+    var p=_audio.play();
+    if(p&&p.then){p.catch(function(){})}
+    updatePlayerStatus('⏸');
+  }else{
+    _audio.pause();
+    updatePlayerStatus('▶');
+  }
   syncFullPlayer();
 }
 
@@ -1956,17 +1968,38 @@ window._initMusic=function(){
   if(!_mInit){
     _mInit=true;
     loadSongsForTab();
+    // 监听 resize 以重新计算滚动高度
+    window.addEventListener('resize',fixMusicScroll);
   }
   updateProgress();
   syncFullPlayer();
+  setTimeout(fixMusicScroll,200);
 };
 
 function fixMusicScroll(){
-  // 纯 CSS flex 布局自动处理滚动，此函数仅作兼容保留
+  // 通过 JS 精确计算 music-results 的可用高度
   var r=document.getElementById('musicResults');
-  if(!r)return;
+  var scene=document.querySelector('.music-scene');
+  if(!r||!scene)return;
   r.style.overflowY='auto';
   r.style.webkitOverflowScrolling='touch';
+  // 动态计算：scene的可见高度 - tabs - search - player
+  var sceneH=scene.clientHeight;
+  var tabsH=0,searchH=0,playerH=0;
+  var tabs=document.querySelector('.music-source-tabs');
+  var srch=document.querySelector('.music-search');
+  var pl=document.getElementById('musicPlayerWrap');
+  if(tabs)tabsH=tabs.offsetHeight;
+  if(srch)srchH=srch.offsetHeight;
+  if(pl)playerH=pl.offsetHeight;
+  var avail=sceneH-tabsH-srchH-playerH-10;
+  if(avail>100){
+    r.style.maxHeight=avail+'px';
+    r.style.flex='none';
+  } else {
+    r.style.maxHeight='';
+    r.style.flex='1';
+  }
 }
 
 /* ====== 全屏播放器 ====== */
