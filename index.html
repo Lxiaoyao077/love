@@ -1938,14 +1938,16 @@ function _qqSearch(kw){
 
 /* ==== QQ 播放 URL — corsproxy.io ==== */
 function _qqPlayUrl(mid){
-  var qqUrl='https://c.y.qq.com/v8/fcg-bin/fcg_play_single_song.fcg?songmid='+mid+'&tpl=yqq_song_detail&format=json&platform=yqq';
-  var proxyUrl='https://corsproxy.io/?'+encodeURIComponent(qqUrl);
-  return fetch(proxyUrl).then(function(r){return r.json()}).then(function(d){
-    var urls=(d||{}).url||{};
-    var raw=Object.values(urls)[0]||'';
-    if(!raw)return'';
-    return raw.startsWith('http')?raw.replace(/^http:/,'https:'):'https://'+raw;
-  }).catch(function(){return''});
+  var body=JSON.stringify({"req_0":{"module":"music.vkey.GetVkey","method":"CgiGetVkey","param":{"guid":"10000","songmid":[mid],"songtype":[0],"uin":"0","loginflag":0,"platform":"20"}}});
+  var proxyUrl='https://corsproxy.io/?'+encodeURIComponent('https://u.y.qq.com/cgi-bin/musicu.fcg');
+  return fetch(proxyUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:body})
+    .then(function(r){return r.json()}).then(function(d){
+      var list=(((d||{}).req_0||{}).data||{}).midurlinfo||[];
+      var item=list[0];
+      if(!item||!item.purl)return'';
+      var purl=item.purl;
+      return purl.startsWith('http')?purl.replace(/^http:/,'https:'):('https://isure-stream.qqmusic.qq.com/'+purl);
+    }).catch(function(){return''});
 }
 
 /* ==== 酷狗搜索 — corsproxy.io ==== */
@@ -1986,7 +1988,14 @@ function _neteaseSearch(kw){
 }
 
 function _neteasePlayUrl(id){
-  return Promise.resolve('https://music.163.com/song/media/outer/url?id='+id+'.mp3');
+  var body='{&quot;ids&quot;:['+id+'],&quot;level&quot;:&quot;standard&quot;,&quot;encodeType&quot;:&quot;aac&quot;}';
+  var proxyUrl='https://corsproxy.io/?'+encodeURIComponent('https://music.163.com/api/song/enhance/player/url/v1');
+  return fetch(proxyUrl,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'params='+encodeURIComponent(body)+'&encSecKey=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'})
+    .then(function(r){return r.json()}).then(function(d){
+      var list=((d||{}).data||[]);
+      if(!list.length)return'';
+      return list[0].url||'';
+    }).catch(function(){return''});
 }
 
 /* ==== 默认加载 ==== */
@@ -2065,7 +2074,7 @@ function playSong(idx){
 
   if(s.source==='qq'&&s.mid){_qqPlayUrl(s.mid).then(doPlay)}
   else if(s.source==='kugou'&&s.hash){_kugouPlayUrl(s.hash,s.album_id).then(doPlay)}
-  else if(s.source==='netease'&&s.songId){doPlay(_neteasePlayUrl(s.songId))}
+  else if(s.source==='netease'&&s.songId){_neteasePlayUrl(s.songId).then(doPlay)}
   else{doPlay(s.previewUrl||'')}
 }
 
