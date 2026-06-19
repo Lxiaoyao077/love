@@ -1770,13 +1770,13 @@ function _qqSearch(kw){
 
 /* ==== QQ 播放 URL — corsproxy.io ==== */
 function _qqPlayUrl(mid){
-  var qqUrl='https://c.y.qq.com/v8/fcg-bin/fcg_play_single_song.fcg?songmid='+mid+'&platform=yqq&format=json';
+  var qqUrl='https://c.y.qq.com/v8/fcg-bin/fcg_play_single_song.fcg?songmid='+mid+'&tpl=yqq_song_detail&format=json&platform=yqq';
   var proxyUrl='https://corsproxy.io/?'+encodeURIComponent(qqUrl);
   return fetch(proxyUrl).then(function(r){return r.json()}).then(function(d){
-    var u=((d||{}).data||{}).url||'';
-    if(!u)return'';
-    // 替换为 https
-    return u.replace(/^http:/,'https:');
+    var urls=(d||{}).url||{};
+    var raw=Object.values(urls)[0]||'';
+    if(!raw)return'';
+    return raw.startsWith('http')?raw.replace(/^http:/,'https:'):'https://'+raw;
   }).catch(function(){return''});
 }
 
