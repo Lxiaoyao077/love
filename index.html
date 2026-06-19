@@ -711,7 +711,6 @@
     padding:0 clamp(1rem,4vw,2rem);
   }
   .game-title{margin-bottom:0.5rem;flex-shrink:0}
-  .version-badge{font-size:0.65rem}
 
   /* ====== 音乐播放器主场景 v8 ====== */
   .music-scene{
@@ -1894,8 +1893,8 @@ function switchMusicSrc(src){
 }
 
 function stopAudio(){
-  if(_audio){try{_audio.pause();_audio.src=''}catch(e){}_audio=null}
-  if(_audioTimeout)clearTimeout(_audioTimeout);
+  if(_audio){try{_audio.pause();_audio.src='';_audio.load()}catch(e){}_audio=null}
+  if(_audioTimeout){clearTimeout(_audioTimeout);_audioTimeout=null}
   updatePlayerUI('','','');
   var w=document.getElementById('musicPlayerWrap');if(w)w.innerHTML='';
   syncFullPlayer();
@@ -1956,9 +1955,10 @@ function _kugouSearch(kw){
   return fetch(url).then(function(r){return r.json()}).then(function(data){
     var lists=((data||{}).data||{}).lists||[];
     return lists.map(function(it){
+      var cover=it.AlbumID?'https://imge.kugou.com/stdmusic/240/'+it.AlbumID+'.jpg':'';
       return {
         id:'kg_'+it.FileHash,name:it.SongName||'未知',artist:it.SingerName||'未知歌手',
-        cover:'',hash:it.FileHash,album_id:it.AlbumID||'',source:'kugou',
+        cover:cover,hash:it.FileHash,album_id:it.AlbumID||'',source:'kugou',
         duration:(it.Duration||0)*1000
       };
     });
@@ -1988,14 +1988,7 @@ function _neteaseSearch(kw){
 }
 
 function _neteasePlayUrl(id){
-  var body='{&quot;ids&quot;:['+id+'],&quot;level&quot;:&quot;standard&quot;,&quot;encodeType&quot;:&quot;aac&quot;}';
-  var proxyUrl='https://corsproxy.io/?'+encodeURIComponent('https://music.163.com/api/song/enhance/player/url/v1');
-  return fetch(proxyUrl,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'params='+encodeURIComponent(body)+'&encSecKey=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'})
-    .then(function(r){return r.json()}).then(function(d){
-      var list=((d||{}).data||[]);
-      if(!list.length)return'';
-      return list[0].url||'';
-    }).catch(function(){return''});
+  return Promise.resolve('https://music.163.com/song/media/outer/url?id='+id+'.mp3');
 }
 
 /* ==== 默认加载 ==== */
