@@ -1683,27 +1683,14 @@ function _iTunesSearch(kw){
   });
 }
 
-/* ==== QQ 搜索（JSONP 从浏览器直调 c.y.qq.com） ==== */
-function _qqJsonp(url,cbParam){
-  return new Promise(function(resolve,reject){
-    var cb='_qqcb'+Date.now()+Math.random().toString(36).slice(2);
-    window[cb]=function(data){delete window[cb];document.head.removeChild(s);resolve(data)};
-    var s=document.createElement('script');
-    s.src=url+(url.indexOf('?')>-1?'&':'?')+cbParam+'='+cb;
-    s.onerror=function(){delete window[cb];document.head.removeChild(s);reject(new Error('jsonp fail'))};
-    document.head.appendChild(s);
-    setTimeout(function(){if(window[cb]){delete window[cb];try{document.head.removeChild(s)}catch(e){};reject(new Error('timeout'))}},10000);
-  });
-}
+/* ==== QQ 搜索（通过后端代理） ==== */
 function _qqSearch(kw){
-  var url='https://c.y.qq.com/splcloud/fcgi-bin/smartbox_new.fcg?is_xml=0&format=json&key='+encodeURIComponent(kw)+'&loginUin=0&hostUin=0&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0';
-  return _qqJsonp(url,'callback').then(function(data){
-    var list=(data&&data.data&&data.data.song&&data.data.song.itemlist)||[];
+  return fetch(API_BASE+'/api/search/qq?kw='+encodeURIComponent(kw)).then(function(r){return r.json()}).then(function(data){
+    var list=(data&&data.songs)||[];
     return list.map(function(it){
-      var cover=it.pic?('https://y.qq.com/music/photo_new/T002R300x300M000'+it.pic+'.jpg'):'';
       return {
-        id:'qq_'+it.mid,name:it.name||'',artist:it.singer||'',
-        cover:cover,mid:it.mid,source:'qq',duration:0
+        id:'qq_'+it.mid,name:it.name||'',artist:it.artist||'',
+        cover:it.cover||'',mid:it.mid,source:'qq',duration:0
       };
     });
   });
