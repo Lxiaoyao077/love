@@ -667,13 +667,14 @@
     border-radius:50% 50% 0 0;z-index:2;pointer-events:none;
   }
   .mole-mole{
-    font-size:clamp(28px,7vw,38px);z-index:1;
-    opacity:0;transform:translateY(20px);
+    position:relative;z-index:5;
+    font-size:clamp(28px,7vw,38px);
+    opacity:0;transform:translateY(30px);
     transition:opacity 0.08s,transform 0.08s;
     line-height:1;pointer-events:auto;
   }
-  .mole-mole.up{opacity:1;transform:translateY(0)}
-  .mole-mole.hit{opacity:1;transform:translateY(0) scale(1.2);filter:saturate(0.3) hue-rotate(-20deg)}
+  .mole-mole.up{opacity:1;transform:translateY(-12px)}
+  .mole-mole.hit{opacity:1;transform:translateY(-12px) scale(1.2);filter:saturate(0.3) hue-rotate(-20deg)}
   .mole-timer{
     font-family:"Cormorant Garamond",serif;font-size:1.1rem;font-weight:600;
     color:oklch(0.2 0.035 45);
